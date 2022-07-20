@@ -27,7 +27,12 @@ export default class Creature {
   brain!: Network;
   genome: Genome;
 
-  constructor(world: World, position: number[], genome: Genome) {
+  constructor(
+    world: World,
+    position: number[],
+    genomeSize: number,
+    genome?: Genome
+  ) {
     this.world = world;
     this.position = position;
     this.urgeToMove = [0, 0];
@@ -56,7 +61,9 @@ export default class Creature {
       this.genome = genome.clone(this.world.mutationProbability);
     } else {
       this.genome = new Genome(
-        [...new Array(5)].map(() => Math.round(Math.random() * maximumNumber))
+        [...new Array(genomeSize)].map(() =>
+          Math.round(Math.random() * maximumNumber)
+        )
       );
 
       // console.log(this.genome.toDecimalString());
@@ -160,6 +167,7 @@ export default class Creature {
     return new Creature(
       this.world,
       [this.position[0], this.position[1]],
+      this.genome.genes.length,
       this.genome
     );
   }

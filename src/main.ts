@@ -12,7 +12,8 @@ const world = new World(
   100,
   1000,
   populationStrategy,
-  selectionMethod
+  selectionMethod,
+  10
 );
 
 world.timePerStep = 0;

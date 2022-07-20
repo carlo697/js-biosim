@@ -8,6 +8,7 @@ const defaultStepsPerGen = 300;
 const defaultImmediateSteps = 1;
 const defaultmutationProbability = 0;
 const defaultPauseBetweenGenerations = 0;
+const defaultInitialGenomeSize = 5;
 
 export default class World {
   static instance: World;
@@ -22,6 +23,7 @@ export default class World {
   timePerStep: number = defaultTimePerStep;
   stepsPerGen: number = defaultStepsPerGen;
   immediateSteps: number = defaultImmediateSteps;
+  initialGenomeSize: number = defaultInitialGenomeSize;
   mutationProbability: number = defaultmutationProbability;
   pauseBetweenGenerations: number = defaultPauseBetweenGenerations;
 
@@ -38,7 +40,8 @@ export default class World {
     size: number,
     initialPopulation: number,
     populationStrategy: PopulationStrategy,
-    selectionMethod: SelectionMethod
+    selectionMethod: SelectionMethod,
+    initialGenomeSize: number
   ) {
     if (World.instance) {
       throw new Error("There's already a world created");
@@ -52,7 +55,8 @@ export default class World {
         size,
         initialPopulation,
         populationStrategy,
-        selectionMethod
+        selectionMethod,
+        initialGenomeSize
       );
     } else {
       throw new Error("Cannot found canvas");
@@ -63,12 +67,14 @@ export default class World {
     size: number,
     initialPopulation: number,
     populationStrategy: PopulationStrategy,
-    selectionMethod: SelectionMethod
+    selectionMethod: SelectionMethod,
+    initialGenomeSize: number
   ): void {
     this.size = size;
     this.initialPopulation = initialPopulation;
     this.populationStrategy = populationStrategy;
     this.selectionMethod = selectionMethod;
+    this.initialGenomeSize = initialGenomeSize;
 
     this.populate();
     this.redraw();
@@ -162,7 +168,7 @@ export default class World {
 
       const normalizedX = position[0] / this.size;
       const normalizedY = position[1] / this.size;
-      const absoluteSize = this.canvas.width / this.size;
+      const absoluteSize = (this.canvas.width / this.size) * 0.9;
 
       this.ctx.fillStyle = creature.getColor();
       this.ctx.beginPath();
