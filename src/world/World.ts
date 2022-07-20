@@ -233,4 +233,44 @@ export default class World {
       );
     }
   }
+
+  public drawRelativeRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string
+  ): void {
+    this.ctx.fillStyle = color;
+
+    this.ctx.beginPath();
+    this.ctx.rect(
+      this.canvas.width * x,
+      this.canvas.height * y,
+      this.canvas.width * width,
+      this.canvas.height * height
+    );
+    this.ctx.fill();
+  }
+
+  public isInsideRelativeRect(
+    x: number,
+    y: number,
+    recX: number,
+    recY: number,
+    recWidth: number,
+    recHeight: number
+  ): boolean {
+    const absoluteWidth = this.size * recWidth;
+    const absoluteHeight = this.size * recHeight;
+    const absoluteX = this.size * recX;
+    const absoluteY = this.size * recY;
+
+    return (
+      x >= absoluteX &&
+      x <= absoluteX + absoluteWidth &&
+      y >= absoluteY &&
+      y <= absoluteY + absoluteHeight
+    );
+  }
 }
