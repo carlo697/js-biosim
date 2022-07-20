@@ -1,11 +1,13 @@
 import AsexualRandomPopulation from "./creature/population/AsexualRandomPopulation";
-import EastWallSelection from "./creature/selection/EastWallSelection";
+import CenterRectangleSelection from "./creature/selection/CenterRectangleSelection";
+// import EastWallSelection from "./creature/selection/EastWallSelection";
 import { WorldEvents } from "./events/WorldEvents";
 import "./styles/style.css";
 import World from "./world/World";
 
 const populationStrategy = new AsexualRandomPopulation();
-const selectionMethod = new EastWallSelection();
+// const selectionMethod = new EastWallSelection();
+const selectionMethod = new CenterRectangleSelection(0.6, 0.6);
 
 const world = new World(
   document.querySelector<HTMLCanvasElement>("#canvas"),

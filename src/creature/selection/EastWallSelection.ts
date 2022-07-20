@@ -18,14 +18,6 @@ export default class EastWallSelection implements SelectionMethod {
   onDrawBeforeCreatures(world: World): void {}
 
   onDrawAfterCreatures(world: World): void {
-    world.ctx.fillStyle = "rgba(0, 255, 0, 0.1)";
-    world.ctx.beginPath();
-    world.ctx.rect(
-      world.canvas.width / 2,
-      0,
-      world.canvas.width / 2,
-      world.canvas.height
-    );
-    world.ctx.fill();
+    world.drawRelativeRect(0.5, 0, 0.5, 1, "rgba(0, 255, 0, 0.1)");
   }
 }
