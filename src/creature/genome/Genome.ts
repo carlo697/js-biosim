@@ -1,4 +1,8 @@
-import { numberToBitString, probabilityToBool } from "../../helpers/helpers";
+import {
+  numberToBitString,
+  numberToRGB,
+  probabilityToBool,
+} from "../../helpers/helpers";
 
 const logMutations = true;
 const logBeforeAndAfter = false;
@@ -50,5 +54,18 @@ export default class Genome {
 
   getGeneData(index: number): number[] {
     return [(this.genes[index] >> 16) & 65535, this.genes[index] & 65535];
+  }
+
+  getColor(): string {
+    let sum = 0;
+
+    // We need to generate a number between 0 and 1777216 to create
+    // a color from it
+    const multiplier = 16777215 / (this.genes.length * maximumNumber);
+    for (let geneIdx = 0; geneIdx < this.genes.length; geneIdx++) {
+      sum += this.genes[geneIdx] * multiplier;
+    }
+
+    return numberToRGB(sum);
   }
 }

@@ -97,7 +97,7 @@ export default class Creature {
   }
 
   getColor(): string {
-    return "white";
+    return this.genome.getColor();
   }
 
   computeStep(): void {
