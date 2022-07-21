@@ -74,41 +74,6 @@ export default class World {
     this.redraw();
   }
 
-  public getRandomPosition(): number[] {
-    return [
-      Math.floor(Math.random() * this.size),
-      Math.floor(Math.random() * this.size),
-    ];
-  }
-
-  public getRandomAvailablePosition(): number[] {
-    // Generate a position until it corresponds to an empty tile
-    let position: number[];
-    do {
-      position = this.getRandomPosition();
-    } while (!this.isTileEmpty(position[0], position[1]));
-
-    return position;
-  }
-
-  public isTileEmpty(x: number, y: number): boolean {
-    for (const creature of this.currentCreatures) {
-      if (creature.position[0] === x && creature.position[1] === y) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  public isTileInsideWorld(x: number, y: number): boolean {
-    if (x < 0 || y < 0 || x >= this.size || y >= this.size) {
-      return false;
-    }
-
-    return true;
-  }
-
   private selectAndPopulate(): void {
     if (this.initialPopulation >= this.size * this.size) {
       throw new Error(
@@ -145,42 +110,6 @@ export default class World {
     }
 
     this.lastCreatureCount = newCreatures.length;
-  }
-
-  private clearCanvas(): void {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-
-  private resizeCanvas(): void {
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
-  }
-
-  private redraw(): void {
-    this.clearCanvas();
-    this.resizeCanvas();
-
-    this.selectionMethod.onDrawBeforeCreatures(this);
-
-    for (const creature of this.currentCreatures) {
-      const position = creature.position;
-
-      const normalizedX = position[0] / this.size;
-      const normalizedY = position[1] / this.size;
-      const absoluteSize = (this.canvas.width / this.size) * 0.9;
-
-      this.ctx.fillStyle = creature.getColor();
-      this.ctx.beginPath();
-      this.ctx.rect(
-        normalizedX * this.canvas.width,
-        normalizedY * this.canvas.height,
-        absoluteSize,
-        absoluteSize
-      );
-      this.ctx.fill();
-    }
-
-    this.selectionMethod.onDrawAfterCreatures(this);
   }
 
   startRun(): void {
@@ -240,6 +169,99 @@ export default class World {
     }
   }
 
+  pause(): void {
+    window.clearTimeout(this.timeoutId);
+    this.timeoutId = undefined;
+  }
+
+  resume(): void {
+    this.computeStep();
+  }
+
+  hasBeenInitiated(): boolean {
+    return (
+      this.timeoutId != undefined ||
+      this.currentStep > 0 ||
+      this.currentGen > 0 ||
+      this.currentCreatures.length > 0
+    );
+  }
+
+  isPaused(): boolean {
+    return !this.timeoutId;
+  }
+
+  public getRandomPosition(): number[] {
+    return [
+      Math.floor(Math.random() * this.size),
+      Math.floor(Math.random() * this.size),
+    ];
+  }
+
+  public getRandomAvailablePosition(): number[] {
+    // Generate a position until it corresponds to an empty tile
+    let position: number[];
+    do {
+      position = this.getRandomPosition();
+    } while (!this.isTileEmpty(position[0], position[1]));
+
+    return position;
+  }
+
+  public isTileEmpty(x: number, y: number): boolean {
+    for (const creature of this.currentCreatures) {
+      if (creature.position[0] === x && creature.position[1] === y) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public isTileInsideWorld(x: number, y: number): boolean {
+    if (x < 0 || y < 0 || x >= this.size || y >= this.size) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private clearCanvas(): void {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  private resizeCanvas(): void {
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
+  }
+
+  private redraw(): void {
+    this.clearCanvas();
+    this.resizeCanvas();
+
+    this.selectionMethod.onDrawBeforeCreatures(this);
+
+    for (const creature of this.currentCreatures) {
+      const position = creature.position;
+
+      const normalizedX = position[0] / this.size;
+      const normalizedY = position[1] / this.size;
+      const absoluteSize = (this.canvas.width / this.size) * 0.9;
+
+      this.ctx.fillStyle = creature.getColor();
+      this.ctx.beginPath();
+      this.ctx.rect(
+        normalizedX * this.canvas.width,
+        normalizedY * this.canvas.height,
+        absoluteSize,
+        absoluteSize
+      );
+      this.ctx.fill();
+    }
+
+    this.selectionMethod.onDrawAfterCreatures(this);
+  }
+
   public drawRelativeRect(
     x: number,
     y: number,
@@ -278,27 +300,5 @@ export default class World {
       y >= absoluteY &&
       y <= absoluteY + absoluteHeight
     );
-  }
-
-  pause(): void {
-    window.clearTimeout(this.timeoutId);
-    this.timeoutId = undefined;
-  }
-
-  resume(): void {
-    this.computeStep();
-  }
-
-  hasBeenInitiated(): boolean {
-    return (
-      this.timeoutId != undefined ||
-      this.currentStep > 0 ||
-      this.currentGen > 0 ||
-      this.currentCreatures.length > 0
-    );
-  }
-
-  isPaused(): boolean {
-    return !this.timeoutId;
   }
 }
