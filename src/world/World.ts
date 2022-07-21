@@ -9,6 +9,7 @@ const defaultImmediateSteps = 1;
 const defaultmutationProbability = 0;
 const defaultPauseBetweenGenerations = 0;
 const defaultInitialGenomeSize = 5;
+const defaultInitialHiddenLayers = [5];
 
 export default class World {
   static instance: World;
@@ -26,6 +27,7 @@ export default class World {
   initialGenomeSize: number = defaultInitialGenomeSize;
   mutationProbability: number = defaultmutationProbability;
   pauseBetweenGenerations: number = defaultPauseBetweenGenerations;
+  initialHiddenLayers: number[] = defaultInitialHiddenLayers;
 
   currentCreatures: Creature[] = [];
   lastCreatureCount: number = 0;
@@ -41,7 +43,8 @@ export default class World {
     initialPopulation: number,
     populationStrategy: PopulationStrategy,
     selectionMethod: SelectionMethod,
-    initialGenomeSize: number
+    initialGenomeSize: number,
+    initialHiddenLayers: number[]
   ) {
     if (World.instance) {
       throw new Error("There's already a world created");
@@ -56,7 +59,8 @@ export default class World {
         initialPopulation,
         populationStrategy,
         selectionMethod,
-        initialGenomeSize
+        initialGenomeSize,
+        initialHiddenLayers
       );
     } else {
       throw new Error("Cannot found canvas");
@@ -68,13 +72,15 @@ export default class World {
     initialPopulation: number,
     populationStrategy: PopulationStrategy,
     selectionMethod: SelectionMethod,
-    initialGenomeSize: number
+    initialGenomeSize: number,
+    initialHiddenLayers: number[]
   ): void {
     this.size = size;
     this.initialPopulation = initialPopulation;
     this.populationStrategy = populationStrategy;
     this.selectionMethod = selectionMethod;
     this.initialGenomeSize = initialGenomeSize;
+    this.initialHiddenLayers = initialHiddenLayers;
 
     this.populate();
     this.redraw();

@@ -15,7 +15,10 @@ const world = new World(
   1000,
   populationStrategy,
   selectionMethod,
-  10
+  40,
+  [4, 4]
+  // 10,
+  // [5]
 );
 
 world.timePerStep = 0;

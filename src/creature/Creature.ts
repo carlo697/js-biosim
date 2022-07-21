@@ -26,10 +26,12 @@ export default class Creature {
   actions: CreatureAction[];
   brain!: Network;
   genome: Genome;
+  hiddenLayersStructure: number[];
 
   constructor(
     world: World,
     position: number[],
+    hiddenLayersStructure: number[],
     genomeSize: number,
     genome?: Genome
   ) {
@@ -71,10 +73,11 @@ export default class Creature {
     }
 
     // Create neuronal network
+    this.hiddenLayersStructure = hiddenLayersStructure;
     this.brain = new Network(
       this.sensors.length,
       this.actions.length,
-      [4],
+      hiddenLayersStructure,
       true,
       false,
       activationFunction
@@ -167,6 +170,7 @@ export default class Creature {
     return new Creature(
       this.world,
       [this.position[0], this.position[1]],
+      this.hiddenLayersStructure,
       this.genome.genes.length,
       this.genome
     );
