@@ -100,4 +100,18 @@ export class Network {
 
     return lastOutput;
   }
+
+  static calculateTotalConnections(
+    inputs: number,
+    outputs: number,
+    hiddenLayers: number[]
+  ): number {
+    let total = inputs * hiddenLayers[0];
+    for (let i = 0; i < hiddenLayers.length - 1; i++) {
+      total += hiddenLayers[i] * hiddenLayers[i + 1];
+    }
+    total += hiddenLayers[hiddenLayers.length - 1] * outputs;
+
+    return total;
+  }
 }

@@ -1,3 +1,4 @@
+import { Network } from "../creature/brain/Network";
 import Creature from "../creature/Creature";
 import PopulationStrategy from "../creature/population/PopulationStrategy";
 import SelectionMethod from "../creature/selection/SelectionMethod";
@@ -149,6 +150,16 @@ export default class World {
       );
     } else {
       console.log("New population:", newCreatures.length);
+      console.log(`Genome size: ${this.initialGenomeSize} genes`);
+      if (newCreatures.length > 0) {
+        console.log(
+          `Total neuronal links: ${Network.calculateTotalConnections(
+            newCreatures[0].sensors.length,
+            newCreatures[0].actions.length,
+            this.initialHiddenLayers
+          )}`
+        );
+      }
     }
 
     this.lastCreatureCount = newCreatures.length;
