@@ -45,24 +45,7 @@ export const setupUI = (world: World) => {
     }
   );
 
-  // Time per step slider
-  //   const timePerStepSlider = document.querySelector(
-  //     "#timePerStepSlider"
-  //   ) as HTMLInputElement;
-  //   const timePerStepValue = document.querySelector(
-  //     "#timePerStepValue"
-  //   ) as HTMLInputElement;
-  //   timePerStepValue.textContent = timePerStepSlider.value;
-
-  //   if (timePerStepSlider && timePerStepValue) {
-  //     timePerStepSlider.addEventListener("input", (e) => {
-  //       const target = e.target as HTMLInputElement;
-  //       timePerStepValue.textContent = target.value;
-
-  //       const value = parseFloat(target.value);
-  //       world.timePerStep = value;
-  //     });
-  //   }
+  // timePerStep slider
   setupSlider(
     "#timePerStepSlider",
     "#timePerStepValue",
@@ -72,6 +55,7 @@ export const setupUI = (world: World) => {
     }
   );
 
+  // immediateSteps slider
   setupSlider(
     "#immediateStepsSlider",
     "#immediateStepsValue",
@@ -80,4 +64,15 @@ export const setupUI = (world: World) => {
       world.immediateSteps = parseFloat(value);
     }
   );
+
+  // Pause button
+  document.querySelector("#pause")?.addEventListener("click", (e) => {
+    if (world.isPaused()) {
+      world.resume();
+      (e.target as HTMLElement).textContent = "Pause";
+    } else {
+      world.pause();
+      (e.target as HTMLElement).textContent = "Resume";
+    }
+  });
 };

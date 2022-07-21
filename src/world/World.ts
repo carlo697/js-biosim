@@ -37,6 +37,7 @@ export default class World {
   selectionMethod!: SelectionMethod;
 
   events: EventTarget = new EventTarget();
+  timeoutId?: number;
 
   constructor(
     canvas: HTMLCanvasElement | null,
@@ -231,7 +232,10 @@ export default class World {
 
     this.redraw();
 
-    window.setTimeout(this.computeStep.bind(this), this.timePerStep);
+    this.timeoutId = window.setTimeout(
+      this.computeStep.bind(this),
+      this.timePerStep
+    );
   }
 
   private endGeneration(): void {}
@@ -289,5 +293,18 @@ export default class World {
       y >= absoluteY &&
       y <= absoluteY + absoluteHeight
     );
+  }
+
+  pause(): void {
+    window.clearTimeout(this.timeoutId);
+    this.timeoutId = undefined;
+  }
+
+  resume(): void {
+    this.computeStep();
+  }
+
+  isPaused(): boolean {
+    return !this.timeoutId;
   }
 }
