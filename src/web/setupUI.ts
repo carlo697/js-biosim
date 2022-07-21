@@ -95,10 +95,14 @@ export const setupUI = (world: World) => {
   const initialGenomeSizeInput = document.querySelector(
     "#initialGenomeSizeInput"
   ) as HTMLInputElement;
+  const initialHiddenLayersInput = document.querySelector(
+    "#initialHiddenLayersInput"
+  ) as HTMLInputElement;
 
   worldSizeInput.value = world.size.toString();
   initialPopulationInput.value = world.initialPopulation.toString();
   initialGenomeSizeInput.value = world.initialGenomeSize.toString();
+  initialHiddenLayersInput.value = world.initialHiddenLayers.join(", ");
 
   // Restart button
   document.querySelector("#restart")?.addEventListener("click", () => {
@@ -106,19 +110,24 @@ export const setupUI = (world: World) => {
     const worldSize = parseInt(worldSizeInput.value);
     const initialPopulation = parseInt(initialPopulationInput.value);
     const initialGenomeSize = parseInt(initialGenomeSizeInput.value);
+    const initialHiddenLayers: number[] = initialHiddenLayersInput.value
+      .split(",")
+      .map((value: string) => parseInt(value.trim()));
 
     if (
       !isNaN(initialPopulation) &&
       !isNaN(initialGenomeSize) &&
-      !isNaN(worldSize)
+      !isNaN(worldSize) &&
+      initialHiddenLayers.every((value: number) => !isNaN(value))
     ) {
       world.size = worldSize;
       world.initialPopulation = initialPopulation;
       world.initialGenomeSize = initialGenomeSize;
+      world.initialHiddenLayers = initialHiddenLayers;
       world.initializeWorld();
       world.startRun();
     } else {
-      console.error("Invalid value for initialPopulation");
+      console.error("Invalid initial settings");
     }
   });
 };
