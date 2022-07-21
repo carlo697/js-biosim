@@ -12,7 +12,6 @@ import { HyperbolicTangentFunction } from "./brain/Activation/HyperbolicTangentF
 import MoveEastAction from "./actions/MoveEastAction";
 import MoveWestAction from "./actions/MoveWestAction";
 import MoveNorthAction from "./actions/MoveNorthAction";
-import UselessAction from "./actions/UselessAction";
 import Genome, { maximumNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
 import RandomSensor from "./sensors/RandomSensor";
@@ -132,8 +131,8 @@ export default class Creature {
 
     // Check if something is blocking the path
     if (
-      this.world.isTileEmpty(finalX, finalY) &&
-      this.world.isTileInsideWorld(finalX, finalY)
+      this.world.isTileInsideWorld(finalX, finalY) &&
+      this.world.isTileEmpty(finalX, finalY)
     ) {
       this.position[0] = finalX;
       this.position[1] = finalY;

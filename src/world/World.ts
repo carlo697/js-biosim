@@ -45,6 +45,8 @@ export default class World {
   events: EventTarget = new EventTarget();
   timeoutId?: number;
 
+  grid: Array<Array<Array<Creature | null>>> = [];
+
   constructor(canvas: HTMLCanvasElement | null, size: number) {
     if (World.instance) {
       throw new Error("There's already a world created");
@@ -70,6 +72,7 @@ export default class World {
       this.currentStep = 0;
     }
 
+    this.initializeGrid();
     this.selectAndPopulate();
     this.redraw();
   }
@@ -112,6 +115,54 @@ export default class World {
     this.lastCreatureCount = newCreatures.length;
   }
 
+  private initializeGrid(): void {
+    // Initialize grid
+    this.grid = [];
+    for (let x = 0; x < this.size; x++) {
+      // Create column
+      const col = [];
+      for (let y = 0; y < this.size; y++) {
+        // Create and push row
+        col.push([null]);
+      }
+
+      // Push column
+      this.grid.push(col);
+    }
+
+    // Another way of initializing the array is with map functions
+    // this.grid = [...new Array(this.size)].map(() =>
+    //   [...new Array(this.size)].map(() => [null, null, null])
+    // );
+
+    // This for loop is used to iterate over every pixel in the grid
+    // for (let y = 0; y < this.size; y++) {
+    //   for (let x = 0; x < this.size; x++) {
+    //     console.log(this.grid[x][y]);
+    //   }
+    // }
+  }
+
+  private clearGrid() {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        this.grid[x][y][0] = null;
+      }
+    }
+  }
+
+  private computeGrid() {
+    this.clearGrid();
+
+    // Set creatures
+    for (let i = 0; i < this.currentCreatures.length; i++) {
+      const creature = this.currentCreatures[i];
+
+      // Set creature
+      this.grid[creature.position[0]][creature.position[1]][0] = creature;
+    }
+  }
+
   startRun(): void {
     this.currentGen = 0;
     this.currentStep = 0;
@@ -125,8 +176,12 @@ export default class World {
         new CustomEvent(WorldEvents.startStep, { detail: { world: this } })
       );
 
-      for (const creature of this.currentCreatures) {
-        creature.computeStep();
+      // Recompute grid
+      this.computeGrid();
+
+      // Compute step of every creature
+      for (let i = 0; i < this.currentCreatures.length; i++) {
+        this.currentCreatures[i].computeStep();
       }
       // console.log("step!");
 
@@ -209,13 +264,14 @@ export default class World {
   }
 
   public isTileEmpty(x: number, y: number): boolean {
-    for (const creature of this.currentCreatures) {
-      if (creature.position[0] === x && creature.position[1] === y) {
-        return false;
-      }
-    }
-
-    return true;
+    // for (let i = 0; i < this.currentCreatures.length; i++) {
+    //   const creature = this.currentCreatures[i];
+    //   if (creature.position[0] === x && creature.position[1] === y) {
+    //     return false;
+    //   }
+    // }
+    // return true;
+    return !this.grid[x][y][0];
   }
 
   public isTileInsideWorld(x: number, y: number): boolean {
