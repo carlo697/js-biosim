@@ -65,6 +65,16 @@ export const setupUI = (world: World) => {
     }
   );
 
+  // immediateSteps slider
+  setupSlider(
+    "#pauseBetweenGenerationsSlider",
+    "#pauseBetweenGenerationsValue",
+    world.pauseBetweenGenerations,
+    (value: string) => {
+      world.pauseBetweenGenerations = parseFloat(value);
+    }
+  );
+
   // Pause button
   document.querySelector("#pause")?.addEventListener("click", (e) => {
     if (world.isPaused()) {

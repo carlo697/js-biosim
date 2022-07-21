@@ -24,7 +24,7 @@
       <div class="row g-2">
         <div class="col">
           <h2 class="text-center">Initial data</h2>
-          <p>You need to restart the simulation for this data to work:</p>
+          <p>You need to restart the simulation for these settings to work:</p>
 
           <div class="input-group">
             <label for="worldSizeInput">World size</label>
@@ -56,7 +56,7 @@
 
           <div class="input-group">
             <label for="timePerStepSlider"
-              >Time per step: <span id="timePerStepValue">0</span></label
+              >Time per step: <span id="timePerStepValue">0</span> ms</label
             >
             <input
               id="timePerStepSlider"
@@ -76,6 +76,19 @@
               type="range"
               min="1"
               max="100"
+              class="slider"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="pauseBetweenGenerationsSlider"
+              >Pause between generations: <span id="pauseBetweenGenerationsValue">0</span> ms</label
+            >
+            <input
+              id="pauseBetweenGenerationsSlider"
+              type="range"
+              min="0"
+              max="2000"
               class="slider"
             />
           </div>
