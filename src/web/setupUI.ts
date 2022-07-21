@@ -23,28 +23,30 @@ const setupSlider = (
 };
 
 export const setupUI = (world: World) => {
-  world.events.addEventListener(
-    WorldEvents.startGeneration,
-    ({ detail }: CustomEventInit) => {
-      const world = detail.world as World;
-      const generationText = document.querySelector("#generation");
-      if (generationText) {
-        generationText.textContent = world.currentGen.toString();
-      }
-    }
-  );
+  world.events.addEventListener(WorldEvents.startGeneration, () => {
+    const generationText = document.querySelector("#generation");
 
-  world.events.addEventListener(
-    WorldEvents.startStep,
-    ({ detail }: CustomEventInit) => {
-      const world = detail.world as World;
+    console.log(
+      `Start generation ${world.currentGen},\nLast generation duration: ${
+        world.lastGenerationDuration
+      } ms\nSurvivors: ${world.lastSurvivorsCount},\nNew population: ${
+        world.currentCreatures.length
+      },\nSurvival rate: ${
+        Math.round(world.lastSurvivalRate * 100 * 100) / 100
+      }%`
+    );
 
-      const stepText = document.querySelector("#step");
-      if (stepText) {
-        stepText.textContent = world.currentStep.toString();
-      }
+    if (generationText) {
+      generationText.textContent = world.currentGen.toString();
     }
-  );
+  });
+
+  world.events.addEventListener(WorldEvents.startStep, () => {
+    const stepText = document.querySelector("#step");
+    if (stepText) {
+      stepText.textContent = world.currentStep.toString();
+    }
+  });
 
   // timePerStep slider
   setupSlider(

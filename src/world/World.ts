@@ -34,6 +34,10 @@ export default class World {
 
   currentCreatures: Creature[] = [];
   lastCreatureCount: number = 0;
+  lastSurvivorsCount: number = 0;
+  lastSurvivalRate: number = 0;
+  lastGenerationDate: Date = new Date();
+  lastGenerationDuration: number = 0;
 
   populationStrategy: PopulationStrategy = new AsexualRandomPopulation();
   selectionMethod: SelectionMethod = new EastWallSelection();
@@ -66,7 +70,7 @@ export default class World {
       this.currentStep = 0;
     }
 
-    this.populate();
+    this.selectAndPopulate();
     this.redraw();
   }
 
@@ -105,7 +109,7 @@ export default class World {
     return true;
   }
 
-  private populate(): void {
+  private selectAndPopulate(): void {
     if (this.initialPopulation >= this.size * this.size) {
       throw new Error(
         "The population cannot be greater than the number of available tiles in the world"
@@ -124,11 +128,8 @@ export default class World {
     this.currentCreatures = newCreatures;
 
     if (this.currentGen > 0) {
-      console.log(
-        `Survivors: ${survivors.length}, New population: ${
-          newCreatures.length
-        }, Survival rate: ${(survivors.length / this.lastCreatureCount) * 100}%`
-      );
+      this.lastSurvivorsCount = survivors.length;
+      this.lastSurvivalRate = this.lastSurvivorsCount / this.lastCreatureCount;
     } else {
       console.log("New population:", newCreatures.length);
       console.log(`Genome size: ${this.initialGenomeSize} genes`);
@@ -221,11 +222,15 @@ export default class World {
   private endGeneration(): void {}
 
   private async startGeneration(): Promise<void> {
+    this.lastGenerationDuration =
+      new Date().getTime() - this.lastGenerationDate.getTime();
+    this.lastGenerationDate = new Date();
+
+    this.selectAndPopulate();
+
     this.events.dispatchEvent(
       new CustomEvent(WorldEvents.startGeneration, { detail: { world: this } })
     );
-    console.log("Start generation", this.currentGen);
-    this.populate();
 
     // Small pause
     if (this.pauseBetweenGenerations > 0) {
