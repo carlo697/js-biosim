@@ -11,22 +11,23 @@ const selectionMethod = new CenterRectangleSelection(0.6, 0.6);
 
 const world = new World(
   document.querySelector<HTMLCanvasElement>("#canvas"),
-  100,
-  1000,
-  populationStrategy,
-  selectionMethod,
-  40,
-  [4, 4]
-  // 10,
-  // [5]
+  100
 );
 
+world.initialPopulation = 1000;
+world.populationStrategy = populationStrategy;
+world.selectionMethod = selectionMethod;
+world.initialGenomeSize = 40;
+world.initialHiddenLayers = [4, 4];
+// world.initialGenomeSize = 10;
+// world.initialHiddenLayers = [5];
 world.timePerStep = 0;
 world.stepsPerGen = 300;
 world.immediateSteps = 5;
 world.mutationProbability = 0.01;
 world.pauseBetweenGenerations = 0;
 
+world.initializeWorld();
 world.startRun();
 
-setupUI(world)
+setupUI(world);

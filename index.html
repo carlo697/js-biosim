@@ -18,11 +18,24 @@
       <canvas id="canvas"></canvas>
 
       <div class="section text-center">
-        <button id="pause" type="button">Pause</button>
+        <button id="restart" type="button" class="btn red">Restart</button>
+        <button id="pause" type="button" class="btn">Pause</button>
       </div>
-      <div class="row">
+      <div class="row g-2">
         <div class="col">
           <h2 class="text-center">Initial data</h2>
+          <p>You need to restart the simulation for this data to work:</p>
+
+          <div class="input-group">
+            <label for="initialPopulation">Initial population</label>
+            <input
+              id="initialPopulation"
+              type="number"
+              min="1"
+              max="2000"
+              value="1000"
+            />
+          </div>
         </div>
         <div class="col">
           <h2 class="text-center">Dynamic values</h2>
@@ -43,7 +56,7 @@
 
           <div class="input-group">
             <label for="immediateStepsSlider"
-              >Time per step: <span id="immediateStepsValue">0</span></label
+              >Immediate steps: <span id="immediateStepsValue">0</span></label
             >
             <input
               id="immediateStepsSlider"

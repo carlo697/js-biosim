@@ -38,7 +38,7 @@ body {
   width: 100%;
 }
 
-button {
+.btn {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -48,13 +48,19 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+  &:hover {
+    border-color: #646cff;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+
+  &.red {
+    background-color: rgb(171, 47, 47);
+  }
 }
 
 #canvas {
@@ -80,6 +86,13 @@ button:focus-visible {
     flex-basis: 0;
     flex-grow: 1;
   }
+
+  &.g-1 {
+    gap: 1rem;
+  }
+  &.g-2 {
+    gap: 2rem;
+  }
 }
 
 .text-center {
@@ -92,5 +105,9 @@ button:focus-visible {
   }
   label {
     display: block;
+  }
+
+  &:not(:last-of-type) {
+    margin-bottom: 1rem;
   }
 }

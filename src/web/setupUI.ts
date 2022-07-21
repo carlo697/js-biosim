@@ -75,4 +75,19 @@ export const setupUI = (world: World) => {
       (e.target as HTMLElement).textContent = "Resume";
     }
   });
+
+  // Restart button
+  document.querySelector("#restart")?.addEventListener("click", () => {
+    // Get initial data
+    const initialPopulation = parseInt(
+      (document.querySelector("#initialPopulation") as HTMLInputElement).value
+    );
+
+    if (!isNaN(initialPopulation)) {
+      world.initialPopulation = initialPopulation;
+      world.initializeWorld();
+    } else {
+      console.error("Invalid value for initialPopulation");
+    }
+  });
 };

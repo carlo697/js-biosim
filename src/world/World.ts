@@ -1,6 +1,8 @@
 import { Network } from "../creature/brain/Network";
 import Creature from "../creature/Creature";
+import AsexualRandomPopulation from "../creature/population/AsexualRandomPopulation";
 import PopulationStrategy from "../creature/population/PopulationStrategy";
+import EastWallSelection from "../creature/selection/EastWallSelection";
 import SelectionMethod from "../creature/selection/SelectionMethod";
 import { WorldEvents } from "../events/WorldEvents";
 
@@ -33,21 +35,13 @@ export default class World {
   currentCreatures: Creature[] = [];
   lastCreatureCount: number = 0;
 
-  populationStrategy!: PopulationStrategy;
-  selectionMethod!: SelectionMethod;
+  populationStrategy: PopulationStrategy = new AsexualRandomPopulation();
+  selectionMethod: SelectionMethod = new EastWallSelection();
 
   events: EventTarget = new EventTarget();
   timeoutId?: number;
 
-  constructor(
-    canvas: HTMLCanvasElement | null,
-    size: number,
-    initialPopulation: number,
-    populationStrategy: PopulationStrategy,
-    selectionMethod: SelectionMethod,
-    initialGenomeSize: number,
-    initialHiddenLayers: number[]
-  ) {
+  constructor(canvas: HTMLCanvasElement | null, size: number) {
     if (World.instance) {
       throw new Error("There's already a world created");
     }
@@ -56,38 +50,23 @@ export default class World {
       World.instance = this;
       this.canvas = canvas;
       this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-      this.initializeWorld(
-        size,
-        initialPopulation,
-        populationStrategy,
-        selectionMethod,
-        initialGenomeSize,
-        initialHiddenLayers
-      );
+      this.size = size;
+
+      window.addEventListener("resize", this.redraw.bind(this));
     } else {
       throw new Error("Cannot found canvas");
     }
   }
 
-  public initializeWorld(
-    size: number,
-    initialPopulation: number,
-    populationStrategy: PopulationStrategy,
-    selectionMethod: SelectionMethod,
-    initialGenomeSize: number,
-    initialHiddenLayers: number[]
-  ): void {
-    this.size = size;
-    this.initialPopulation = initialPopulation;
-    this.populationStrategy = populationStrategy;
-    this.selectionMethod = selectionMethod;
-    this.initialGenomeSize = initialGenomeSize;
-    this.initialHiddenLayers = initialHiddenLayers;
+  public initializeWorld(): void {
+    // If there's a simulation already running
+    if (this.hasBeenInitiated()) {
+      this.currentGen = 0;
+      this.currentStep = 0;
+    }
 
     this.populate();
     this.redraw();
-
-    window.addEventListener("resize", this.redraw.bind(this));
   }
 
   public getRandomPosition(): number[] {
@@ -209,7 +188,7 @@ export default class World {
     this.computeStep();
   }
 
-  async computeStep(): Promise<void> {
+  private async computeStep(): Promise<void> {
     for (let i = 0; i < this.immediateSteps; i++) {
       this.events.dispatchEvent(
         new CustomEvent(WorldEvents.startStep, { detail: { world: this } })
@@ -302,6 +281,15 @@ export default class World {
 
   resume(): void {
     this.computeStep();
+  }
+
+  hasBeenInitiated(): boolean {
+    return (
+      this.timeoutId != undefined ||
+      this.currentStep > 0 ||
+      this.currentGen > 0 ||
+      this.currentCreatures.length > 0
+    );
   }
 
   isPaused(): boolean {
