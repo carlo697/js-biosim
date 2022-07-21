@@ -1,8 +1,8 @@
+import "./styles/style.scss";
+import { setupUI } from "./web/setupUI";
 import AsexualRandomPopulation from "./creature/population/AsexualRandomPopulation";
 import CenterRectangleSelection from "./creature/selection/CenterRectangleSelection";
 // import EastWallSelection from "./creature/selection/EastWallSelection";
-import { WorldEvents } from "./events/WorldEvents";
-import "./styles/style.css";
 import World from "./world/World";
 
 const populationStrategy = new AsexualRandomPopulation();
@@ -29,24 +29,4 @@ world.pauseBetweenGenerations = 0;
 
 world.startRun();
 
-world.events.addEventListener(
-  WorldEvents.startGeneration,
-  ({ detail }: CustomEventInit) => {
-    const world = detail.world as World;
-    const generationText = document.querySelector("#generation");
-    if (generationText) {
-      generationText.textContent = world.currentGen.toString();
-    }
-  }
-);
-
-world.events.addEventListener(
-  WorldEvents.startStep,
-  ({ detail }: CustomEventInit) => {
-    const world = detail.world as World;
-    const stepText = document.querySelector("#step");
-    if (stepText) {
-      stepText.textContent = world.currentStep.toString();
-    }
-  }
-);
+setupUI(world)

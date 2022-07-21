@@ -35,7 +35,6 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
   width: 100%;
 }
 
@@ -62,4 +61,36 @@ button:focus-visible {
   background-color: rgb(168, 168, 168);
   width: 100%;
   aspect-ratio: 1;
+}
+
+.header {
+  position: sticky;
+  top: 0.5rem;
+  text-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+}
+
+.section {
+  padding: 1rem;
+}
+
+.row {
+  display: flex;
+
+  .col {
+    flex-basis: 0;
+    flex-grow: 1;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.input-group {
+  input {
+    width: 100%;
+  }
+  label {
+    display: block;
+  }
 }
