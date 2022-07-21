@@ -76,6 +76,9 @@ export const setupUI = (world: World) => {
     }
   });
 
+  const worldSizeInput = document.querySelector(
+    "#worldSizeInput"
+  ) as HTMLInputElement;
   const initialPopulationInput = document.querySelector(
     "#initialPopulationInput"
   ) as HTMLInputElement;
@@ -83,19 +86,27 @@ export const setupUI = (world: World) => {
     "#initialGenomeSizeInput"
   ) as HTMLInputElement;
 
+  worldSizeInput.value = world.size.toString();
   initialPopulationInput.value = world.initialPopulation.toString();
   initialGenomeSizeInput.value = world.initialGenomeSize.toString();
 
   // Restart button
   document.querySelector("#restart")?.addEventListener("click", () => {
     // Get initial data
+    const worldSize = parseInt(worldSizeInput.value);
     const initialPopulation = parseInt(initialPopulationInput.value);
     const initialGenomeSize = parseInt(initialGenomeSizeInput.value);
 
-    if (!isNaN(initialPopulation) && !isNaN(initialGenomeSize)) {
+    if (
+      !isNaN(initialPopulation) &&
+      !isNaN(initialGenomeSize) &&
+      !isNaN(worldSize)
+    ) {
+      world.size = worldSize;
       world.initialPopulation = initialPopulation;
       world.initialGenomeSize = initialGenomeSize;
       world.initializeWorld();
+      world.startRun();
     } else {
       console.error("Invalid value for initialPopulation");
     }

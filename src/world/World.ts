@@ -61,6 +61,7 @@ export default class World {
   public initializeWorld(): void {
     // If there's a simulation already running
     if (this.hasBeenInitiated()) {
+      this.pause();
       this.currentGen = 0;
       this.currentStep = 0;
     }
