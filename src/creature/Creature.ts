@@ -15,6 +15,7 @@ import MoveNorthAction from "./actions/MoveNorthAction";
 import UselessAction from "./actions/UselessAction";
 import Genome, { maximumNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
+import RandomSensor from "./sensors/RandomSensor";
 
 const activationFunction = new HyperbolicTangentFunction();
 
@@ -43,6 +44,7 @@ export default class Creature {
       new VerticalPositionSensor(this),
       new AgeSensor(this),
       new OscillatorSensor(this),
+      new RandomSensor(this),
     ];
     this.actions = [
       new MoveNorthAction(this),
