@@ -5,17 +5,18 @@ const setupSlider = (
   sliderId: string,
   valueId: string,
   initialValue: any,
-  callback: (value: string) => any
+  callback: (value: string) => any,
+  formatText = (value: string): string => value
 ) => {
   const slider = document.querySelector(sliderId) as HTMLInputElement;
   const value = document.querySelector(valueId) as HTMLInputElement;
   slider.value = initialValue;
-  value.textContent = initialValue;
+  value.textContent = formatText(initialValue);
 
   if (slider && value) {
     slider.addEventListener("input", (e) => {
       const target = e.target as HTMLInputElement;
-      value.textContent = target.value;
+      value.textContent = formatText(target.value);
       callback(target.value);
     });
   }
@@ -65,7 +66,7 @@ export const setupUI = (world: World) => {
     }
   );
 
-  // immediateSteps slider
+  // pauseBetweenGenerations slider
   setupSlider(
     "#pauseBetweenGenerationsSlider",
     "#pauseBetweenGenerationsValue",
@@ -73,6 +74,18 @@ export const setupUI = (world: World) => {
     (value: string) => {
       world.pauseBetweenGenerations = parseFloat(value);
     }
+  );
+
+  // mutationProbability slider
+  setupSlider(
+    "#mutationProbabilitySlider",
+    "#mutationProbabilityValue",
+    world.mutationProbability,
+    (value: string) => {
+      world.mutationProbability = parseFloat(value);
+    },
+    (value: string) =>
+      (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
   );
 
   // Pause button
