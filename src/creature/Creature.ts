@@ -52,13 +52,6 @@ export default class Creature {
       new MoveEastAction(this),
       new MoveWestAction(this),
       new RandomMoveAction(this),
-
-      // Useless actions
-      new UselessAction(this),
-      new UselessAction(this),
-      new UselessAction(this),
-      new UselessAction(this),
-      new UselessAction(this),
     ];
 
     if (genome) {
@@ -119,34 +112,18 @@ export default class Creature {
     const inputValues = this.sensors.map((sensor) => sensor.calculateOutput());
     const outputValues = this.brain.feedForward(inputValues);
 
-    // console.log(
-    //   inputValues.map((value: number) =>
-    //     (Math.round(value * 100) / 100).toFixed(2)
-    //   )
-    // );
-    // console.log(outputValues);
-    // console.log(this.brain);
-
-    // const outputValues: number[] = [0, 1, 0];
-
     for (let i = 0; i < this.actions.length; i++) {
       this.actions[i].execute(outputValues[i]);
     }
 
+    // Calculate probability of movement
     const moveX = Math.tanh(this.urgeToMove[0]);
     const moveY = Math.tanh(this.urgeToMove[1]);
     const probX = probabilityToBool(Math.abs(moveX)) ? 1 : 0;
     const probY = probabilityToBool(Math.abs(moveY)) ? 1 : 0;
     const signumX = moveX < 0 ? -1 : 1;
     const signumY = moveY < 0 ? -1 : 1;
-
-    // console.log(this.urgeToMove);
-
     this.move(signumX * probX, signumY * probY);
-    // this.move(
-    //   Math.round(Math.random() * 2 - 1),
-    //   Math.round(Math.random() * 2 - 1)
-    // );
   }
 
   move(x: number, y: number) {
