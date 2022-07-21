@@ -76,15 +76,25 @@ export const setupUI = (world: World) => {
     }
   });
 
+  const initialPopulationInput = document.querySelector(
+    "#initialPopulationInput"
+  ) as HTMLInputElement;
+  const initialGenomeSizeInput = document.querySelector(
+    "#initialGenomeSizeInput"
+  ) as HTMLInputElement;
+
+  initialPopulationInput.value = world.initialPopulation.toString();
+  initialGenomeSizeInput.value = world.initialGenomeSize.toString();
+
   // Restart button
   document.querySelector("#restart")?.addEventListener("click", () => {
     // Get initial data
-    const initialPopulation = parseInt(
-      (document.querySelector("#initialPopulation") as HTMLInputElement).value
-    );
+    const initialPopulation = parseInt(initialPopulationInput.value);
+    const initialGenomeSize = parseInt(initialGenomeSizeInput.value);
 
-    if (!isNaN(initialPopulation)) {
+    if (!isNaN(initialPopulation) && !isNaN(initialGenomeSize)) {
       world.initialPopulation = initialPopulation;
+      world.initialGenomeSize = initialGenomeSize;
       world.initializeWorld();
     } else {
       console.error("Invalid value for initialPopulation");
