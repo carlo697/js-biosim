@@ -161,8 +161,6 @@ export const setupCanvas = (world: World) => {
 
   const clearCanvas = () => {
     context?.clearRect(0, 0, canvas.width, canvas.height);
-    console.log(context?.clearRect);
-    console.log(canvas.width, canvas.height);
   };
 
   const clearGenomePreview = () => {
@@ -173,14 +171,7 @@ export const setupCanvas = (world: World) => {
   if (canvas != null) {
     world.canvas.addEventListener("click", (e: MouseEvent) => {
       world.computeGrid();
-      const rect = (e.target as HTMLElement).getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      const relativeX = x / rect.width;
-      const relativeY = y / rect.height;
-
-      const [worldX, worldY] = world.relativeToWorld(relativeX, relativeY);
+      const [worldX, worldY] = world.mouseEventPosToWorld(e);
 
       // Get creature
       const creature = world.grid[worldX][worldY][0];
@@ -197,6 +188,14 @@ export const setupCanvas = (world: World) => {
 
     world.canvas.addEventListener("mouseenter", () => {
       world.computeGrid();
+    });
+
+    world.canvas.addEventListener("mousemove", (e: MouseEvent) => {
+      if (world.isPaused()) {
+        const [worldX, worldY] = world.mouseEventPosToWorld(e);
+        world.redraw();
+        world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
+      }
     });
 
     world.events.addEventListener(WorldEvents.initializeWorld, () => {

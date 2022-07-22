@@ -84,4 +84,6 @@ export const drawNeuronalNetwork = (
     // Move to the next layer
     context.translate(neuronDiameter + layerMargin, 0);
   });
+
+  context.resetTransform();
 };

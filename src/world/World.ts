@@ -286,6 +286,18 @@ export default class World {
     return true;
   }
 
+  public mouseEventPosToWorld(e: MouseEvent): number[] {
+    const rect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const relativeX = x / rect.width;
+    const relativeY = y / rect.height;
+    return [
+      Math.floor(relativeX * this.size),
+      Math.floor(relativeY * this.size),
+    ];
+  }
+
   public relativeToWorld(x: number, y: number): number[] {
     const worldX = Math.floor(x * this.size);
     const worldY = Math.floor(y * this.size);
@@ -302,7 +314,7 @@ export default class World {
     this.canvas.height = this.canvas.clientHeight;
   }
 
-  private redraw(): void {
+  public redraw(): void {
     this.clearCanvas();
     this.resizeCanvas();
 
@@ -327,6 +339,45 @@ export default class World {
     }
 
     this.selectionMethod.onDrawAfterCreatures(this);
+  }
+
+  public drawRectStroke(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+    lineWidth: number
+  ): void {
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = lineWidth;
+    this.ctx.beginPath();
+    this.ctx.rect(
+      this.canvas.width * (x / this.size),
+      this.canvas.height * (y / this.size),
+      this.canvas.width * (width / this.size),
+      this.canvas.height * (height / this.size)
+    );
+    this.ctx.stroke();
+  }
+
+  public drawRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string
+  ): void {
+    this.ctx.fillStyle = color;
+
+    this.ctx.beginPath();
+    this.ctx.rect(
+      this.canvas.width * (x / this.size),
+      this.canvas.height * (y / this.size),
+      this.canvas.width * (width / this.size),
+      this.canvas.height * (height / this.size)
+    );
+    this.ctx.fill();
   }
 
   public drawRelativeRect(
