@@ -1,12 +1,22 @@
 import {
   numberToBitString,
   numberToRGB,
+  paddingLeft,
   probabilityToBool,
 } from "../../helpers/helpers";
 
 const logMutations = true;
 const logBeforeAndAfter = false;
-export const maximumNumber = Math.pow(2, 32);
+const geneBitSize = 32;
+const bitPad = [...new Array(geneBitSize)].map(() => "0").join("");
+const hexadecimalPad = [...new Array(geneBitSize / 4)].map(() => "0").join("");
+
+export const maximumNumber = Math.pow(2, geneBitSize);
+const decimalPad = maximumNumber
+  .toString()
+  .split("")
+  .map(() => "0")
+  .join("");
 
 export default class Genome {
   genes: number[];
@@ -23,7 +33,7 @@ export default class Genome {
       const originalGene = this.genes[geneIndex];
 
       // Select a mask for a random bit in the 32 bits of the gene
-      const randomBitMask = 1 << Math.round(Math.random() * 32);
+      const randomBitMask = 1 << Math.round(Math.random() * geneBitSize);
       // Swap bit in the gene
       let newGene = originalGene;
       newGene ^= randomBitMask;
@@ -44,12 +54,22 @@ export default class Genome {
     return Math.round(Math.random() * (this.genes.length - 1));
   }
 
-  toBitString() {
-    return this.genes.map((value) => (value >>> 0).toString(2)).join(" ");
+  toBitString(): string {
+    return this.genes
+      .map((value) => paddingLeft((value >>> 0).toString(2), bitPad))
+      .join(" ");
   }
 
-  toDecimalString() {
-    return this.genes.map((value) => value).join(" ");
+  toDecimalString(): string {
+    return this.genes
+      .map((value) => paddingLeft(value.toString(), decimalPad))
+      .join(" ");
+  }
+
+  toHexadecimalString(): string {
+    return this.genes
+      .map((value) => paddingLeft((value >>> 0).toString(16), hexadecimalPad))
+      .join(" ");
   }
 
   getGeneData(index: number): number[] {

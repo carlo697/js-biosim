@@ -17,3 +17,7 @@ export const numberToRGB = (value: number) => {
   const b = (value >> 16) & 0xff;
   return "rgb(" + r + "," + g + "," + b + ")";
 };
+
+export const paddingLeft = (string: String, paddingValue: string) => {
+  return String(paddingValue + string).slice(-paddingValue.length);
+};

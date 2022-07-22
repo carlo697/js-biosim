@@ -8,19 +8,33 @@
   </head>
   <body>
     <div id="app">
-      <div class="header">
-        <h1 class="text-center">
-          Generation: <span id="generation">0</span>, step:
-          <span id="step">0</span>
-        </h1>
+      <div class="row g-2">
+        <div class="col">
+          <div class="header">
+            <h1 class="text-center">
+              Generation: <span id="generation">0</span>, step:
+              <span id="step">0</span>
+            </h1>
+            <canvas id="canvas"></canvas>
+            <div class="section text-center">
+              <button id="restart" type="button" class="btn red">
+                Restart
+              </button>
+              <button id="pause" type="button" class="btn">Pause</button>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <h2 class="text-center">Genome</h2>
+
+          <textarea name="" id="genomePreview" cols="30" rows="10" readonly>
+Pause the simulation and click a creature to see its genome</textarea
+          >
+          <h2 class="text-center">Preview neuronal network:</h2>
+          <canvas id="previewCanvas"></canvas>
+        </div>
       </div>
 
-      <canvas id="canvas"></canvas>
-
-      <div class="section text-center">
-        <button id="restart" type="button" class="btn red">Restart</button>
-        <button id="pause" type="button" class="btn">Pause</button>
-      </div>
       <div class="row g-2">
         <div class="col">
           <h2 class="text-center">Initial data</h2>
@@ -52,7 +66,9 @@
           </div>
 
           <div class="input-group">
-            <label for="initialHiddenLayersInput">Hidden layers structure</label>
+            <label for="initialHiddenLayersInput"
+              >Hidden layers structure</label
+            >
             <input id="initialHiddenLayersInput" type="text" />
           </div>
         </div>

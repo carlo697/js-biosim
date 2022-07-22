@@ -6,11 +6,12 @@ export class Network {
   layers: Layer[] = [];
   inputLayer: Layer;
   outputLayer: Layer;
+  hiddenLayerStructure: number[];
 
   constructor(
     inputs: number,
     outputs: number,
-    hiddenLayers: number[],
+    hiddenLayerStructure: number[],
     generateLinks: boolean = false,
     randomlyGenerateWeights: boolean = false,
     public activationFunction: ActivationFunction = new SigmoidActivation()
@@ -19,10 +20,11 @@ export class Network {
     const inputLayer = new Layer(this, null, inputs);
     this.layers.push(inputLayer);
     this.inputLayer = inputLayer;
+    this.hiddenLayerStructure = hiddenLayerStructure;
 
     // Create hidden layers
     let lastLayer = this.inputLayer;
-    hiddenLayers.forEach((neuronCount) => {
+    hiddenLayerStructure.forEach((neuronCount) => {
       lastLayer = new Layer(
         this,
         lastLayer,
@@ -99,6 +101,14 @@ export class Network {
     }
 
     return lastOutput;
+  }
+
+  calculateTotalConnections(): number {
+    return Network.calculateTotalConnections(
+      this.inputLayer.neurons.length,
+      this.outputLayer.neurons.length,
+      this.hiddenLayerStructure
+    );
   }
 
   static calculateTotalConnections(

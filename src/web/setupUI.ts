@@ -1,3 +1,4 @@
+import { drawNeuronalNetwork } from "../creature/brain/Helpers/drawNeuronalNetwork";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
 
@@ -145,4 +146,61 @@ export const setupUI = (world: World) => {
       console.error("Invalid initial settings");
     }
   });
+
+  setupCanvas(world);
+};
+
+export const setupCanvas = (world: World) => {
+  const canvas = document.querySelector("#previewCanvas") as HTMLCanvasElement;
+  const context = canvas?.getContext("2d");
+
+  const genomePreview = document.querySelector(
+    "#genomePreview"
+  ) as HTMLCanvasElement;
+  const originalGenomePreviewText = genomePreview.textContent;
+
+  const clearCanvas = () => {
+    context?.clearRect(0, 0, canvas.width, canvas.height);
+    console.log(context?.clearRect);
+    console.log(canvas.width, canvas.height);
+  };
+
+  const clearGenomePreview = () => {
+    clearCanvas();
+    genomePreview.textContent = originalGenomePreviewText;
+  };
+
+  if (canvas != null) {
+    world.canvas.addEventListener("click", (e: MouseEvent) => {
+      world.computeGrid();
+      const rect = (e.target as HTMLElement).getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const relativeX = x / rect.width;
+      const relativeY = y / rect.height;
+
+      const [worldX, worldY] = world.relativeToWorld(relativeX, relativeY);
+
+      // Get creature
+      const creature = world.grid[worldX][worldY][0];
+
+      if (creature) {
+        drawNeuronalNetwork(creature.brain, canvas);
+        genomePreview.textContent = `Genome size, neuronal links = ${
+          creature.genome.genes.length
+        }\nPossible connections = ${creature.brain.calculateTotalConnections()}\n\nBinary:\n\n${creature.genome.toBitString()}\n\nDecimal:\n${creature.genome.toDecimalString()}\n\nHex:\n${creature.genome.toHexadecimalString()}`;
+      } else {
+        clearGenomePreview();
+      }
+    });
+
+    world.canvas.addEventListener("mouseenter", () => {
+      world.computeGrid();
+    });
+
+    world.events.addEventListener(WorldEvents.initializeWorld, () => {
+      clearGenomePreview();
+    });
+  }
 };

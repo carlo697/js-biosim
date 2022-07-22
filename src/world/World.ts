@@ -75,6 +75,10 @@ export default class World {
     this.initializeGrid();
     this.selectAndPopulate();
     this.redraw();
+
+    this.events.dispatchEvent(
+      new CustomEvent(WorldEvents.initializeWorld, { detail: { world: this } })
+    );
   }
 
   private selectAndPopulate(): void {
@@ -151,7 +155,7 @@ export default class World {
     }
   }
 
-  private computeGrid() {
+  public computeGrid() {
     this.clearGrid();
 
     // Set creatures
@@ -280,6 +284,13 @@ export default class World {
     }
 
     return true;
+  }
+
+  public relativeToWorld(x: number, y: number): number[] {
+    const worldX = Math.floor(x * this.size);
+    const worldY = Math.floor(y * this.size);
+
+    return [worldX, worldY];
   }
 
   private clearCanvas(): void {
