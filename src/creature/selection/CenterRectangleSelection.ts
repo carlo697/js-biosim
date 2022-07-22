@@ -32,7 +32,7 @@ export default class CenterRectangleSelection implements SelectionMethod {
     return parents;
   }
 
-  onDrawBeforeCreatures(world: World): void {}
+  onDrawBeforeCreatures(_world: World): void {}
 
   onDrawAfterCreatures(world: World): void {
     world.drawRelativeRect(

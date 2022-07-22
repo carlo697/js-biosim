@@ -10,12 +10,13 @@ export class Neuron {
     layer: Layer,
     generateLinks: boolean = false,
     randomlyGenerateWeights: boolean = false,
+    randomlyGenerateBias: boolean = false,
     bias: number | undefined = undefined
   ) {
     this.layer = layer;
 
     if (generateLinks) {
-      // this.bias = bias ?? (randomlyGenerateWeights ? Math.random() * 2 - 1 : 0);
+      this.bias = bias ?? (randomlyGenerateBias ? Math.random() * 2 - 1 : 0);
 
       // Create random links if the layer exists
       layer.previous?.neurons?.forEach((neuron) => {

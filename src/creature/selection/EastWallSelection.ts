@@ -15,7 +15,7 @@ export default class EastWallSelection implements SelectionMethod {
     return parents;
   }
 
-  onDrawBeforeCreatures(world: World): void {}
+  onDrawBeforeCreatures(_world: World): void {}
 
   onDrawAfterCreatures(world: World): void {
     world.drawRelativeRect(0.5, 0, 0.5, 1, "rgba(0, 255, 0, 0.1)");

@@ -74,6 +74,7 @@ export default class Creature {
       hiddenLayersStructure,
       true,
       false,
+      false,
       activationFunction
     );
 

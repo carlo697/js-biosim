@@ -11,13 +11,20 @@ export class Layer {
     previous: Layer | null,
     neuronCount: number,
     generateLinks: boolean = false,
-    randomlyGenerateWeights: boolean = false
+    randomlyGenerateWeights: boolean = false,
+    randomlyGenerateBias: boolean = false
   ) {
     this.network = network;
     this.previous = previous;
     this.neurons = Array.from(
       { length: neuronCount },
-      () => new Neuron(this, generateLinks, randomlyGenerateWeights)
+      () =>
+        new Neuron(
+          this,
+          generateLinks,
+          randomlyGenerateWeights,
+          randomlyGenerateBias
+        )
     );
   }
 }

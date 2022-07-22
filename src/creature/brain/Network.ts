@@ -12,8 +12,9 @@ export class Network {
     inputs: number,
     outputs: number,
     hiddenLayerStructure: number[],
-    generateLinks: boolean = false,
+    generateLinks: boolean = true,
     randomlyGenerateWeights: boolean = false,
+    randomlyGenerateBias: boolean = false,
     public activationFunction: ActivationFunction = new SigmoidActivation()
   ) {
     // Create input layer
@@ -30,7 +31,8 @@ export class Network {
         lastLayer,
         neuronCount,
         generateLinks,
-        randomlyGenerateWeights
+        randomlyGenerateWeights,
+        randomlyGenerateBias
       );
       this.layers.push(lastLayer);
     });
@@ -53,6 +55,7 @@ export class Network {
       this.outputLayer.neurons.length,
       this.layers.slice(1, -1).map((layer) => layer.neurons.length),
       true,
+      false,
       false,
       activationFunction
     );
