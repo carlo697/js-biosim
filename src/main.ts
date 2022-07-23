@@ -1,20 +1,22 @@
 import "./styles/style.scss";
-import { setupUI } from "./web/setupUI";
 import AsexualRandomPopulation from "./creature/population/AsexualRandomPopulation";
 import CenterRectangleSelection from "./creature/selection/CenterRectangleSelection";
 // import EastWallSelection from "./creature/selection/EastWallSelection";
 import World from "./world/World";
 import { MutationMode } from "./creature/genome/MutationMode";
+import WebUI from "./web/WebUI";
 
 const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new EastWallSelection();
 const selectionMethod = new CenterRectangleSelection(0.6, 0.6);
 
+// Create world
 const world = new World(
   document.querySelector<HTMLCanvasElement>("#canvas"),
   100
 );
 
+// Default values
 world.initialPopulation = 1000;
 world.populationStrategy = populationStrategy;
 world.selectionMethod = selectionMethod;
@@ -30,7 +32,9 @@ world.mutationMode = MutationMode.wholeGene;
 world.startWithEmptyGenome = false;
 world.pauseBetweenGenerations = 0;
 
+// Initialize world and start simulation
 world.initializeWorld();
 world.startRun();
 
-setupUI(world);
+// Create UI
+new WebUI(world);
