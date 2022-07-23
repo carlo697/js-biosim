@@ -24,9 +24,12 @@ const setupSlider = (
 };
 
 export const setupUI = (world: World) => {
-  world.events.addEventListener(WorldEvents.startGeneration, () => {
-    const generationText = document.querySelector("#generation");
+  const generationText = document.querySelector("#generation") as HTMLElement;
+  const newPopulation = document.querySelector("#newPopulation") as HTMLElement;
+  const lastSurvivors = document.querySelector("#lastSurvivors") as HTMLElement;
+  const survivalRate = document.querySelector("#survivalRate") as HTMLElement;
 
+  world.events.addEventListener(WorldEvents.startGeneration, () => {
     console.log(
       `Start generation ${world.currentGen},\nLast generation duration: ${
         world.lastGenerationDuration
@@ -37,9 +40,12 @@ export const setupUI = (world: World) => {
       }%`
     );
 
-    if (generationText) {
-      generationText.textContent = world.currentGen.toString();
-    }
+    generationText.textContent = world.currentGen.toString();
+    newPopulation.textContent = world.currentCreatures.length.toString();
+    lastSurvivors.textContent = world.lastSurvivorsCount.toString();
+    survivalRate.textContent = (
+      Math.round(world.lastSurvivalRate * 100 * 100) / 100
+    ).toString();
   });
 
   world.events.addEventListener(WorldEvents.startStep, () => {
@@ -142,6 +148,11 @@ export const setupUI = (world: World) => {
       world.initialHiddenLayers = initialHiddenLayers;
       world.initializeWorld();
       world.startRun();
+
+      generationText.textContent = "0";
+      newPopulation.textContent = "0";
+      lastSurvivors.textContent = "0";
+      survivalRate.textContent = "0";
     } else {
       console.error("Invalid initial settings");
     }
