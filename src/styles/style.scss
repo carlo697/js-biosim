@@ -133,6 +133,13 @@ body {
   text-align: center;
 }
 
+.input-group,
+.input-checkbox-group {
+  &:not(:last-of-type) {
+    margin-bottom: 1rem;
+  }
+}
+
 .input-group {
   input {
     width: 100%;
@@ -141,8 +148,23 @@ body {
     display: block;
   }
 
-  &:not(:last-of-type) {
-    margin-bottom: 1rem;
+  select {
+    font-size: 1em;
+    width: 100%;
+  }
+}
+
+.input-checkbox-group {
+  display: flex;
+  align-items: center;
+
+  label {
+    display: inline;
+  }
+
+  input {
+    width: 1.1em;
+    height: 1.1em;
   }
 }
 

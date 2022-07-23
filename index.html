@@ -88,6 +88,27 @@ Pause the simulation and click a creature to see its genome</textarea
             >
             <input id="initialHiddenLayersInput" type="text" />
           </div>
+
+          <div class="row g-1">
+            <div class="col">
+              <div class="input-group">
+                <label for="mutationModeSelect">Mutation mode</label>
+                <select id="mutationModeSelect">
+                  <option value="wholeGene">Whole gene</option>
+                  <option value="singleBit">Single bit</option>
+                  <option value="singleHexDigit">Single hex digit</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="input-checkbox-group">
+                <label for="startWithEmptyGenomeCheckbox"
+                  >Start with empty genome</label
+                >
+                <input type="checkbox" id="startWithEmptyGenomeCheckbox" />
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col">
           <h2 class="text-center">Dynamic values</h2>

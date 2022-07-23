@@ -1,4 +1,5 @@
 import { drawNeuronalNetwork } from "../creature/brain/Helpers/drawNeuronalNetwork";
+import { MutationMode } from "../creature/genome/MutationMode";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
 
@@ -10,6 +11,8 @@ export default class WebUI {
   initialPopulationInput: HTMLInputElement;
   initialGenomeSizeInput: HTMLInputElement;
   initialHiddenLayersInput: HTMLInputElement;
+  mutationModeSelect: HTMLSelectElement;
+  startWithEmptyGenomeCheckbox: HTMLInputElement;
 
   // Statistics texts
   generationText: HTMLElement;
@@ -38,6 +41,12 @@ export default class WebUI {
     ) as HTMLInputElement;
     this.initialHiddenLayersInput = document.querySelector(
       "#initialHiddenLayersInput"
+    ) as HTMLInputElement;
+    this.mutationModeSelect = document.querySelector(
+      "#mutationModeSelect"
+    ) as HTMLSelectElement;
+    this.startWithEmptyGenomeCheckbox = document.querySelector(
+      "#startWithEmptyGenomeCheckbox"
     ) as HTMLInputElement;
 
     // Statistics texts
@@ -139,6 +148,8 @@ export default class WebUI {
     this.initialPopulationInput.value = world.initialPopulation.toString();
     this.initialGenomeSizeInput.value = world.initialGenomeSize.toString();
     this.initialHiddenLayersInput.value = world.initialHiddenLayers.join(", ");
+    this.mutationModeSelect.value = world.mutationMode;
+    this.startWithEmptyGenomeCheckbox.checked = world.startWithEmptyGenome;
 
     // Restart button
     document
@@ -208,6 +219,8 @@ export default class WebUI {
     const initialHiddenLayers: number[] = this.initialHiddenLayersInput.value
       .split(",")
       .map((value: string) => parseInt(value.trim()));
+    const mutationMode = this.mutationModeSelect.value as MutationMode;
+    const startWithEmptyGenome = this.startWithEmptyGenomeCheckbox.checked;
 
     if (
       !isNaN(initialPopulation) &&
@@ -219,6 +232,8 @@ export default class WebUI {
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
       this.world.initialHiddenLayers = initialHiddenLayers;
+      this.world.mutationMode = mutationMode;
+      this.world.startWithEmptyGenome = startWithEmptyGenome;
       this.world.initializeWorld();
       this.world.startRun();
 
