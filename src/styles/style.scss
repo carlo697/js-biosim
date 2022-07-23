@@ -82,10 +82,43 @@ body {
 
 .row {
   display: flex;
+  flex-wrap: wrap;
 
   .col {
     flex-basis: 0;
     flex-grow: 1;
+  }
+
+  .col-sm {
+    flex-basis: 100%;
+    @media (min-width: 576px) {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+  }
+
+  .col-md {
+    flex-basis: 100%;
+    @media (min-width: 768px) {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+  }
+
+  .col-lg {
+    flex-basis: 100%;
+    @media (min-width: 992px) {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+  }
+
+  .col-xl {
+    flex-basis: 100%;
+    @media (min-width: 1200px) {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
   }
 
   &.g-1 {
