@@ -250,13 +250,9 @@ export default class WebUI {
       this.onMouseEnterCanvas()
     );
 
-    this.world.canvas.addEventListener("mousemove", (e: MouseEvent) => {
-      if (this.world.isPaused()) {
-        const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
-        this.world.redraw();
-        this.world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
-      }
-    });
+    this.world.canvas.addEventListener("mousemove", (e: MouseEvent) =>
+      this.onMouseMoveCanvas(e)
+    );
   }
 
   clearGenomePreview() {
@@ -287,5 +283,13 @@ export default class WebUI {
 
   onMouseEnterCanvas() {
     this.world.computeGrid();
+  }
+
+  onMouseMoveCanvas(e: MouseEvent) {
+    if (this.world.isPaused()) {
+      const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
+      this.world.redraw();
+      this.world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
+    }
   }
 }
