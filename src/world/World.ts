@@ -409,9 +409,9 @@ export default class World {
 
     return (
       x >= absoluteX &&
-      x <= absoluteX + absoluteWidth &&
+      x < absoluteX + absoluteWidth &&
       y >= absoluteY &&
-      y <= absoluteY + absoluteHeight
+      y < absoluteY + absoluteHeight
     );
   }
 }
