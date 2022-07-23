@@ -97,6 +97,16 @@ export const setupUI = (world: World) => {
       (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
   );
 
+  // stepsPerGen slider
+  setupSlider(
+    "#stepsPerGenSlider",
+    "#stepsPerGenValue",
+    world.stepsPerGen,
+    (value: string) => {
+      world.stepsPerGen = parseFloat(value);
+    }
+  );
+
   // Pause button
   document.querySelector("#pause")?.addEventListener("click", (e) => {
     if (world.isPaused()) {
