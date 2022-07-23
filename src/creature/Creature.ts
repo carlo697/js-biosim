@@ -141,7 +141,8 @@ export default class Creature {
   }
 
   move(x: number, y: number) {
-    this.lastPosition = [this.position[0], this.position[1]];
+    this.lastPosition[0] = this.position[0];
+    this.lastPosition[1] = this.position[1];
 
     const finalX = this.position[0] + x;
     const finalY = this.position[1] + y;
