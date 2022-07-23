@@ -1,14 +1,18 @@
 import {
+  getRandomHexChar,
   numberToBitString,
   numberToRGB,
   paddingLeft,
   probabilityToBool,
 } from "../../helpers/helpers";
+import { MutationMode } from "./MutationMode";
 
 const logMutations = true;
 const logBeforeAndAfter = false;
 const geneBitSize = 32;
-const bitPad = [...new Array(geneBitSize)].map(() => "0").join("");
+export const emptyGene = 32768;
+
+const binaryPad = [...new Array(geneBitSize)].map(() => "0").join("");
 const hexadecimalPad = [...new Array(geneBitSize / 4)].map(() => "0").join("");
 
 export const maximumNumber = Math.pow(2, geneBitSize);
@@ -25,25 +29,84 @@ export default class Genome {
     this.genes = genes;
   }
 
-  clone(mutationProbability: number = 0): Genome {
+  clone(
+    mutationProbability: number = 0,
+    mutationMode: MutationMode = MutationMode.wholeGene
+  ): Genome {
     const newGenes = this.genes.slice();
     if (probabilityToBool(mutationProbability)) {
       // Select a random gene to mutate
       const geneIndex = this.getRandomGeneIndex();
       const originalGene = this.genes[geneIndex];
 
-      // Select a mask for a random bit in the 32 bits of the gene
-      const randomBitMask = 1 << Math.round(Math.random() * geneBitSize);
-      // Swap bit in the gene
-      let newGene = originalGene;
-      newGene ^= randomBitMask;
-      newGenes[geneIndex] = newGene;
+      if (mutationMode === MutationMode.singleBit) {
+        // Select a mask for a random bit in the 32 bits of the gene
+        const randomBitMask = 1 << Math.round(Math.random() * geneBitSize);
+        // Swap bit in the gene
+        let newGene = originalGene;
+        newGene ^= randomBitMask;
+        newGenes[geneIndex] = newGene;
 
-      if (logMutations) {
-        console.log("Mutation!!!");
-        if (logBeforeAndAfter) {
-          console.log("New:", numberToBitString(originalGene));
-          console.log("Old:", numberToBitString(newGene));
+        if (logMutations) {
+          console.log("Mutation");
+          if (logBeforeAndAfter) {
+            console.log(
+              "New:",
+              paddingLeft(numberToBitString(originalGene), binaryPad)
+            );
+            console.log(
+              "Old:",
+              paddingLeft(numberToBitString(newGene), binaryPad)
+            );
+          }
+        }
+      } else if (mutationMode === MutationMode.singleHexDigit) {
+        // Get an array of hex digits of the whole gene
+        const hexArray = paddingLeft(
+          (originalGene >>> 0).toString(16),
+          hexadecimalPad
+        ).split("");
+
+        // Select a random digit and change it with a random character
+        const randomBitIndex: number = Math.round(
+          Math.random() * (hexArray.length - 1)
+        );
+        hexArray[randomBitIndex] = getRandomHexChar();
+
+        // Set new gene
+        const newGene = parseInt(hexArray.join(""), 16);
+        newGenes[geneIndex] = newGene;
+
+        if (logMutations) {
+          console.log("Mutation");
+          if (logBeforeAndAfter) {
+            console.log(
+              "New:",
+              paddingLeft(numberToBitString(originalGene), binaryPad)
+            );
+            console.log(
+              "Old:",
+              paddingLeft(numberToBitString(newGene), binaryPad)
+            );
+          }
+        }
+      } else if (mutationMode === MutationMode.wholeGene) {
+        // Set new gene
+        const newGene = Math.round(Math.random() * (4294967296 - 1));
+        newGenes[geneIndex] = newGene;
+
+        if (logMutations) {
+          console.log("Mutation");
+          if (logBeforeAndAfter) {
+            console.log(
+              "New:",
+              paddingLeft(numberToBitString(originalGene), binaryPad)
+            );
+            console.log(
+              "Old:",
+              paddingLeft(numberToBitString(newGene), binaryPad)
+            );
+          }
         }
       }
     }
@@ -56,7 +119,7 @@ export default class Genome {
 
   toBitString(): string {
     return this.genes
-      .map((value) => paddingLeft((value >>> 0).toString(2), bitPad))
+      .map((value) => paddingLeft((value >>> 0).toString(2), binaryPad))
       .join(" ");
   }
 

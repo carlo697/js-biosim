@@ -1,18 +1,11 @@
 import { Network } from "../creature/brain/Network";
 import Creature from "../creature/Creature";
+import { MutationMode } from "../creature/genome/MutationMode";
 import AsexualRandomPopulation from "../creature/population/AsexualRandomPopulation";
 import PopulationStrategy from "../creature/population/PopulationStrategy";
 import EastWallSelection from "../creature/selection/EastWallSelection";
 import SelectionMethod from "../creature/selection/SelectionMethod";
 import { WorldEvents } from "../events/WorldEvents";
-
-const defaultTimePerStep = 0;
-const defaultStepsPerGen = 300;
-const defaultImmediateSteps = 1;
-const defaultmutationProbability = 0;
-const defaultPauseBetweenGenerations = 0;
-const defaultInitialGenomeSize = 5;
-const defaultInitialHiddenLayers = [5];
 
 export default class World {
   static instance: World;
@@ -24,13 +17,15 @@ export default class World {
 
   currentGen: number = 0;
   currentStep: number = 0;
-  timePerStep: number = defaultTimePerStep;
-  stepsPerGen: number = defaultStepsPerGen;
-  immediateSteps: number = defaultImmediateSteps;
-  initialGenomeSize: number = defaultInitialGenomeSize;
-  mutationProbability: number = defaultmutationProbability;
-  pauseBetweenGenerations: number = defaultPauseBetweenGenerations;
-  initialHiddenLayers: number[] = defaultInitialHiddenLayers;
+  timePerStep: number = 0;
+  stepsPerGen: number = 300;
+  immediateSteps: number = 1;
+  initialGenomeSize: number = 5;
+  mutationProbability: number = 0;
+  mutationMode: MutationMode = MutationMode.wholeGene;
+  startWithEmptyGenome: boolean = false;
+  pauseBetweenGenerations: number = 0;
+  initialHiddenLayers: number[] = [5];
 
   currentCreatures: Creature[] = [];
   lastCreatureCount: number = 0;

@@ -12,7 +12,7 @@ import { HyperbolicTangentFunction } from "./brain/Activation/HyperbolicTangentF
 import MoveEastAction from "./actions/MoveEastAction";
 import MoveWestAction from "./actions/MoveWestAction";
 import MoveNorthAction from "./actions/MoveNorthAction";
-import Genome, { maximumNumber } from "./genome/Genome";
+import Genome, { emptyGene, maximumNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
 import RandomSensor from "./sensors/RandomSensor";
 
@@ -54,11 +54,16 @@ export default class Creature {
     ];
 
     if (genome) {
-      this.genome = genome.clone(this.world.mutationProbability);
+      this.genome = genome.clone(
+        this.world.mutationProbability,
+        this.world.mutationMode
+      );
     } else {
       this.genome = new Genome(
         [...new Array(genomeSize)].map(() =>
-          Math.round(Math.random() * maximumNumber)
+          world.startWithEmptyGenome
+            ? emptyGene
+            : Math.round(Math.random() * (maximumNumber - 1))
         )
       );
 
@@ -90,14 +95,16 @@ export default class Creature {
     }
 
     // Read genome and assign the link weights
-    for (let geneIdx = 1; geneIdx < this.genome.genes.length; geneIdx++) {
+    for (let geneIdx = 0; geneIdx < this.genome.genes.length; geneIdx++) {
       const [firstHalf, secondHalf] = this.genome.getGeneData(geneIdx);
 
-      // Get a link in the network
-      const selectedLink =
-        links[Math.round((firstHalf / 65536) * (links.length - 1))];
-      // Set a weight between -4 and 4
-      selectedLink.weigth = (secondHalf / 65536) * 8 - 4;
+      if (this.genome.genes[geneIdx] !== emptyGene) {
+        // Get a link in the network
+        const selectedLink =
+          links[Math.round((firstHalf / 65536) * (links.length - 1))];
+        // Set a weight between -4 and 4
+        selectedLink.weigth = (secondHalf / 65536) * 8 - 4;
+      }
     }
   }
 

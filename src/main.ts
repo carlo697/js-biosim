@@ -4,6 +4,7 @@ import AsexualRandomPopulation from "./creature/population/AsexualRandomPopulati
 import CenterRectangleSelection from "./creature/selection/CenterRectangleSelection";
 // import EastWallSelection from "./creature/selection/EastWallSelection";
 import World from "./world/World";
+import { MutationMode } from "./creature/genome/MutationMode";
 
 const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new EastWallSelection();
@@ -24,7 +25,9 @@ world.initialHiddenLayers = [4, 4];
 world.timePerStep = 0;
 world.stepsPerGen = 300;
 world.immediateSteps = 5;
-world.mutationProbability = 0.01;
+world.mutationProbability = 0.05;
+world.mutationMode = MutationMode.wholeGene;
+world.startWithEmptyGenome = false;
 world.pauseBetweenGenerations = 0;
 
 world.initializeWorld();

@@ -21,3 +21,7 @@ export const numberToRGB = (value: number) => {
 export const paddingLeft = (string: String, paddingValue: string) => {
   return String(paddingValue + string).slice(-paddingValue.length);
 };
+
+export const getRandomHexChar = (): string => {
+  return Math.round(Math.random() * 15).toString(16);
+};
