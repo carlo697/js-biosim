@@ -12,7 +12,7 @@ import { HyperbolicTangentFunction } from "./brain/Activation/HyperbolicTangentF
 import MoveEastAction from "./actions/MoveEastAction";
 import MoveWestAction from "./actions/MoveWestAction";
 import MoveNorthAction from "./actions/MoveNorthAction";
-import Genome, { emptyGene, maximumNumber } from "./genome/Genome";
+import Genome, { emptyGene, maxGenNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
 import RandomSensor from "./sensors/RandomSensor";
 import VerticalSpeedSensor from "./sensors/VerticalSpeedSensor";
@@ -69,7 +69,7 @@ export default class Creature {
         [...new Array(genomeSize)].map(() =>
           world.startWithEmptyGenome
             ? emptyGene
-            : Math.round(Math.random() * (maximumNumber - 1))
+            : Math.round(Math.random() * maxGenNumber)
         )
       );
 
@@ -102,12 +102,13 @@ export default class Creature {
 
     // Read genome and assign the link weights
     for (let geneIdx = 0; geneIdx < this.genome.genes.length; geneIdx++) {
-      const [firstHalf, secondHalf] = this.genome.getGeneData(geneIdx);
-
       if (this.genome.genes[geneIdx] !== emptyGene) {
+        const [firstHalf, secondHalf] = this.genome.getGeneData(geneIdx);
+
         // Get a link in the network
         const selectedLink =
           links[Math.round((firstHalf / 65536) * (links.length - 1))];
+
         // Set a weight between -4 and 4
         selectedLink.weigth = (secondHalf / 65536) * 8 - 4;
       }

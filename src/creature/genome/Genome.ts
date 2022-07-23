@@ -15,8 +15,9 @@ export const emptyGene = 32768;
 const binaryPad = [...new Array(geneBitSize)].map(() => "0").join("");
 const hexadecimalPad = [...new Array(geneBitSize / 4)].map(() => "0").join("");
 
-export const maximumNumber = Math.pow(2, geneBitSize);
-const decimalPad = maximumNumber
+export const maxGenNumber = Math.pow(2, geneBitSize) - 1;
+
+const decimalPad = maxGenNumber
   .toString()
   .split("")
   .map(() => "0")
@@ -144,7 +145,7 @@ export default class Genome {
 
     // We need to generate a number between 0 and 1777216 to create
     // a color from it
-    const multiplier = 16777215 / (this.genes.length * maximumNumber);
+    const multiplier = 16777215 / (this.genes.length * maxGenNumber);
     for (let geneIdx = 0; geneIdx < this.genes.length; geneIdx++) {
       sum += this.genes[geneIdx] * multiplier;
     }
