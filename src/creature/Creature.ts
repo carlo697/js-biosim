@@ -15,12 +15,15 @@ import MoveNorthAction from "./actions/MoveNorthAction";
 import Genome, { emptyGene, maximumNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
 import RandomSensor from "./sensors/RandomSensor";
+import VerticalSpeedSensor from "./sensors/VerticalSpeedSensor";
+import HorizontalSpeedSensor from "./sensors/HorizontalSpeedSensor";
 
 const activationFunction = new HyperbolicTangentFunction();
 
 export default class Creature {
   world: World;
   position: number[];
+  lastPosition: number[];
   urgeToMove: number[];
   sensors: CreatureSensor[];
   actions: CreatureAction[];
@@ -37,6 +40,7 @@ export default class Creature {
   ) {
     this.world = world;
     this.position = position;
+    this.lastPosition = [position[0], position[1]];
     this.urgeToMove = [0, 0];
     this.sensors = [
       new HorizontalPositionSensor(this),
@@ -44,6 +48,8 @@ export default class Creature {
       new AgeSensor(this),
       new OscillatorSensor(this),
       new RandomSensor(this),
+      new HorizontalSpeedSensor(this),
+      new VerticalSpeedSensor(this),
     ];
     this.actions = [
       new MoveNorthAction(this),
@@ -134,6 +140,8 @@ export default class Creature {
   }
 
   move(x: number, y: number) {
+    this.lastPosition = [this.position[0], this.position[1]];
+
     const finalX = this.position[0] + x;
     const finalY = this.position[1] + y;
 
