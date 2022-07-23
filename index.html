@@ -8,33 +8,37 @@
   </head>
   <body>
     <div id="app">
-      <div class="row g-2">
-        <div class="col">
-          <div class="header">
+      <div class="header">
+        <div class="row">
+          <div class="col">
             <h1 class="text-center">
               Generation: <span id="generation">0</span>, step:
               <span id="step">0</span>
             </h1>
-            <canvas id="canvas"></canvas>
+          </div>
+          <div class="col"></div>
+        </div>
+      </div>
 
-            <div class="row g-1">
-              <div class="col-xl">
-                New population: <span id="newPopulation">0</span>
-              </div>
-              <div class="col-xl">
-                Survivors: <span id="lastSurvivors">0</span>
-              </div>
-              <div class="col-xl">
-                Survival rate: <span id="survivalRate">0</span>%
-              </div>
-            </div>
+      <div class="row g-2">
+        <div class="col">
+          <canvas id="canvas"></canvas>
 
-            <div class="section text-center">
-              <button id="restart" type="button" class="btn red">
-                Restart
-              </button>
-              <button id="pause" type="button" class="btn">Pause</button>
+          <div class="row g-1">
+            <div class="col-xl">
+              New population: <span id="newPopulation">0</span>
             </div>
+            <div class="col-xl">
+              Survivors: <span id="lastSurvivors">0</span>
+            </div>
+            <div class="col-xl">
+              Survival rate: <span id="survivalRate">0</span>%
+            </div>
+          </div>
+
+          <div class="section text-center">
+            <button id="restart" type="button" class="btn red">Restart</button>
+            <button id="pause" type="button" class="btn">Pause</button>
           </div>
         </div>
         <div class="col">
@@ -145,8 +149,7 @@ Pause the simulation and click a creature to see its genome</textarea
 
           <div class="input-group">
             <label for="stepsPerGenSlider"
-              >Steps per gen:
-              <span id="stepsPerGenValue">0</span></label
+              >Steps per gen: <span id="stepsPerGenValue">0</span></label
             >
             <input
               id="stepsPerGenSlider"
