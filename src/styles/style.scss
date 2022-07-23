@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -127,17 +131,37 @@ body {
   &.g-2 {
     gap: 2rem;
   }
+
+  &.g-sm-1 {
+    @media (min-width: 576px) {
+      gap: 1rem;
+    }
+  }
+  &.g-sm-2 {
+    @media (min-width: 576px) {
+      gap: 2rem;
+    }
+  }
+
+  &.g-md-1 {
+    @media (min-width: 768px) {
+      gap: 1rem;
+    }
+  }
+  &.g-md-2 {
+    @media (min-width: 768px) {
+      gap: 2rem;
+    }
+  }
 }
 
 .text-center {
   text-align: center;
 }
 
-.input-group,
-.input-checkbox-group {
-  &:not(:last-of-type) {
-    margin-bottom: 1rem;
-  }
+.input-group input,
+.input-checkbox-group input {
+  margin-bottom: 0.5  rem;
 }
 
 .input-group {

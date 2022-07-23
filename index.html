@@ -57,40 +57,50 @@ Pause the simulation and click a creature to see its genome</textarea
           <h2 class="text-center">Initial data</h2>
           <p>You need to restart the simulation for these settings to work:</p>
 
-          <div class="input-group">
-            <label for="worldSizeInput">World size</label>
-            <input id="worldSizeInput" type="number" min="10" max="500" />
+          <div class="row g-md-2">
+            <div class="col-md">
+              <div class="input-group">
+                <label for="worldSizeInput">World size</label>
+                <input id="worldSizeInput" type="number" min="10" max="500" />
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="input-group">
+                <label for="initialPopulationInput">Initial population</label>
+                <input
+                  id="initialPopulationInput"
+                  type="number"
+                  min="1"
+                  max="2000"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="input-group">
-            <label for="initialPopulationInput">Initial population</label>
-            <input
-              id="initialPopulationInput"
-              type="number"
-              min="1"
-              max="2000"
-            />
+          <div class="row g-md-2">
+            <div class="col-md">
+              <div class="input-group">
+                <label for="initialGenomeSizeInput">Initial genome size</label>
+                <input
+                  id="initialGenomeSizeInput"
+                  type="number"
+                  min="2"
+                  max="1000"
+                />
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="input-group">
+                <label for="initialHiddenLayersInput"
+                  >Hidden layers structure</label
+                >
+                <input id="initialHiddenLayersInput" type="text" />
+              </div>
+            </div>
           </div>
 
-          <div class="input-group">
-            <label for="initialGenomeSizeInput">Initial genome size</label>
-            <input
-              id="initialGenomeSizeInput"
-              type="number"
-              min="2"
-              max="1000"
-            />
-          </div>
-
-          <div class="input-group">
-            <label for="initialHiddenLayersInput"
-              >Hidden layers structure</label
-            >
-            <input id="initialHiddenLayersInput" type="text" />
-          </div>
-
-          <div class="row g-1">
-            <div class="col">
+          <div class="row g-md-2">
+            <div class="col-md">
               <div class="input-group">
                 <label for="mutationModeSelect">Mutation mode</label>
                 <select id="mutationModeSelect">
@@ -100,7 +110,7 @@ Pause the simulation and click a creature to see its genome</textarea
                 </select>
               </div>
             </div>
-            <div class="col">
+            <div class="col-md">
               <div class="input-checkbox-group">
                 <label for="startWithEmptyGenomeCheckbox"
                   >Start with empty genome</label
@@ -110,33 +120,41 @@ Pause the simulation and click a creature to see its genome</textarea
             </div>
           </div>
         </div>
+
         <div class="col">
           <h2 class="text-center">Dynamic values</h2>
 
-          <div class="input-group">
-            <label for="timePerStepSlider"
-              >Time per step: <span id="timePerStepValue">0</span> ms</label
-            >
-            <input
-              id="timePerStepSlider"
-              type="range"
-              min="0"
-              max="250"
-              class="slider"
-            />
-          </div>
+          <div class="row g-md-2">
+            <div class="col-md">
+              <div class="input-group">
+                <label for="timePerStepSlider"
+                  >Time per step: <span id="timePerStepValue">0</span> ms</label
+                >
+                <input
+                  id="timePerStepSlider"
+                  type="range"
+                  min="0"
+                  max="250"
+                  class="slider"
+                />
+              </div>
+            </div>
 
-          <div class="input-group">
-            <label for="immediateStepsSlider"
-              >Immediate steps: <span id="immediateStepsValue">0</span></label
-            >
-            <input
-              id="immediateStepsSlider"
-              type="range"
-              min="1"
-              max="100"
-              class="slider"
-            />
+            <div class="col-md">
+              <div class="input-group">
+                <label for="immediateStepsSlider"
+                  >Immediate steps:
+                  <span id="immediateStepsValue">0</span></label
+                >
+                <input
+                  id="immediateStepsSlider"
+                  type="range"
+                  min="1"
+                  max="100"
+                  class="slider"
+                />
+              </div>
+            </div>
           </div>
 
           <div class="input-group">
