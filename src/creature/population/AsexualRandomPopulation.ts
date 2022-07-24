@@ -31,10 +31,11 @@ export default class AsexualRandomPopulation implements PopulationStrategy {
       // Add extra creatures to achieve the target population, but
       // we want all survivors to have at least one children
       let shuffledParents = shuffle(parents);
-      for (const parent of shuffledParents) {
-        for (let i = 0; i < childrenPerParent; i++) {
-          if (i === 0 || totalNeededCreatures > 0) {
-            if (i > 0) {
+      for (let parentIdx = 0; parentIdx < shuffledParents.length; parentIdx++) {
+        const parent = shuffledParents[parentIdx];
+        for (let childIdx = 0; childIdx < childrenPerParent; childIdx++) {
+          if (childIdx === 0 || totalNeededCreatures > 0) {
+            if (childIdx > 0) {
               totalNeededCreatures--;
             }
 

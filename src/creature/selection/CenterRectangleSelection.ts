@@ -14,7 +14,9 @@ export default class CenterRectangleSelection implements SelectionMethod {
   getSurvivors(world: World): Creature[] {
     const parents = [];
 
-    for (const creature of world.currentCreatures) {
+    for (let idx = 0; idx < world.currentCreatures.length; idx++) {
+      const creature = world.currentCreatures[idx];
+
       if (
         world.isInsideRelativeRect(
           creature.position[0],
