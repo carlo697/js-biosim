@@ -1,4 +1,5 @@
 import { drawNeuronalNetwork } from "../creature/brain/Helpers/drawNeuronalNetwork";
+import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
@@ -284,7 +285,7 @@ export default class WebUI {
     const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
 
     // Get creature
-    const creature = this.world.grid[worldX][worldY][0];
+    const creature = this.world.grid[worldX][worldY][0] as Creature;
 
     if (creature) {
       drawNeuronalNetwork(creature.brain, this.networkCanvas);
