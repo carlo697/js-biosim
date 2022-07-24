@@ -22,11 +22,21 @@ const activationFunction = new HyperbolicTangentFunction();
 
 export default class Creature {
   world: World;
+
+  // Position
   position: number[];
   lastPosition: number[];
   urgeToMove: number[];
+
+  // Sensors
   sensors: CreatureSensor[];
+
+  // Actions
   actions: CreatureAction[];
+
+  // Neuronal network and genome
+  networkInputs: number;
+  networkOutputs: number;
   brain!: Network;
   genome: Genome;
   hiddenLayersStructure: number[];
@@ -39,9 +49,13 @@ export default class Creature {
     genome?: Genome
   ) {
     this.world = world;
+
+    // Position
     this.position = position;
     this.lastPosition = [position[0], position[1]];
     this.urgeToMove = [0, 0];
+
+    // Sensors
     this.sensors = [
       new HorizontalPositionSensor(this),
       new VerticalPositionSensor(this),
@@ -51,6 +65,8 @@ export default class Creature {
       new HorizontalSpeedSensor(this),
       new VerticalSpeedSensor(this),
     ];
+
+    // Actions
     this.actions = [
       new MoveNorthAction(this),
       new MoveSouthAction(this),
@@ -77,11 +93,20 @@ export default class Creature {
       // console.log(this.genome.toBitString())
     }
 
+    // Calculate inputs of neuronal network
+    this.networkInputs = 0;
+    for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
+      this.networkInputs += this.sensors[sensorIdx].outputCount;
+    }
+
+    // Calculate outputs of neuronal network
+    this.networkOutputs = this.actions.length;
+
     // Create neuronal network
     this.hiddenLayersStructure = hiddenLayersStructure;
     this.brain = new Network(
-      this.sensors.length,
-      this.actions.length,
+      this.networkInputs,
+      this.networkOutputs,
       hiddenLayersStructure,
       true,
       false,
@@ -123,9 +148,26 @@ export default class Creature {
     this.urgeToMove = [0, 0];
 
     // Calculate sensors
-    const inputValues = this.sensors.map((sensor) => sensor.calculateOutput());
+    // const inputValues = this.sensors.map((sensor) => sensor.calculateOutput());
+    const inputValues: number[] = [];
+    for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
+      const sensor = this.sensors[sensorIdx];
+
+      if (sensor.calculateOutput) {
+        inputValues.push(sensor.calculateOutput());
+      } else if (sensor.calculateOutputs) {
+        const results = sensor.calculateOutputs();
+
+        for (let j = 0; j < results.length; j++) {
+          inputValues.push(results[j]);
+        }
+      }
+    }
+
+    // Calculate outputs with neuronal network
     const outputValues = this.brain.feedForward(inputValues);
 
+    // Execute actions with outputs
     for (let i = 0; i < this.actions.length; i++) {
       this.actions[i].execute(outputValues[i]);
     }

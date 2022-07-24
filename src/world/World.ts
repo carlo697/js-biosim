@@ -106,8 +106,8 @@ export default class World {
       if (newCreatures.length > 0) {
         console.log(
           `Total neuronal links: ${Network.calculateTotalConnections(
-            newCreatures[0].sensors.length,
-            newCreatures[0].actions.length,
+            newCreatures[0].networkInputs,
+            newCreatures[0].networkOutputs,
             this.initialHiddenLayers
           )}`
         );
