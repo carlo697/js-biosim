@@ -6,6 +6,7 @@ import PopulationStrategy from "../creature/population/PopulationStrategy";
 import EastWallSelection from "../creature/selection/EastWallSelection";
 import SelectionMethod from "../creature/selection/SelectionMethod";
 import { WorldEvents } from "../events/WorldEvents";
+import WorldObject from "./WorldObject";
 
 export default class World {
   static instance: World;
@@ -40,7 +41,8 @@ export default class World {
   events: EventTarget = new EventTarget();
   timeoutId?: number;
 
-  grid: Array<Array<Array<Creature | null>>> = [];
+  grid: Array<Array<Array<Creature | WorldObject | null>>> = [];
+  obstacles: WorldObject[] = [];
 
   constructor(canvas: HTMLCanvasElement | null, size: number) {
     if (World.instance) {
@@ -68,6 +70,7 @@ export default class World {
     }
 
     this.initializeGrid();
+    this.computeGrid();
     this.selectAndPopulate();
     this.redraw();
 
@@ -159,6 +162,22 @@ export default class World {
 
       // Set creature
       this.grid[creature.position[0]][creature.position[1]][0] = creature;
+    }
+
+    // Check obstacles
+    for (
+      let obstacleIdx = 0;
+      obstacleIdx < this.obstacles.length;
+      obstacleIdx++
+    ) {
+      const obstacle: WorldObject = this.obstacles[obstacleIdx];
+
+      for (let pixelIdx = 0; pixelIdx < obstacle.pixels.length; pixelIdx++) {
+        const [x, y] = obstacle.pixels[pixelIdx];
+
+        // Set pixel
+        this.grid[x][y][1] = obstacle;
+      }
     }
   }
 
@@ -270,7 +289,7 @@ export default class World {
     //   }
     // }
     // return true;
-    return !this.grid[x][y][0];
+    return !this.grid[x][y][0] && !this.grid[x][y][1];
   }
 
   public isTileInsideWorld(x: number, y: number): boolean {
@@ -313,9 +332,20 @@ export default class World {
     this.clearCanvas();
     this.resizeCanvas();
 
+    // Draw obstacles
+    for (let i = 0; i < this.obstacles.length; i++) {
+      const obstacle = this.obstacles[i];
+      if (obstacle.onDrawBeforeCreatures) {
+        obstacle.onDrawBeforeCreatures(this);
+      }
+    }
+
     this.selectionMethod.onDrawBeforeCreatures(this);
 
-    for (const creature of this.currentCreatures) {
+    // Draw creatures
+    for (let i = 0; i < this.currentCreatures.length; i++) {
+      const creature = this.currentCreatures[i];
+
       const position = creature.position;
 
       const normalizedX = position[0] / this.size;
