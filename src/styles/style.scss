@@ -1,3 +1,8 @@
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1200px;
+
 * {
   box-sizing: border-box;
 }
@@ -159,8 +164,7 @@ body {
   text-align: center;
 }
 
-.input-group input,
-.input-checkbox-group input {
+.input-group input {
   margin-bottom: 0.5rem;
 }
 
@@ -181,6 +185,7 @@ body {
 .input-checkbox-group {
   display: flex;
   align-items: center;
+  column-gap: 0.5em;
 
   label {
     display: inline;
@@ -189,6 +194,7 @@ body {
   input {
     width: 1.1em;
     height: 1.1em;
+    flex-shrink: 0;
   }
 }
 
@@ -203,4 +209,24 @@ body {
   height: 150px;
   max-height: 500px;
   resize: vertical;
+}
+
+#sensorList {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 0.5em;
+  font-size: 0.85rem;
+
+  div {
+    flex-basis: 100%;
+    width: 100%;
+
+    @media (min-width: $md) {
+      flex-basis: 50%;
+    }
+
+    @media (min-width: $xl) {
+      flex-basis: 33.333%;
+    }
+  }
 }

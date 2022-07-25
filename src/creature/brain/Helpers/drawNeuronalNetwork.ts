@@ -39,9 +39,14 @@ export const drawNeuronalNetwork = (
 
     context.save();
 
-    const available = distributeEvenly
+    let available = distributeEvenly
       ? (maxNeurons - 1) / (layer.neurons.length - 1)
       : 1;
+
+    // This fixes a bug that happens when a layer only has one neuron
+    if (available === Number.POSITIVE_INFINITY) {
+      available = 0;
+    }
 
     // Draw neurons
     layer.neurons.forEach((neuron, neuronIndex) => {

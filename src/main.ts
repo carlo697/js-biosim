@@ -55,7 +55,7 @@ const sensors = [
   new RandomSensor(world),
   new HorizontalSpeedSensor(world),
   new VerticalSpeedSensor(world),
-  new TouchSensor(world),
+  // new TouchSensor(world),
 ];
 
 // Actions

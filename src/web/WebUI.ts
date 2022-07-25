@@ -1,6 +1,21 @@
+import CreatureAction from "../creature/actions/CreatureAction";
+import MoveEastAction from "../creature/actions/MoveEastAction";
+import MoveNorthAction from "../creature/actions/MoveNorthAction";
+import MoveSouthAction from "../creature/actions/MoveSouthAction";
+import MoveWestAction from "../creature/actions/MoveWestAction";
+import RandomMoveAction from "../creature/actions/RandomMoveAction";
 import { drawNeuronalNetwork } from "../creature/brain/Helpers/drawNeuronalNetwork";
 import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
+import AgeSensor from "../creature/sensors/AgeSensor";
+import CreatureSensor from "../creature/sensors/CreatureSensor";
+import HorizontalPositionSensor from "../creature/sensors/HorizontalPositionSensor";
+import HorizontalSpeedSensor from "../creature/sensors/HorizontalSpeedSensor";
+import OscillatorSensor from "../creature/sensors/OscillatorSensor";
+import RandomSensor from "../creature/sensors/RandomSensor";
+import TouchSensor from "../creature/sensors/TouchSensor";
+import VerticalPositionSensor from "../creature/sensors/VerticalPositionSensor";
+import VerticalSpeedSensor from "../creature/sensors/VerticalSpeedSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
 
@@ -27,8 +42,39 @@ export default class WebUI {
   genomeTextarea: HTMLInputElement;
   originalGenomePreviewText: string | null;
 
+  // Sensors and actions
+  sensorsParent: HTMLElement;
+  actionsParent: HTMLElement;
+  sensors: { [key: string]: CreatureSensor };
+  actions: { [key: string]: CreatureAction };
+
   constructor(world: World) {
     this.world = world;
+
+    this.sensorsParent = <HTMLElement>document.querySelector("#sensorList");
+    this.actionsParent = <HTMLElement>document.querySelector("#actionList");
+
+    this.sensors = {
+      HorizontalPositionSensor: new HorizontalPositionSensor(world),
+      VerticalPositionSensor: new VerticalPositionSensor(world),
+      AgeSensor: new AgeSensor(world),
+      OscillatorSensor: new OscillatorSensor(world),
+      RandomSensor: new RandomSensor(world),
+      HorizontalSpeedSensor: new HorizontalSpeedSensor(world),
+      VerticalSpeedSensor: new VerticalSpeedSensor(world),
+      TouchSensor: new TouchSensor(world),
+    };
+
+    // Actions
+    this.actions = {
+      MoveNorthAction: new MoveNorthAction(world),
+      MoveSouthAction: new MoveSouthAction(world),
+      MoveEastAction: new MoveEastAction(world),
+      MoveWestAction: new MoveWestAction(world),
+      RandomMoveAction: new RandomMoveAction(world),
+    };
+
+    this.createSensorCheckboxes();
 
     // Initial data Inputs
     this.worldSizeInput = document.querySelector(
@@ -230,6 +276,7 @@ export default class WebUI {
       initialHiddenLayers.every((value: number) => !isNaN(value))
     ) {
       this.world.size = worldSize;
+      this.world.sensors = this.parseSensors();
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
       this.world.initialHiddenLayers = initialHiddenLayers;
@@ -316,5 +363,61 @@ export default class WebUI {
       this.world.redraw();
       this.world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
     }
+  }
+
+  createSensorCheckboxes() {
+    // Create checkboxes
+    for (const sensor of Object.values(this.sensors)) {
+      const name = sensor.constructor.name;
+      const prettyName = name.replace(/([A-Z])/g, " $1").trim();
+
+      // Create container
+      const container = document.createElement("div");
+      container.classList.add("input-checkbox-group");
+
+      // Create checkbox
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.id = name;
+      container.appendChild(input);
+
+      // Create label
+      const label = document.createElement("label");
+      label.htmlFor = name;
+      label.textContent = `${prettyName} (${
+        sensor.outputCount > 1
+          ? `${sensor.outputCount} neurons`
+          : `${sensor.outputCount} neuron`
+      })`;
+      container.appendChild(label);
+
+      this.sensorsParent.appendChild(container);
+    }
+
+    // Check initial sensors
+    const initial = this.world.sensors.map((item) => item.constructor.name);
+    for (const activeSensor of initial) {
+      const foundCheckbox = document.querySelector<HTMLInputElement>(
+        `#${activeSensor}`
+      );
+      if (foundCheckbox) {
+        foundCheckbox.checked = true;
+      }
+    }
+  }
+
+  parseSensors(): CreatureSensor[] {
+    const sensors: CreatureSensor[] = [];
+
+    const checkboxes = Array.from(
+      this.sensorsParent.querySelectorAll<HTMLInputElement>("input")
+    );
+    for (const checkbox of checkboxes) {
+      if (checkbox.checked) {
+        sensors.push(this.sensors[checkbox.id]);
+      }
+    }
+
+    return sensors;
   }
 }
