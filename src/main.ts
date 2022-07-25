@@ -12,7 +12,7 @@ import AgeSensor from "./creature/sensors/AgeSensor";
 import HorizontalSpeedSensor from "./creature/sensors/HorizontalSpeedSensor";
 import OscillatorSensor from "./creature/sensors/OscillatorSensor";
 import RandomSensor from "./creature/sensors/RandomSensor";
-import TouchSensor from "./creature/sensors/TouchSensor";
+// import TouchSensor from "./creature/sensors/TouchSensor";
 import VerticalSpeedSensor from "./creature/sensors/VerticalSpeedSensor";
 import MoveNorthAction from "./creature/actions/MoveNorthAction";
 import MoveSouthAction from "./creature/actions/MoveSouthAction";
