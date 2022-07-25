@@ -65,7 +65,7 @@ export default class Creature {
       new RandomSensor(this),
       new HorizontalSpeedSensor(this),
       new VerticalSpeedSensor(this),
-      new TouchSensor(this)
+      new TouchSensor(this),
     ];
 
     // Actions
@@ -146,32 +146,37 @@ export default class Creature {
     return this.genome.getColor();
   }
 
-  computeStep(): void {
-    this.urgeToMove = [0, 0];
-
-    // Calculate sensors
-    // const inputValues = this.sensors.map((sensor) => sensor.calculateOutput());
-    const inputValues: number[] = [];
+  calculateInputs(): number[] {
+    const inputs = [];
     for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
       const sensor = this.sensors[sensorIdx];
 
       if (sensor.calculateOutput) {
-        inputValues.push(sensor.calculateOutput());
+        inputs.push(sensor.calculateOutput());
       } else if (sensor.calculateOutputs) {
         const results = sensor.calculateOutputs();
 
         for (let j = 0; j < results.length; j++) {
-          inputValues.push(results[j]);
+          inputs.push(results[j]);
         }
       }
     }
+    return inputs;
+  }
 
-    // Calculate outputs with neuronal network
-    const outputValues = this.brain.feedForward(inputValues);
+  calculateOutputs(inputs: number[]): number[] {
+    return this.brain.feedForward(inputs);
+  }
+
+  computeStep(): void {
+    this.urgeToMove = [0, 0];
+
+    // Calculate outputs of neuronal network
+    const outputs = this.calculateOutputs(this.calculateInputs());
 
     // Execute actions with outputs
     for (let i = 0; i < this.actions.length; i++) {
-      this.actions[i].execute(outputValues[i]);
+      this.actions[i].execute(outputs[i]);
     }
 
     // Calculate probability of movement

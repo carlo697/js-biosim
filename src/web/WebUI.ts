@@ -288,10 +288,19 @@ export default class WebUI {
     const creature = this.world.grid[worldX][worldY][0] as Creature;
 
     if (creature) {
+      const inputs = creature.calculateInputs();
+      const outputs = creature.calculateOutputs(inputs);
+
       drawNeuronalNetwork(creature.brain, this.networkCanvas);
       this.genomeTextarea.textContent = `Genome size, neuronal links = ${
         creature.genome.genes.length
-      }\nPossible connections = ${creature.brain.calculateTotalConnections()}\n\nBinary:\n\n${creature.genome.toBitString()}\n\nDecimal:\n${creature.genome.toDecimalString()}\n\nHex:\n${creature.genome.toHexadecimalString()}`;
+      }\nPossible connections = ${creature.brain.calculateTotalConnections()}\n\nInputs:\n[${inputs
+        .map((value) => value.toFixed(3))
+        .join(", ")}]\nOutputs:\n[${outputs
+        .map((value) => value.toFixed(3))
+        .join(
+          ", "
+        )}]\n\nBinary:\n\n${creature.genome.toBitString()}\n\nDecimal:\n${creature.genome.toDecimalString()}\n\nHex:\n${creature.genome.toHexadecimalString()}`;
     } else {
       this.clearGenomePreview();
     }
