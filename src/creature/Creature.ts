@@ -36,8 +36,8 @@ export default class Creature {
   actions: CreatureAction[];
 
   // Neuronal network and genome
-  networkInputs: number;
-  networkOutputs: number;
+  networkInputCount: number;
+  networkOutputCount: number;
   brain!: Network;
   genome: Genome;
   hiddenLayersStructure: number[];
@@ -96,19 +96,19 @@ export default class Creature {
     }
 
     // Calculate inputs of neuronal network
-    this.networkInputs = 0;
+    this.networkInputCount = 0;
     for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
-      this.networkInputs += this.sensors[sensorIdx].outputCount;
+      this.networkInputCount += this.sensors[sensorIdx].outputCount;
     }
 
     // Calculate outputs of neuronal network
-    this.networkOutputs = this.actions.length;
+    this.networkOutputCount = this.actions.length;
 
     // Create neuronal network
     this.hiddenLayersStructure = hiddenLayersStructure;
     this.brain = new Network(
-      this.networkInputs,
-      this.networkOutputs,
+      this.networkInputCount,
+      this.networkOutputCount,
       hiddenLayersStructure,
       true,
       false,
