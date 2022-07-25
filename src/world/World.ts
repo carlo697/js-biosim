@@ -1,3 +1,4 @@
+import CreatureAction from "../creature/actions/CreatureAction";
 import { Network } from "../creature/brain/Network";
 import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
@@ -5,6 +6,7 @@ import AsexualRandomPopulation from "../creature/population/AsexualRandomPopulat
 import PopulationStrategy from "../creature/population/PopulationStrategy";
 import EastWallSelection from "../creature/selection/EastWallSelection";
 import SelectionMethod from "../creature/selection/SelectionMethod";
+import CreatureSensor from "../creature/sensors/CreatureSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import WorldObject from "./WorldObject";
 
@@ -43,6 +45,10 @@ export default class World {
 
   grid: Array<Array<Array<Creature | WorldObject | null>>> = [];
   obstacles: WorldObject[] = [];
+
+  // Sensors and actions
+  sensors: CreatureSensor[] = [];
+  actions: CreatureAction[] = [];
 
   constructor(canvas: HTMLCanvasElement | null, size: number) {
     if (World.instance) {

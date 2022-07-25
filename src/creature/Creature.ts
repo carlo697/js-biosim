@@ -1,23 +1,10 @@
 import World from "../world/World";
-import AgeSensor from "./sensors/AgeSensor";
-import HorizontalPositionSensor from "./sensors/HorizontalPositionSensor";
-import OscillatorSensor from "./sensors/OscillatorSensor";
 import CreatureSensor from "./sensors/CreatureSensor";
-import VerticalPositionSensor from "./sensors/VerticalPositionSensor";
 import CreatureAction from "./actions/CreatureAction";
-import MoveSouthAction from "./actions/MoveSouthAction";
-import RandomMoveAction from "./actions/RandomMoveAction";
 import { Network } from "./brain/Network";
 import { HyperbolicTangentFunction } from "./brain/Activation/HyperbolicTangentFunction";
-import MoveEastAction from "./actions/MoveEastAction";
-import MoveWestAction from "./actions/MoveWestAction";
-import MoveNorthAction from "./actions/MoveNorthAction";
 import Genome, { emptyGene, maxGenNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
-import RandomSensor from "./sensors/RandomSensor";
-import VerticalSpeedSensor from "./sensors/VerticalSpeedSensor";
-import HorizontalSpeedSensor from "./sensors/HorizontalSpeedSensor";
-import TouchSensor from "./sensors/TouchSensor";
 
 const activationFunction = new HyperbolicTangentFunction();
 
@@ -29,10 +16,8 @@ export default class Creature {
   lastPosition: number[];
   urgeToMove: number[];
 
-  // Sensors
+  // Sensors and actions
   sensors: CreatureSensor[];
-
-  // Actions
   actions: CreatureAction[];
 
   // Neuronal network and genome
@@ -45,6 +30,8 @@ export default class Creature {
   constructor(
     world: World,
     position: number[],
+    sensors: CreatureSensor[],
+    actions: CreatureAction[],
     hiddenLayersStructure: number[],
     genomeSize: number,
     genome?: Genome
@@ -56,26 +43,9 @@ export default class Creature {
     this.lastPosition = [position[0], position[1]];
     this.urgeToMove = [0, 0];
 
-    // Sensors
-    this.sensors = [
-      new HorizontalPositionSensor(this),
-      new VerticalPositionSensor(this),
-      new AgeSensor(this),
-      new OscillatorSensor(this),
-      new RandomSensor(this),
-      new HorizontalSpeedSensor(this),
-      new VerticalSpeedSensor(this),
-      new TouchSensor(this),
-    ];
-
-    // Actions
-    this.actions = [
-      new MoveNorthAction(this),
-      new MoveSouthAction(this),
-      new MoveEastAction(this),
-      new MoveWestAction(this),
-      new RandomMoveAction(this),
-    ];
+    // Sensors and actions
+    this.sensors = sensors;
+    this.actions = actions;
 
     if (genome) {
       this.genome = genome.clone(
@@ -152,9 +122,9 @@ export default class Creature {
       const sensor = this.sensors[sensorIdx];
 
       if (sensor.calculateOutput) {
-        inputs.push(sensor.calculateOutput());
+        inputs.push(sensor.calculateOutput(this));
       } else if (sensor.calculateOutputs) {
-        const results = sensor.calculateOutputs();
+        const results = sensor.calculateOutputs(this);
 
         for (let j = 0; j < results.length; j++) {
           inputs.push(results[j]);
@@ -176,7 +146,7 @@ export default class Creature {
 
     // Execute actions with outputs
     for (let i = 0; i < this.actions.length; i++) {
-      this.actions[i].execute(outputs[i]);
+      this.actions[i].execute(this, outputs[i]);
     }
 
     // Calculate probability of movement
@@ -215,6 +185,8 @@ export default class Creature {
     return new Creature(
       this.world,
       [this.position[0], this.position[1]],
+      this.sensors,
+      this.actions,
       this.hiddenLayersStructure,
       this.genome.genes.length,
       this.genome

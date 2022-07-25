@@ -1,7 +1,8 @@
+import Creature from "../Creature";
 import CreatureSensor from "./CreatureSensor";
 
 export default class AgeSensor extends CreatureSensor {
-  calculateOutput(): number {
-    return this.owner.world.currentStep / this.owner.world.stepsPerGen;
+  calculateOutput(creature: Creature): number {
+    return creature.world.currentStep / creature.world.stepsPerGen;
   }
 }

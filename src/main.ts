@@ -6,6 +6,20 @@ import World from "./world/World";
 import { MutationMode } from "./creature/genome/MutationMode";
 import WebUI from "./web/WebUI";
 import RectangleObstacle from "./world/obstacles/RectangleObstacle";
+import HorizontalPositionSensor from "./creature/sensors/HorizontalPositionSensor";
+import VerticalPositionSensor from "./creature/sensors/VerticalPositionSensor";
+import AgeSensor from "./creature/sensors/AgeSensor";
+import HorizontalSpeedSensor from "./creature/sensors/HorizontalSpeedSensor";
+import OscillatorSensor from "./creature/sensors/OscillatorSensor";
+import RandomSensor from "./creature/sensors/RandomSensor";
+import TouchSensor from "./creature/sensors/TouchSensor";
+import VerticalSpeedSensor from "./creature/sensors/VerticalSpeedSensor";
+import MoveNorthAction from "./creature/actions/MoveNorthAction";
+import MoveSouthAction from "./creature/actions/MoveSouthAction";
+import MoveEastAction from "./creature/actions/MoveEastAction";
+import MoveWestAction from "./creature/actions/MoveWestAction";
+import RandomMoveAction from "./creature/actions/RandomMoveAction";
+import CreatureAction from "./creature/actions/CreatureAction";
 
 // Create world
 const world = new World(
@@ -24,8 +38,38 @@ world.obstacles = [
   new RectangleObstacle(world, 0, 0, 0.2, 0.2),
   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
 ];
+// world.obstacles = [
+//   new RectangleObstacle(world, 0, 0, 0.2, 0.2),
+//   new RectangleObstacle(world, 0.2, 0.2, 0.2, 0.2),
+//   new RectangleObstacle(world, 0.4, 0.4, 0.2, 0.2),
+//   new RectangleObstacle(world, 0.6, 0.6, 0.2, 0.2),
+//   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
+// ];
+
+// Sensors
+const sensors = [
+  new HorizontalPositionSensor(world),
+  new VerticalPositionSensor(world),
+  new AgeSensor(world),
+  new OscillatorSensor(world),
+  new RandomSensor(world),
+  new HorizontalSpeedSensor(world),
+  new VerticalSpeedSensor(world),
+  new TouchSensor(world),
+];
+
+// Actions
+const actions: CreatureAction[] = [
+  new MoveNorthAction(world),
+  new MoveSouthAction(world),
+  new MoveEastAction(world),
+  new MoveWestAction(world),
+  new RandomMoveAction(world),
+];
 
 // Default values
+world.sensors = sensors;
+world.actions = actions;
 world.initialPopulation = 1000;
 world.populationStrategy = populationStrategy;
 world.selectionMethod = selectionMethod;

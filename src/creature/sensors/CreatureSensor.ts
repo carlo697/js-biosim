@@ -1,13 +1,14 @@
+import World from "../../world/World";
 import Creature from "../Creature";
 
 export default abstract class CreatureSensor {
-  owner: Creature;
+  world: World;
   outputCount: number = 1;
 
-  constructor(owner: Creature) {
-    this.owner = owner;
+  constructor(world: World) {
+    this.world = world;
   }
 
-  calculateOutput?(): number;
-  calculateOutputs?(): number[];
+  calculateOutput?(creature: Creature): number;
+  calculateOutputs?(creature: Creature): number[];
 }

@@ -60,7 +60,7 @@ export default class RectangleObstacle implements WorldObject {
     this.height = height;
 
     // Generate pixels
-    this.pixels.length = 0;
+    this.pixels = [];
     for (let y = top; y < bottom && y <= worldSize; y++) {
       for (let x = left; x < right && y <= worldSize; x++) {
         this.pixels.push([x, y]);

@@ -15,6 +15,8 @@ export default class AsexualRandomPopulation implements PopulationStrategy {
         const creature = new Creature(
           world,
           position,
+          world.sensors,
+          world.actions,
           world.initialHiddenLayers,
           world.initialGenomeSize
         );

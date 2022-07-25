@@ -1,11 +1,12 @@
+import World from "../../world/World";
 import Creature from "../Creature";
 
 export default abstract class CreatureAction {
-  owner: Creature;
+  world: World;
 
-  constructor(owner: Creature) {
-    this.owner = owner;
+  constructor(world: World) {
+    this.world = world;
   }
 
-  abstract execute(input: number): void;
+  abstract execute(creature: Creature, input: number): void;
 }

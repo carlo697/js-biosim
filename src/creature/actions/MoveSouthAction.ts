@@ -1,9 +1,10 @@
+import Creature from "../Creature";
 import CreatureAction from "./CreatureAction";
 
 export default class MoveSouthAction extends CreatureAction {
-  execute(input: number): void {
+  execute(creature: Creature, input: number): void {
     if (input > 0) {
-      this.owner.addUrgeToMove(0, input);
+      creature.addUrgeToMove(0, input);
     }
   }
 }

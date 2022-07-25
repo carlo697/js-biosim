@@ -1,7 +1,8 @@
+import Creature from "../Creature";
 import CreatureSensor from "./CreatureSensor";
 
 export default class OscillatorSensor extends CreatureSensor {
-  calculateOutput(): number {
-    return (Math.sin(this.owner.world.currentStep / 10) + 1) / 2;
+  calculateOutput(creature: Creature): number {
+    return (Math.sin(creature.world.currentStep / 10) + 1) / 2;
   }
 }
