@@ -106,8 +106,8 @@ export default class World {
       if (newCreatures.length > 0) {
         console.log(
           `Total neuronal links: ${Network.calculateTotalConnections(
-            newCreatures[0].networkInputs,
-            newCreatures[0].networkOutputs,
+            newCreatures[0].networkInputCount,
+            newCreatures[0].networkOutputCount,
             this.initialHiddenLayers
           )}`
         );
@@ -149,6 +149,7 @@ export default class World {
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
         this.grid[x][y][0] = null;
+        this.grid[x][y][1] = null;
       }
     }
   }
@@ -266,8 +267,8 @@ export default class World {
 
   public getRandomPosition(): number[] {
     return [
-      Math.floor(Math.random() * this.size),
-      Math.floor(Math.random() * this.size),
+      Math.floor(Math.random() * (this.size - 1)),
+      Math.floor(Math.random() * (this.size - 1)),
     ];
   }
 

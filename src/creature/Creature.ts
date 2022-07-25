@@ -17,6 +17,7 @@ import { probabilityToBool } from "../helpers/helpers";
 import RandomSensor from "./sensors/RandomSensor";
 import VerticalSpeedSensor from "./sensors/VerticalSpeedSensor";
 import HorizontalSpeedSensor from "./sensors/HorizontalSpeedSensor";
+import TouchSensor from "./sensors/TouchSensor";
 
 const activationFunction = new HyperbolicTangentFunction();
 
@@ -64,6 +65,7 @@ export default class Creature {
       new RandomSensor(this),
       new HorizontalSpeedSensor(this),
       new VerticalSpeedSensor(this),
+      new TouchSensor(this)
     ];
 
     // Actions
