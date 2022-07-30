@@ -55,14 +55,14 @@ export default class WebUI {
     this.actionsParent = <HTMLElement>document.querySelector("#actionList");
 
     this.sensors = {
-      HorizontalPositionSensor: new HorizontalPositionSensor(world),
-      VerticalPositionSensor: new VerticalPositionSensor(world),
-      AgeSensor: new AgeSensor(world),
-      OscillatorSensor: new OscillatorSensor(world),
-      RandomSensor: new RandomSensor(world),
-      HorizontalSpeedSensor: new HorizontalSpeedSensor(world),
-      VerticalSpeedSensor: new VerticalSpeedSensor(world),
-      TouchSensor: new TouchSensor(world),
+      HorizontalPosition: new HorizontalPositionSensor(world),
+      VerticalPosition: new VerticalPositionSensor(world),
+      Age: new AgeSensor(world),
+      Oscillator: new OscillatorSensor(world),
+      Random: new RandomSensor(world),
+      HorizontalSpeed: new HorizontalSpeedSensor(world),
+      VerticalSpeed: new VerticalSpeedSensor(world),
+      Touch: new TouchSensor(world),
     };
 
     // Actions
@@ -368,7 +368,7 @@ export default class WebUI {
   createSensorCheckboxes() {
     // Create checkboxes
     for (const sensor of Object.values(this.sensors)) {
-      const name = sensor.constructor.name;
+      const name = sensor.name;
       const prettyName = name.replace(/([A-Z])/g, " $1").trim();
 
       // Create container
@@ -395,7 +395,7 @@ export default class WebUI {
     }
 
     // Check initial sensors
-    const initial = this.world.sensors.map((item) => item.constructor.name);
+    const initial = this.world.sensors.map((item) => item.name);
     for (const activeSensor of initial) {
       const foundCheckbox = document.querySelector<HTMLInputElement>(
         `#${activeSensor}`

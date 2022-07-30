@@ -3,7 +3,8 @@ import Creature from "../Creature";
 
 export default abstract class CreatureSensor {
   world: World;
-  outputCount: number = 1;
+  abstract outputCount: number;
+  abstract name: string;
 
   constructor(world: World) {
     this.world = world;

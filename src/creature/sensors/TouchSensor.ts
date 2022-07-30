@@ -3,6 +3,7 @@ import CreatureSensor from "./CreatureSensor";
 
 export default class TouchSensor extends CreatureSensor {
   outputCount: number = 4;
+  name: string = "Touch";
 
   calculateOutputs(creature: Creature): number[] {
     const world = creature.world;
