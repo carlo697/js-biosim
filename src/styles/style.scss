@@ -211,7 +211,8 @@ body {
   resize: vertical;
 }
 
-#sensorList {
+#sensorList,
+#actionList {
   display: flex;
   flex-wrap: wrap;
   row-gap: 0.5em;

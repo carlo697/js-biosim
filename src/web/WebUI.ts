@@ -67,14 +67,14 @@ export default class WebUI {
 
     // Actions
     this.actions = {
-      MoveNorthAction: new MoveNorthAction(world),
-      MoveSouthAction: new MoveSouthAction(world),
-      MoveEastAction: new MoveEastAction(world),
-      MoveWestAction: new MoveWestAction(world),
-      RandomMoveAction: new RandomMoveAction(world),
+      MoveNorth: new MoveNorthAction(world),
+      MoveSouth: new MoveSouthAction(world),
+      MoveEast: new MoveEastAction(world),
+      MoveWest: new MoveWestAction(world),
+      RandomMove: new RandomMoveAction(world),
     };
 
-    this.createSensorCheckboxes();
+    this.createSensorAndActionCheckboxes();
 
     // Initial data Inputs
     this.worldSizeInput = document.querySelector(
@@ -277,6 +277,7 @@ export default class WebUI {
     ) {
       this.world.size = worldSize;
       this.world.sensors = this.parseSensors();
+      this.world.actions = this.parseActions();
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
       this.world.initialHiddenLayers = initialHiddenLayers;
@@ -365,10 +366,21 @@ export default class WebUI {
     }
   }
 
-  createSensorCheckboxes() {
+  createSensorAndActionCheckboxes() {
+    const elements = [
+      ...Object.values(this.sensors).map((item) => ({
+        instance: item,
+        type: "sensor",
+      })),
+      ...Object.values(this.actions).map((item) => ({
+        instance: item,
+        type: "action",
+      })),
+    ];
+
     // Create checkboxes
-    for (const sensor of Object.values(this.sensors)) {
-      const name = sensor.name;
+    for (const { instance, type } of Object.values(elements)) {
+      const name = instance.name;
       const prettyName = name.replace(/([A-Z])/g, " $1").trim();
 
       // Create container
@@ -384,24 +396,27 @@ export default class WebUI {
       // Create label
       const label = document.createElement("label");
       label.htmlFor = name;
-      label.textContent = `${prettyName} (${
-        sensor.outputCount > 1
-          ? `${sensor.outputCount} neurons`
-          : `${sensor.outputCount} neuron`
-      })`;
       container.appendChild(label);
 
-      this.sensorsParent.appendChild(container);
-    }
+      // Set label text, check input and add to DOM
+      if (type === "sensor") {
+        const sensor = <CreatureSensor>instance;
 
-    // Check initial sensors
-    const initial = this.world.sensors.map((item) => item.name);
-    for (const activeSensor of initial) {
-      const foundCheckbox = document.querySelector<HTMLInputElement>(
-        `#${activeSensor}`
-      );
-      if (foundCheckbox) {
-        foundCheckbox.checked = true;
+        label.textContent = `${prettyName} (${
+          sensor.outputCount > 1
+            ? `${sensor.outputCount} neurons`
+            : `${sensor.outputCount} neuron`
+        })`;
+
+        input.checked = !!this.world.sensors.find((item) => item.name === name);
+
+        this.sensorsParent.appendChild(container);
+      } else {
+        // Actions
+        label.textContent = `${prettyName} (1 neuron)`;
+        input.checked = !!this.world.actions.find((item) => item.name === name);
+
+        this.actionsParent.appendChild(container);
       }
     }
   }
@@ -419,5 +434,20 @@ export default class WebUI {
     }
 
     return sensors;
+  }
+
+  parseActions(): CreatureAction[] {
+    const actions: CreatureAction[] = [];
+
+    const checkboxes = Array.from(
+      this.actionsParent.querySelectorAll<HTMLInputElement>("input")
+    );
+    for (const checkbox of checkboxes) {
+      if (checkbox.checked) {
+        actions.push(this.actions[checkbox.id]);
+      }
+    }
+
+    return actions;
   }
 }
