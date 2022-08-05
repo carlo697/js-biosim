@@ -154,9 +154,10 @@ export default class Creature {
     const moveY = Math.tanh(this.urgeToMove[1]);
     const probX = probabilityToBool(Math.abs(moveX)) ? 1 : 0;
     const probY = probabilityToBool(Math.abs(moveY)) ? 1 : 0;
-    const signumX = moveX < 0 ? -1 : 1;
-    const signumY = moveY < 0 ? -1 : 1;
-    this.move(signumX * probX, signumY * probY);
+
+    if (probX !== 0 || probY !== 0) {
+      this.move((moveX < 0 ? -1 : 1) * probX, (moveY < 0 ? -1 : 1) * probY);
+    }
   }
 
   move(x: number, y: number) {
@@ -169,7 +170,11 @@ export default class Creature {
     // Check if something is blocking the path
     if (
       this.world.isTileInsideWorld(finalX, finalY) &&
-      this.world.isTileEmpty(finalX, finalY)
+      this.world.isTileEmpty(finalX, finalY) &&
+      (x === 0 ||
+        y === 0 ||
+        this.world.isTileEmpty(this.position[0] + x, this.position[1]) ||
+        this.world.isTileEmpty(this.position[0], this.position[1] + y))
     ) {
       this.position[0] = finalX;
       this.position[1] = finalY;
