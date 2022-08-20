@@ -26,6 +26,7 @@ export default class WebUI {
   worldSizeInput: HTMLInputElement;
   initialPopulationInput: HTMLInputElement;
   initialGenomeSizeInput: HTMLInputElement;
+  maxNumberNeuronsInput: HTMLInputElement;
   mutationModeSelect: HTMLSelectElement;
   startWithEmptyGenomeCheckbox: HTMLInputElement;
 
@@ -84,6 +85,9 @@ export default class WebUI {
     ) as HTMLInputElement;
     this.initialGenomeSizeInput = document.querySelector(
       "#initialGenomeSizeInput"
+    ) as HTMLInputElement;
+    this.maxNumberNeuronsInput = document.querySelector(
+      "#maxNumberNeuronsInput"
     ) as HTMLInputElement;
     this.mutationModeSelect = document.querySelector(
       "#mutationModeSelect"
@@ -190,6 +194,7 @@ export default class WebUI {
     this.worldSizeInput.value = world.size.toString();
     this.initialPopulationInput.value = world.initialPopulation.toString();
     this.initialGenomeSizeInput.value = world.initialGenomeSize.toString();
+    this.maxNumberNeuronsInput.value = world.maxNumberNeurons.toString();
     this.mutationModeSelect.value = world.mutationMode;
     this.startWithEmptyGenomeCheckbox.checked = world.startWithEmptyGenome;
 
@@ -258,6 +263,7 @@ export default class WebUI {
     const worldSize = parseInt(this.worldSizeInput.value);
     const initialPopulation = parseInt(this.initialPopulationInput.value);
     const initialGenomeSize = parseInt(this.initialGenomeSizeInput.value);
+    const maxNumberNeurons = parseInt(this.maxNumberNeuronsInput.value);
     const mutationMode = this.mutationModeSelect.value as MutationMode;
     const startWithEmptyGenome = this.startWithEmptyGenomeCheckbox.checked;
 
@@ -271,6 +277,7 @@ export default class WebUI {
       this.world.actions = this.parseActions();
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
+      this.world.maxNumberNeurons = maxNumberNeurons;
       this.world.mutationMode = mutationMode;
       this.world.startWithEmptyGenome = startWithEmptyGenome;
       this.world.initializeWorld();
@@ -332,7 +339,9 @@ export default class WebUI {
       drawNeuronalNetwork(creature.brain, this.networkCanvas);
       this.genomeTextarea.textContent = `Genome size, neuronal links = ${
         creature.genome.genes.length
-      }\nPossible connections = ${creature.brain.calculateTotalConnections()}\n\nInputs:\n[${inputs
+      }\nTotal neurons = ${creature.brain.totalNeurons}\nInternal neurons = ${
+        creature.brain.totalInternalNeurons
+      }\n\nInputs:\n[${inputs
         .map((value) => value.toFixed(3))
         .join(", ")}]\nOutputs:\n[${outputs
         .map((value) => value.toFixed(3))

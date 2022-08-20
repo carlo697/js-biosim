@@ -4,6 +4,11 @@ import CreatureAction from "./actions/CreatureAction";
 import { Network } from "./brain/Network";
 import Genome, { emptyGene, maxGenNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
+import Connection from "./brain/Connection";
+import Neuron, { NeuronType } from "./brain/Neuron";
+import NeuronNode from "./NeuronNode";
+
+export const initialNeuronOutput = 0.5;
 
 export default class Creature {
   world: World;
@@ -62,8 +67,132 @@ export default class Creature {
     // Calculate outputs of neuronal network
     this.networkOutputCount = this.actions.length;
 
-    // Create neuronal network
-    this.brain = new Network();
+    this.createBrainFromGenome();
+  }
+
+  createBrainFromGenome() {
+    // Create connections from genes
+    const connections: Connection[] = [];
+    for (let geneIdx = 0; geneIdx < this.genome.genes.length; geneIdx++) {
+      let [sourceType, sourceId, sinkType, sinkId, weigth] =
+        this.genome.getGeneData(geneIdx);
+
+      // Renumber sourceId
+      if (sourceType === NeuronType.SENSOR) {
+        sourceId %= this.world.sensors.length;
+      } else {
+        sourceId %= this.world.maxNumberNeurons;
+      }
+
+      // Renumber sinkId
+      if (sinkType === NeuronType.ACTION) {
+        sinkId %= this.world.actions.length;
+      } else {
+        sinkId %= this.world.maxNumberNeurons;
+      }
+
+      // Renumber weigth to a -4 and 4
+      weigth = weigth / 8192 - 4;
+
+      connections.push(
+        new Connection(sourceType, sourceId, sinkType, sinkId, weigth)
+      );
+    }
+
+    // Build a map of neurons. We won't include sensor or action neurons
+    const nodeMap: Map<number, NeuronNode> = new Map();
+    for (
+      let connectionIdx = 0;
+      connectionIdx < connections.length;
+      connectionIdx++
+    ) {
+      const connection = connections[connectionIdx];
+
+      if (connection.sinkType === NeuronType.NEURON) {
+        if (!nodeMap.has(connection.sinkId)) {
+          const node = new NeuronNode();
+          nodeMap.set(connection.sinkId, node);
+        }
+      }
+
+      if (connection.sourceType === NeuronType.NEURON) {
+        if (!nodeMap.has(connection.sourceId)) {
+          const node = new NeuronNode();
+          nodeMap.set(connection.sourceId, node);
+        }
+      }
+    }
+
+    // Renumber neurons in nodeMap
+    let newIndex = 0;
+    for (const [_id, neuronNode] of nodeMap) {
+      neuronNode.remappedIndex = newIndex;
+      newIndex++;
+    }
+
+    // Create final array of connections
+    const finalConnections: Connection[] = [];
+    // We want to add first the connections between sensors and neurons,
+    // and between neurons and neurons
+    for (
+      let connectionIdx = 0;
+      connectionIdx < connections.length;
+      connectionIdx++
+    ) {
+      const connection = connections[connectionIdx];
+
+      if (connection.sinkType === NeuronType.NEURON) {
+        const newConnection = connection.copy();
+
+        // Use the new index for the sink neuron
+        newConnection.sinkId = (<NeuronNode>(
+          nodeMap.get(connection.sinkId)
+        )).remappedIndex;
+
+        if (newConnection.sourceType === NeuronType.NEURON) {
+          // Use the new index for the source neuron
+          newConnection.sourceId = (<NeuronNode>(
+            nodeMap.get(connection.sourceId)
+          )).remappedIndex;
+        }
+
+        finalConnections.push(newConnection);
+      }
+    }
+    // Then we add the connections with actions
+    for (
+      let connectionIdx = 0;
+      connectionIdx < connections.length;
+      connectionIdx++
+    ) {
+      const connection = connections[connectionIdx];
+
+      if (connection.sinkType === NeuronType.ACTION) {
+        const newConnection = connection.copy();
+
+        if (newConnection.sourceType === NeuronType.NEURON) {
+          // Use the new index for the source neuron
+          newConnection.sourceId = (<NeuronNode>(
+            nodeMap.get(connection.sourceId)
+          )).remappedIndex;
+        }
+
+        finalConnections.push(newConnection);
+      }
+    }
+
+    // Create final array of neurons
+    const finalNeurons: Neuron[] = [];
+    for (const [_id, _neuronNode] of nodeMap) {
+      finalNeurons.push(new Neuron(initialNeuronOutput, true));
+    }
+
+    this.brain = new Network(
+      this.world.sensors.length,
+      this.world.actions.length,
+      finalNeurons,
+      finalConnections
+    );
   }
 
   getColor(): string {

@@ -23,7 +23,8 @@ export default class World {
   timePerStep: number = 0;
   stepsPerGen: number = 300;
   immediateSteps: number = 1;
-  initialGenomeSize: number = 5;
+  initialGenomeSize: number = 20;
+  maxNumberNeurons: number = 5;
   mutationProbability: number = 0;
   mutationMode: MutationMode = MutationMode.wholeGene;
   startWithEmptyGenome: boolean = false;
@@ -108,11 +109,6 @@ export default class World {
     } else {
       console.log("New population:", newCreatures.length);
       console.log(`Genome size: ${this.initialGenomeSize} genes`);
-      if (newCreatures.length > 0) {
-        console.log(
-          `Total neuronal links: ${Network.calculateTotalConnections()}`
-        );
-      }
     }
 
     this.lastCreatureCount = newCreatures.length;

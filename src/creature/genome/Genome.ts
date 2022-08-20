@@ -7,7 +7,7 @@ import {
 } from "../../helpers/helpers";
 import { MutationMode } from "./MutationMode";
 
-const logMutations = true;
+const logMutations = false;
 const logBeforeAndAfter = false;
 const geneBitSize = 32;
 export const emptyGene = 32768;
@@ -137,7 +137,15 @@ export default class Genome {
   }
 
   getGeneData(index: number): number[] {
-    return [(this.genes[index] >> 16) & 65535, this.genes[index] & 65535];
+    // sourceType, sourceId, sinkType, sinkId, weigth
+    // 1 1110001 0 0110101 0001111111100011
+    return [
+      (this.genes[index] >> 31) & 1,
+      (this.genes[index] >> 24) & 127,
+      (this.genes[index] >> 23) & 1,
+      (this.genes[index] >> 16) & 127,
+      this.genes[index] & 65535,
+    ];
   }
 
   getColor(): string {
