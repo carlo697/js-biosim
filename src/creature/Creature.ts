@@ -88,11 +88,14 @@ export default class Creature {
 
     // Get an erray of the links inside the network
     const links = [];
-    for (let i = 1; i < this.brain.layers.length; i++) {
-      const layer = this.brain.layers[i];
-      for (const neuron of layer.neurons) {
-        for (const link of neuron.links) {
-          links.push(link);
+    for (let layerIdx = 1; layerIdx < this.brain.layers.length; layerIdx++) {
+      const layer = this.brain.layers[layerIdx];
+
+      for (let neuronIdx = 0; neuronIdx < layer.neurons.length; neuronIdx++) {
+        const neuron = layer.neurons[neuronIdx];
+
+        for (let linkIdx = 0; linkIdx < neuron.links.length; linkIdx++) {
+          links.push(neuron.links[linkIdx]);
         }
       }
     }
@@ -100,14 +103,20 @@ export default class Creature {
     // Read genome and assign the link weights
     for (let geneIdx = 0; geneIdx < this.genome.genes.length; geneIdx++) {
       if (this.genome.genes[geneIdx] !== emptyGene) {
-        const [firstHalf, secondHalf] = this.genome.getGeneData(geneIdx);
+        const [linkIdx, weigth, bias] = this.genome.getGeneData(geneIdx);
+
+        if (linkIdx > 1023 || weigth > 1023 || bias > 1023) {
+          console.log(linkIdx);
+        }
 
         // Get a link in the network
         const selectedLink =
-          links[Math.round((firstHalf / 65536) * (links.length - 1))];
+          links[Math.round((linkIdx / 1024) * (links.length - 1))];
 
         // Set a weight between -4 and 4
-        selectedLink.weigth = (secondHalf / 65536) * 8 - 4;
+        selectedLink.weigth = (weigth / 1024) * 8 - 4;
+        // Set a bias between -2 and 2
+        selectedLink.b.bias = (bias / 1024) * 4 - 2;
       }
     }
   }

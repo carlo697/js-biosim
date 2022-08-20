@@ -93,11 +93,9 @@ export class Network {
           weightedSum += neuron.links[k].weigth * lastOutput[k];
         }
 
-        const result = this.activationFunction.calculate(
-          weightedSum + neuron.bias
+        layerOutput.push(
+          this.activationFunction.calculate(weightedSum + neuron.bias)
         );
-
-        layerOutput.push(result);
       }
 
       lastOutput = layerOutput;
