@@ -26,7 +26,6 @@ export default class WebUI {
   worldSizeInput: HTMLInputElement;
   initialPopulationInput: HTMLInputElement;
   initialGenomeSizeInput: HTMLInputElement;
-  initialHiddenLayersInput: HTMLInputElement;
   mutationModeSelect: HTMLSelectElement;
   startWithEmptyGenomeCheckbox: HTMLInputElement;
 
@@ -85,9 +84,6 @@ export default class WebUI {
     ) as HTMLInputElement;
     this.initialGenomeSizeInput = document.querySelector(
       "#initialGenomeSizeInput"
-    ) as HTMLInputElement;
-    this.initialHiddenLayersInput = document.querySelector(
-      "#initialHiddenLayersInput"
     ) as HTMLInputElement;
     this.mutationModeSelect = document.querySelector(
       "#mutationModeSelect"
@@ -194,7 +190,6 @@ export default class WebUI {
     this.worldSizeInput.value = world.size.toString();
     this.initialPopulationInput.value = world.initialPopulation.toString();
     this.initialGenomeSizeInput.value = world.initialGenomeSize.toString();
-    this.initialHiddenLayersInput.value = world.initialHiddenLayers.join(", ");
     this.mutationModeSelect.value = world.mutationMode;
     this.startWithEmptyGenomeCheckbox.checked = world.startWithEmptyGenome;
 
@@ -263,24 +258,19 @@ export default class WebUI {
     const worldSize = parseInt(this.worldSizeInput.value);
     const initialPopulation = parseInt(this.initialPopulationInput.value);
     const initialGenomeSize = parseInt(this.initialGenomeSizeInput.value);
-    const initialHiddenLayers: number[] = this.initialHiddenLayersInput.value
-      .split(",")
-      .map((value: string) => parseInt(value.trim()));
     const mutationMode = this.mutationModeSelect.value as MutationMode;
     const startWithEmptyGenome = this.startWithEmptyGenomeCheckbox.checked;
 
     if (
       !isNaN(initialPopulation) &&
       !isNaN(initialGenomeSize) &&
-      !isNaN(worldSize) &&
-      initialHiddenLayers.every((value: number) => !isNaN(value))
+      !isNaN(worldSize)
     ) {
       this.world.size = worldSize;
       this.world.sensors = this.parseSensors();
       this.world.actions = this.parseActions();
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
-      this.world.initialHiddenLayers = initialHiddenLayers;
       this.world.mutationMode = mutationMode;
       this.world.startWithEmptyGenome = startWithEmptyGenome;
       this.world.initializeWorld();

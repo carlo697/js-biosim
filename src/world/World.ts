@@ -28,7 +28,6 @@ export default class World {
   mutationMode: MutationMode = MutationMode.wholeGene;
   startWithEmptyGenome: boolean = false;
   pauseBetweenGenerations: number = 0;
-  initialHiddenLayers: number[] = [5];
 
   currentCreatures: Creature[] = [];
   lastCreatureCount: number = 0;
@@ -111,11 +110,7 @@ export default class World {
       console.log(`Genome size: ${this.initialGenomeSize} genes`);
       if (newCreatures.length > 0) {
         console.log(
-          `Total neuronal links: ${Network.calculateTotalConnections(
-            newCreatures[0].networkInputCount,
-            newCreatures[0].networkOutputCount,
-            this.initialHiddenLayers
-          )}`
+          `Total neuronal links: ${Network.calculateTotalConnections()}`
         );
       }
     }

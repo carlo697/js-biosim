@@ -2,11 +2,8 @@ import World from "../world/World";
 import CreatureSensor from "./sensors/CreatureSensor";
 import CreatureAction from "./actions/CreatureAction";
 import { Network } from "./brain/Network";
-import { HyperbolicTangentFunction } from "./brain/Activation/HyperbolicTangentFunction";
 import Genome, { emptyGene, maxGenNumber } from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
-
-const activationFunction = new HyperbolicTangentFunction();
 
 export default class Creature {
   world: World;
@@ -25,17 +22,8 @@ export default class Creature {
   networkOutputCount: number;
   brain!: Network;
   genome: Genome;
-  hiddenLayersStructure: number[];
 
-  constructor(
-    world: World,
-    position: number[],
-    sensors: CreatureSensor[],
-    actions: CreatureAction[],
-    hiddenLayersStructure: number[],
-    genomeSize: number,
-    genome?: Genome
-  ) {
+  constructor(world: World, position: number[], genome?: Genome) {
     this.world = world;
 
     // Position
@@ -44,8 +32,8 @@ export default class Creature {
     this.urgeToMove = [0, 0];
 
     // Sensors and actions
-    this.sensors = sensors;
-    this.actions = actions;
+    this.sensors = world.sensors;
+    this.actions = world.actions;
 
     if (genome) {
       this.genome = genome.clone(
@@ -54,7 +42,7 @@ export default class Creature {
       );
     } else {
       this.genome = new Genome(
-        [...new Array(genomeSize)].map(() =>
+        [...new Array(this.world.initialGenomeSize)].map(() =>
           world.startWithEmptyGenome
             ? emptyGene
             : Math.round(Math.random() * maxGenNumber)
@@ -75,41 +63,7 @@ export default class Creature {
     this.networkOutputCount = this.actions.length;
 
     // Create neuronal network
-    this.hiddenLayersStructure = hiddenLayersStructure;
-    this.brain = new Network(
-      this.networkInputCount,
-      this.networkOutputCount,
-      hiddenLayersStructure,
-      true,
-      false,
-      false,
-      activationFunction
-    );
-
-    // Get an erray of the links inside the network
-    const links = [];
-    for (let i = 1; i < this.brain.layers.length; i++) {
-      const layer = this.brain.layers[i];
-      for (const neuron of layer.neurons) {
-        for (const link of neuron.links) {
-          links.push(link);
-        }
-      }
-    }
-
-    // Read genome and assign the link weights
-    for (let geneIdx = 0; geneIdx < this.genome.genes.length; geneIdx++) {
-      if (this.genome.genes[geneIdx] !== emptyGene) {
-        const [firstHalf, secondHalf] = this.genome.getGeneData(geneIdx);
-
-        // Get a link in the network
-        const selectedLink =
-          links[Math.round((firstHalf / 65536) * (links.length - 1))];
-
-        // Set a weight between -4 and 4
-        selectedLink.weigth = (secondHalf / 65536) * 8 - 4;
-      }
-    }
+    this.brain = new Network();
   }
 
   getColor(): string {
@@ -190,10 +144,6 @@ export default class Creature {
     return new Creature(
       this.world,
       [this.position[0], this.position[1]],
-      this.sensors,
-      this.actions,
-      this.hiddenLayersStructure,
-      this.genome.genes.length,
       this.genome
     );
   }

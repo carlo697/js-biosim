@@ -74,7 +74,6 @@ world.initialPopulation = 1000;
 world.populationStrategy = populationStrategy;
 world.selectionMethod = selectionMethod;
 world.initialGenomeSize = 40;
-world.initialHiddenLayers = [4, 4];
 // world.initialGenomeSize = 10;
 // world.initialHiddenLayers = [5];
 world.timePerStep = 0;

@@ -12,14 +12,7 @@ export default class AsexualRandomPopulation implements PopulationStrategy {
       for (let i = 0; i < world.initialPopulation; i++) {
         // Generate the creature
         let position = world.getRandomAvailablePosition();
-        const creature = new Creature(
-          world,
-          position,
-          world.sensors,
-          world.actions,
-          world.initialHiddenLayers,
-          world.initialGenomeSize
-        );
+        const creature = new Creature(world, position);
         creatures.push(creature);
       }
     } else if (parents) {
