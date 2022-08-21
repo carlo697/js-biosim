@@ -46,6 +46,10 @@ export class Network {
       }
     }
 
+    for (let i = 0; i < outputs.length; i++) {
+      outputs[i] = Math.tanh(outputs[i]);
+    }
+
     return outputs;
   }
 

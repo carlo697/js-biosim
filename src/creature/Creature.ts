@@ -109,16 +109,70 @@ export default class Creature {
       const connection = connections[connectionIdx];
 
       if (connection.sinkType === NeuronType.NEURON) {
-        if (!nodeMap.has(connection.sinkId)) {
-          const node = new NeuronNode();
+        let node = nodeMap.get(connection.sinkId);
+
+        if (!node) {
+          node = new NeuronNode();
           nodeMap.set(connection.sinkId, node);
+        }
+
+        if (
+          connection.sourceType == NeuronType.NEURON &&
+          connection.sourceId == connection.sinkId
+        ) {
+          node.numSelfInputs++;
+        } else {
+          node.numInputsFromSensorsOrOtherNeurons++;
         }
       }
 
       if (connection.sourceType === NeuronType.NEURON) {
-        if (!nodeMap.has(connection.sourceId)) {
-          const node = new NeuronNode();
+        let node = nodeMap.get(connection.sourceId);
+
+        if (!node) {
+          node = new NeuronNode();
           nodeMap.set(connection.sourceId, node);
+        }
+
+        node.numOutputs++;
+      }
+    }
+
+    // Delete useless neurons
+    let allDone = false;
+    while (!allDone) {
+      allDone = true;
+
+      for (const [id, neuronNode] of nodeMap) {
+        // Look for neurons with zero outputs, or neurons that only feed itself
+        if (neuronNode.numOutputs === neuronNode.numSelfInputs) {
+          allDone = false;
+
+          // Find and remove connections from sensors or other neurons
+          for (
+            let connectionIdx = connections.length - 1;
+            connectionIdx >= 0;
+            connectionIdx--
+          ) {
+            const connection = connections[connectionIdx];
+
+            if (
+              connection.sinkType == NeuronType.NEURON &&
+              connection.sinkId == id
+            ) {
+              // See if there's a neuron sourcing this connection
+              if (connection.sourceType == NeuronType.NEURON) {
+                // Decrement the neuron's numOutputs:
+                (<NeuronNode>nodeMap.get(connection.sourceId)).numOutputs--;
+              }
+
+              // Remove the connection
+              connections.splice(connectionIdx, 1);
+            }
+          }
+
+          // Remove the neuron
+          nodeMap.delete(id);
         }
       }
     }
@@ -183,8 +237,13 @@ export default class Creature {
 
     // Create final array of neurons
     const finalNeurons: Neuron[] = [];
-    for (const [_id, _neuronNode] of nodeMap) {
-      finalNeurons.push(new Neuron(initialNeuronOutput, true));
+    for (const [_id, neuronNode] of nodeMap) {
+      finalNeurons.push(
+        new Neuron(
+          initialNeuronOutput,
+          neuronNode.numInputsFromSensorsOrOtherNeurons !== 0
+        )
+      );
     }
 
     this.brain = new Network(

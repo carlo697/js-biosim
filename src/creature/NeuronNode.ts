@@ -1,3 +1,6 @@
 export default class NeuronNode {
-  public remappedIndex: number = 0;
+  remappedIndex: number = 0;
+  numOutputs: number = 0;
+  numSelfInputs: number = 0;
+  numInputsFromSensorsOrOtherNeurons: number = 0;
 }
