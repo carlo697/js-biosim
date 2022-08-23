@@ -332,6 +332,17 @@ export default class WebUI {
     this.genomeTextarea.textContent = this.originalGenomePreviewText;
   }
 
+  getLabelForNeuron(index: number, group: number) {
+    if (group === 1) {
+      return `(In) ${this.world.sensors[index].name}`;
+    } else if (group === 2) {
+      return `(Out) ${this.world.actions[index].name}`;
+    } else if (group === 3) {
+      return index.toString();
+    }
+    return undefined;
+  }
+
   onClickCanvas(e: MouseEvent) {
     const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
 
@@ -349,7 +360,8 @@ export default class WebUI {
 
       this.d3Simulation = drawNeuronalNetwork(
         creature.brain,
-        this.networkCanvas
+        this.networkCanvas,
+        this.getLabelForNeuron.bind(this)
       );
 
       this.genomeTextarea.textContent = `Genome size, neuronal links = ${

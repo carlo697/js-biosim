@@ -12,6 +12,7 @@ import { drawBendLine } from "../../../helpers/canvas.js";
 interface Node extends SimulationNodeDatum {
   id: number;
   group: number;
+  label?: string;
 }
 
 type LinkDatum = {
@@ -66,7 +67,7 @@ function ForceGraph(
     nodeStroke?: string;
     nodeStrokeOpacity?: number;
     nodeRadius?: number;
-    nodeStrength?: number;
+    nodeStrength?: any;
     linkStroke?: any;
     linkStrokeOpacity?: number;
     linkStrokeWidth?: number;
@@ -166,6 +167,16 @@ function ForceGraph(
       context.stroke();
     }
     context.restore();
+
+    // Draw texts
+    const textSize = 12;
+    context.font = "bold 12px arial";
+    for (const node of nodes) {
+      if (node.x && node.y && node.label) {
+        context.textAlign = "center";
+        context.fillText(node.label, node.x, node.y + textSize / 4);
+      }
+    }
   }
 
   function drawLink(d: any) {
@@ -253,7 +264,8 @@ function ForceGraph(
 
 export const drawNeuronalNetwork = (
   network: Network,
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  getLabel: (index: number, group: number) => string | undefined
 ) => {
   const data: { nodes: Node[]; links: LinkDatum[] } = {
     nodes: [],
@@ -265,25 +277,37 @@ export const drawNeuronalNetwork = (
 
   // Add inputs
   for (let inputIdx = 0; inputIdx < network.inputCount; inputIdx++) {
+    const group = 1;
+    const label = getLabel ? getLabel(inputIdx, group) : undefined;
+
     data.nodes.push({
       id: inputIdx,
-      group: 54,
+      group,
+      label,
     });
   }
 
   // Add outputs
   for (let outputIdx = 0; outputIdx < network.outputCount; outputIdx++) {
+    const group = 2;
+    const label = getLabel ? getLabel(outputIdx, group) : undefined;
+
     data.nodes.push({
       id: outputIdx + actionsOffset,
-      group: 55,
+      group,
+      label,
     });
   }
 
   // Add neurons
   for (let neuronIdx = 0; neuronIdx < network.neurons.length; neuronIdx++) {
+    const group = 3;
+    const label = getLabel ? getLabel(neuronIdx, group) : undefined;
+
     data.nodes.push({
       id: neuronIdx + neuronsOffset,
-      group: 56,
+      group,
+      label,
     });
   }
 
@@ -326,7 +350,12 @@ export const drawNeuronalNetwork = (
         ? `rgba(0, 255, 0, ${link.value / 4})`
         : `rgba(255, 0, 0, ${link.value / -4})`;
     },
-    nodeStrength: -50,
+    nodeStrength: (node: Node) => {
+      if (node.group === 1 || node.group === 2) {
+        return -100
+      }
+      return -50;
+    },
   });
 
   simulation.tick(300);
