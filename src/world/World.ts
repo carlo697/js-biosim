@@ -1,5 +1,4 @@
 import CreatureAction from "../creature/actions/CreatureAction";
-import { Network } from "../creature/brain/Network";
 import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
 import AsexualRandomPopulation from "../creature/population/AsexualRandomPopulation";

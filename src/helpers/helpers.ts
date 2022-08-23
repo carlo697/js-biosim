@@ -25,3 +25,8 @@ export const paddingLeft = (string: String, paddingValue: string) => {
 export const getRandomHexChar = (): string => {
   return Math.round(Math.random() * 15).toString(16);
 };
+
+export const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
+
+export const clamp = (value: number, min: number, max: number): number =>
+  Math.min(Math.max(value, min), max);

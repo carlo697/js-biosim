@@ -4,7 +4,10 @@ import MoveNorthAction from "../creature/actions/MoveNorthAction";
 import MoveSouthAction from "../creature/actions/MoveSouthAction";
 import MoveWestAction from "../creature/actions/MoveWestAction";
 import RandomMoveAction from "../creature/actions/RandomMoveAction";
-import { drawNeuronalNetwork } from "../creature/brain/Helpers/drawNeuronalNetwork";
+import {
+  drawNeuronalNetwork,
+  GraphSimulation,
+} from "../creature/brain/Helpers/drawNeuronalNetwork";
 import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
 import AgeSensor from "../creature/sensors/AgeSensor";
@@ -47,6 +50,9 @@ export default class WebUI {
   actionsParent: HTMLElement;
   sensors: { [key: string]: CreatureSensor };
   actions: { [key: string]: CreatureAction };
+
+  // d3
+  d3Simulation: GraphSimulation | undefined;
 
   constructor(world: World) {
     this.world = world;
@@ -336,7 +342,16 @@ export default class WebUI {
       const inputs = creature.calculateInputs();
       const outputs = creature.calculateOutputs(inputs);
 
-      drawNeuronalNetwork(creature.brain, this.networkCanvas);
+      if (this.d3Simulation) {
+        this.d3Simulation.stop();
+        this.d3Simulation = undefined;
+      }
+
+      this.d3Simulation = drawNeuronalNetwork(
+        creature.brain,
+        this.networkCanvas
+      );
+
       this.genomeTextarea.textContent = `Genome size, neuronal links = ${
         creature.genome.genes.length
       }\nTotal neurons = ${creature.brain.totalNeurons}\nInternal neurons = ${
