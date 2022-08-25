@@ -2,7 +2,7 @@ import World from "../world/World";
 import CreatureSensor from "./sensors/CreatureSensor";
 import CreatureAction from "./actions/CreatureAction";
 import { Network } from "./brain/Network";
-import Genome, { emptyGene, maxGenNumber } from "./genome/Genome";
+import Genome from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
 import Connection from "./brain/Connection";
 import Neuron, { NeuronType } from "./brain/Neuron";
@@ -42,15 +42,16 @@ export default class Creature {
 
     if (genome) {
       this.genome = genome.clone(
+        this.world.mutationMode,
+        this.world.maxGenomeSize,
         this.world.mutationProbability,
-        this.world.mutationMode
+        this.world.geneInsertionDeletionProbability,
+        this.world.deletionRatio
       );
     } else {
       this.genome = new Genome(
         [...new Array(this.world.initialGenomeSize)].map(() =>
-          world.startWithEmptyGenome
-            ? emptyGene
-            : Math.round(Math.random() * maxGenNumber)
+          Genome.generateRandomGene()
         )
       );
 

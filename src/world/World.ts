@@ -23,10 +23,12 @@ export default class World {
   stepsPerGen: number = 300;
   immediateSteps: number = 1;
   initialGenomeSize: number = 20;
+  maxGenomeSize: number = 30;
   maxNumberNeurons: number = 5;
-  mutationProbability: number = 0;
+  mutationProbability: number = 0.01;
+  geneInsertionDeletionProbability: number = 0.005;
+  deletionRatio: number = 0.5;
   mutationMode: MutationMode = MutationMode.wholeGene;
-  startWithEmptyGenome: boolean = false;
   pauseBetweenGenerations: number = 0;
 
   currentCreatures: Creature[] = [];

@@ -92,6 +92,18 @@ Pause the simulation and click a creature to see its genome</textarea
 
             <div class="col-md">
               <div class="input-group">
+                <label for="maxGenomeSizeInput">Max genome size</label>
+                <input
+                  id="maxGenomeSizeInput"
+                  type="number"
+                  min="2"
+                  max="1000"
+                />
+              </div>
+            </div>
+
+            <div class="col-md">
+              <div class="input-group">
                 <label for="maxNumberNeuronsInput">Max neurons</label>
                 <input
                   id="maxNumberNeuronsInput"
@@ -112,14 +124,6 @@ Pause the simulation and click a creature to see its genome</textarea
                   <option value="singleBit">Single bit</option>
                   <option value="singleHexDigit">Single hex digit</option>
                 </select>
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="input-checkbox-group">
-                <input type="checkbox" id="startWithEmptyGenomeCheckbox" />
-                <label for="startWithEmptyGenomeCheckbox"
-                  >Start with empty genome</label
-                >
               </div>
             </div>
           </div>
@@ -160,7 +164,7 @@ Pause the simulation and click a creature to see its genome</textarea
                   id="immediateStepsSlider"
                   type="range"
                   min="1"
-                  max="100"
+                  max="150"
                   class="slider"
                 />
               </div>
@@ -188,6 +192,21 @@ Pause the simulation and click a creature to see its genome</textarea
             >
             <input
               id="mutationProbabilitySlider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.001"
+              class="slider"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="geneInsertionDeletionProbabilitySlider"
+              >Probability of insertion and deletion of genes:
+              <span id="geneInsertionDeletionProbabilityValue">0</span>%</label
+            >
+            <input
+              id="geneInsertionDeletionProbabilitySlider"
               type="range"
               min="0"
               max="1"

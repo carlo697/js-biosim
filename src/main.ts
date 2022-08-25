@@ -32,18 +32,60 @@ const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new EastWallSelection();
 const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 
-// world.obstacles = [new RectObstacle(world, 0.15, 0.25, 0.1, 0.5)];
+world.obstacles = [new RectangleObstacle(world, 0.15, 0.25, 0.1, 0.5)];
+
 // world.obstacles = [new RectObstacle(world, 95, 95, 5, 5, false)];
-world.obstacles = [
-  new RectangleObstacle(world, 0, 0, 0.2, 0.2),
-  new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
-];
+
+// world.obstacles = [
+//   new RectangleObstacle(world, 0, 0, 0.2, 0.2),
+//   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
+// ];
+
 // world.obstacles = [
 //   new RectangleObstacle(world, 0, 0, 0.2, 0.2),
 //   new RectangleObstacle(world, 0.2, 0.2, 0.2, 0.2),
 //   new RectangleObstacle(world, 0.4, 0.4, 0.2, 0.2),
 //   new RectangleObstacle(world, 0.6, 0.6, 0.2, 0.2),
 //   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
+// ];
+
+// world.obstacles = [new RectangleObstacle(world, 0, 0, 0.6, 0.6)];
+// world.obstacles = [new RectangleObstacle(world, 0.15, 0.15, 0.5, 0.5)];
+
+// |    |
+// |    |
+// world.obstacles = [
+//   new RectangleObstacle(world, 0.2, 0.2, 0.05, 0.6),
+//   new RectangleObstacle(world, 0.75, 0.2, 0.05, 0.6),
+// ];
+
+//  _  _
+// |    |
+// |_  _|
+//
+// world.obstacles = [
+//   new RectangleObstacle(world, 0.2, 0.2, 0.05, 0.6),
+//   new RectangleObstacle(world, 0.25, 0.2, 0.15, 0.05),
+//   new RectangleObstacle(world, 0.25, 0.75, 0.15, 0.05),
+//   new RectangleObstacle(world, 0.75, 0.2, 0.05, 0.6),
+//   new RectangleObstacle(world, 0.6, 0.2, 0.15, 0.05),
+//   new RectangleObstacle(world, 0.6, 0.75, 0.15, 0.05),
+// ];
+
+// |   |
+// |   |
+// world.obstacles = [
+//   new RectangleObstacle(world, 0.2, 0.2, 0.05, 0.8),
+//   // new RectangleObstacle(world, 0.75, 0, 0.05, 0.8),
+//   new RectangleObstacle(world, 0.75, 0.2, 0.05, 0.8),
+// ];
+
+// |  |  |
+// |  |  |
+// world.obstacles = [
+//   new RectangleObstacle(world, 0.2, 0.2, 0.1, 0.8),
+//   new RectangleObstacle(world, 0.45, 0.2, 0.1, 0.8),
+//   new RectangleObstacle(world, 0.7, 0.2, 0.1, 0.8),
 // ];
 
 // Sensors
@@ -73,14 +115,16 @@ world.actions = actions;
 world.initialPopulation = 1000;
 world.populationStrategy = populationStrategy;
 world.selectionMethod = selectionMethod;
-world.initialGenomeSize = 30;
-world.maxNumberNeurons = 10;
+world.initialGenomeSize = 1;
+world.maxGenomeSize = 30;
+world.maxNumberNeurons = 15;
 world.timePerStep = 0;
 world.stepsPerGen = 300;
 world.immediateSteps = 1;
 world.mutationProbability = 0.05;
+world.geneInsertionDeletionProbability = 0.015;
+world.deletionRatio = 0.5;
 world.mutationMode = MutationMode.wholeGene;
-world.startWithEmptyGenome = false;
 world.pauseBetweenGenerations = 0;
 
 // Initialize world and start simulation

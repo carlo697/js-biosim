@@ -10,7 +10,6 @@ import { MutationMode } from "./MutationMode";
 const logMutations = false;
 const logBeforeAndAfter = false;
 const geneBitSize = 32;
-export const emptyGene = 32768;
 
 const binaryPad = [...new Array(geneBitSize)].map(() => "0").join("");
 const hexadecimalPad = [...new Array(geneBitSize / 4)].map(() => "0").join("");
@@ -31,8 +30,11 @@ export default class Genome {
   }
 
   clone(
+    mutationMode: MutationMode,
+    genomeMaxLength: number,
     mutationProbability: number = 0,
-    mutationMode: MutationMode = MutationMode.wholeGene
+    geneInsertionDeletionProbability: number = 0,
+    deletionRate: number = 0
   ): Genome {
     const newGenes = this.genes.slice();
     if (probabilityToBool(mutationProbability)) {
@@ -111,7 +113,25 @@ export default class Genome {
         }
       }
     }
+
+    if (Math.random() < geneInsertionDeletionProbability) {
+      if (Math.random() < deletionRate) {
+        // Deletion
+        if (newGenes.length > 1) {
+          const randomIndex = Math.floor(Math.random() * newGenes.length);
+          newGenes.splice(randomIndex, 1);
+        }
+      } else if (newGenes.length < genomeMaxLength) {
+        // Insertion
+        newGenes.push(Genome.generateRandomGene());
+      }
+    }
+
     return new Genome(newGenes);
+  }
+
+  static generateRandomGene(): number {
+    return Math.round(Math.random() * maxGenNumber);
   }
 
   getRandomGeneIndex() {

@@ -29,9 +29,9 @@ export default class WebUI {
   worldSizeInput: HTMLInputElement;
   initialPopulationInput: HTMLInputElement;
   initialGenomeSizeInput: HTMLInputElement;
+  maxGenomeSizeInput: HTMLInputElement;
   maxNumberNeuronsInput: HTMLInputElement;
   mutationModeSelect: HTMLSelectElement;
-  startWithEmptyGenomeCheckbox: HTMLInputElement;
 
   // Statistics texts
   generationText: HTMLElement;
@@ -89,18 +89,20 @@ export default class WebUI {
     this.initialPopulationInput = document.querySelector(
       "#initialPopulationInput"
     ) as HTMLInputElement;
+
     this.initialGenomeSizeInput = document.querySelector(
       "#initialGenomeSizeInput"
     ) as HTMLInputElement;
+    this.maxGenomeSizeInput = document.querySelector(
+      "#maxGenomeSizeInput"
+    ) as HTMLInputElement;
+
     this.maxNumberNeuronsInput = document.querySelector(
       "#maxNumberNeuronsInput"
     ) as HTMLInputElement;
     this.mutationModeSelect = document.querySelector(
       "#mutationModeSelect"
     ) as HTMLSelectElement;
-    this.startWithEmptyGenomeCheckbox = document.querySelector(
-      "#startWithEmptyGenomeCheckbox"
-    ) as HTMLInputElement;
 
     // Statistics texts
     this.generationText = document.querySelector("#generation") as HTMLElement;
@@ -181,6 +183,18 @@ export default class WebUI {
         (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
     );
 
+    // geneInsertionDeletionProbabilitySlider slider
+    this.setupSlider(
+      "#geneInsertionDeletionProbabilitySlider",
+      "#geneInsertionDeletionProbabilityValue",
+      world.geneInsertionDeletionProbability,
+      (value: string) => {
+        world.geneInsertionDeletionProbability = parseFloat(value);
+      },
+      (value: string) =>
+        (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
+    );
+
     // stepsPerGen slider
     this.setupSlider(
       "#stepsPerGenSlider",
@@ -200,9 +214,9 @@ export default class WebUI {
     this.worldSizeInput.value = world.size.toString();
     this.initialPopulationInput.value = world.initialPopulation.toString();
     this.initialGenomeSizeInput.value = world.initialGenomeSize.toString();
+    this.maxGenomeSizeInput.value = world.maxGenomeSize.toString();
     this.maxNumberNeuronsInput.value = world.maxNumberNeurons.toString();
     this.mutationModeSelect.value = world.mutationMode;
-    this.startWithEmptyGenomeCheckbox.checked = world.startWithEmptyGenome;
 
     // Restart button
     document
@@ -269,9 +283,9 @@ export default class WebUI {
     const worldSize = parseInt(this.worldSizeInput.value);
     const initialPopulation = parseInt(this.initialPopulationInput.value);
     const initialGenomeSize = parseInt(this.initialGenomeSizeInput.value);
+    const maxGenomeSize = parseInt(this.maxGenomeSizeInput.value);
     const maxNumberNeurons = parseInt(this.maxNumberNeuronsInput.value);
     const mutationMode = this.mutationModeSelect.value as MutationMode;
-    const startWithEmptyGenome = this.startWithEmptyGenomeCheckbox.checked;
 
     if (
       !isNaN(initialPopulation) &&
@@ -283,9 +297,9 @@ export default class WebUI {
       this.world.actions = this.parseActions();
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
+      this.world.maxGenomeSize = maxGenomeSize;
       this.world.maxNumberNeurons = maxNumberNeurons;
       this.world.mutationMode = mutationMode;
-      this.world.startWithEmptyGenome = startWithEmptyGenome;
       this.world.initializeWorld();
       this.world.startRun();
 
