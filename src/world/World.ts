@@ -265,8 +265,8 @@ export default class World {
 
   public getRandomPosition(): number[] {
     return [
-      Math.floor(Math.random() * (this.size - 1)),
-      Math.floor(Math.random() * (this.size - 1)),
+      Math.floor(Math.random() * this.size),
+      Math.floor(Math.random() * this.size),
     ];
   }
 

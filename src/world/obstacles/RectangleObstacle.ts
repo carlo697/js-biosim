@@ -35,20 +35,16 @@ export default class RectangleObstacle implements WorldObject {
     width: number,
     height: number
   ) {
-    const worldSize = this.world.size - 1;
-
     // Calculate world coordinates
-    const absoluteWidth = Math.ceil(width * worldSize);
-    const absoluteHeight = Math.ceil(height * worldSize);
-    left = Math.ceil(left * worldSize);
-    top = Math.ceil(top * worldSize);
+    const absoluteWidth = Math.floor(width * this.world.size);
+    const absoluteHeight = Math.floor(height * this.world.size);
+    left = Math.floor(left * this.world.size);
+    top = Math.floor(top * this.world.size);
 
     this.setWorldTransform(left, top, absoluteWidth, absoluteHeight);
   }
 
   setWorldTransform(left: number, top: number, width: number, height: number) {
-    const worldSize = this.world.size - 1;
-
     // Calculate world coordinates
     const right = left + width;
     const bottom = top + height;
@@ -61,8 +57,8 @@ export default class RectangleObstacle implements WorldObject {
 
     // Generate pixels
     this.pixels = [];
-    for (let y = top; y < bottom && y <= worldSize; y++) {
-      for (let x = left; x < right && y <= worldSize; x++) {
+    for (let y = top; y < bottom && y < this.world.size; y++) {
+      for (let x = left; x < right && y < this.world.size; x++) {
         this.pixels.push([x, y]);
       }
     }
