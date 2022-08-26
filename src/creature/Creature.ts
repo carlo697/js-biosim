@@ -248,8 +248,8 @@ export default class Creature {
     }
 
     this.brain = new Network(
-      this.world.sensors.length,
-      this.world.actions.length,
+      this.networkInputCount,
+      this.networkOutputCount,
       finalNeurons,
       finalConnections
     );

@@ -352,9 +352,27 @@ export default class WebUI {
     this.genomeTextarea.textContent = this.originalGenomePreviewText;
   }
 
-  getLabelForNeuron(index: number, group: number) {
+  getLabelForNeuron(creature: Creature, index: number, group: number) {
     if (group === 1) {
-      return `(In) ${this.world.sensors[index].name}`;
+      // Create a list of names
+      const names: string[] = [];
+      for (let sensorIdx = 0; sensorIdx < creature.sensors.length; ) {
+        const sensor = creature.sensors[sensorIdx];
+
+        for (let i = 0; i < sensor.outputCount; i++) {
+          let name = `(In) ${sensor.name}`;
+
+          if (sensor.outputCount > 1) {
+            // If the sensor has more than one output
+            name += ` [${i + 1}]`;
+          }
+
+          names.push(name);
+          sensorIdx++;
+        }
+      }
+
+      return names[index];
     } else if (group === 2) {
       return `(Out) ${this.world.actions[index].name}`;
     } else if (group === 3) {
@@ -381,7 +399,8 @@ export default class WebUI {
       this.d3Simulation = drawNeuronalNetwork(
         creature.brain,
         this.networkCanvas,
-        this.getLabelForNeuron.bind(this)
+        (index: number, group: number) =>
+          this.getLabelForNeuron(creature, index, group)
       );
 
       this.genomeTextarea.textContent = `Genome size, neuronal links = ${
