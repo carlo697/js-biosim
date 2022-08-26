@@ -70,7 +70,7 @@ function ForceGraph(
     nodeStrength?: any;
     linkStroke?: any;
     linkStrokeOpacity?: number;
-    linkStrokeWidth?: number;
+    linkStrokeWidth?: any;
     linkStrength?: number;
     colors?: readonly string[];
     width?: number;
@@ -80,7 +80,6 @@ function ForceGraph(
 ): GraphSimulation {
   // Scaling
   nodeRadius = nodeRadius * width;
-  linkStrokeWidth = linkStrokeWidth * width;
 
   // Compute values.
   const N = d3.map(nodes, nodeId).map(intern);
@@ -150,7 +149,7 @@ function ForceGraph(
 
       context.strokeStyle = L ? L[i] : linkStroke;
       context.fillStyle = L ? L[i] : linkStroke;
-      context.lineWidth = W ? W[i] : linkStrokeWidth;
+      context.lineWidth = (W ? W[i] : linkStrokeWidth) * width;
       drawLink(link);
     }
     context.restore();
@@ -198,8 +197,8 @@ function ForceGraph(
       d.target.x,
       d.target.y,
       bend,
-      0.01 * width,
-      0.01 * width,
+      0.015 * width,
+      0.015 * width,
       false,
       true,
       nodeRadius,
@@ -343,16 +342,19 @@ export const drawNeuronalNetwork = (
     height: canvas.offsetHeight,
     nodeRadius: 0.02,
     linkStrength: 0.1,
-    linkStrokeWidth: 0.003,
+    linkStrokeWidth: (link: LinkDatum) => {
+      console.log(link);
+      return (
+        0.0005 + 0.006 * (link.value > 0 ? link.value / 4 : link.value / -4)
+      );
+    },
     linkStrokeOpacity: 0.9,
     linkStroke: (link: any) => {
-      return link.value > 0
-        ? `rgba(0, 255, 0, ${link.value / 4})`
-        : `rgba(255, 0, 0, ${link.value / -4})`;
+      return link.value > 0 ? `rgba(0, 255, 0)` : `rgba(255, 0, 0)`;
     },
     nodeStrength: (node: Node) => {
       if (node.group === 1 || node.group === 2) {
-        return -100
+        return -100;
       }
       return -50;
     },
