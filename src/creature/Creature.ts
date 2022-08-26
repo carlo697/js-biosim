@@ -298,15 +298,15 @@ export default class Creature {
     const probX = probabilityToBool(Math.abs(moveX)) ? 1 : 0;
     const probY = probabilityToBool(Math.abs(moveY)) ? 1 : 0;
 
+    this.lastPosition[0] = this.position[0];
+    this.lastPosition[1] = this.position[1];
+
     if (probX !== 0 || probY !== 0) {
       this.move((moveX < 0 ? -1 : 1) * probX, (moveY < 0 ? -1 : 1) * probY);
     }
   }
 
   move(x: number, y: number) {
-    this.lastPosition[0] = this.position[0];
-    this.lastPosition[1] = this.position[1];
-
     const finalX = this.position[0] + x;
     const finalY = this.position[1] + y;
 
