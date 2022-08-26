@@ -343,7 +343,6 @@ export const drawNeuronalNetwork = (
     nodeRadius: 0.02,
     linkStrength: 0.1,
     linkStrokeWidth: (link: LinkDatum) => {
-      console.log(link);
       return (
         0.0005 + 0.006 * (link.value > 0 ? link.value / 4 : link.value / -4)
       );
