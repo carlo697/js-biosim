@@ -11,12 +11,15 @@ import {
 import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
 import AgeSensor from "../creature/sensors/AgeSensor";
+import BorderDistanceSensor from "../creature/sensors/BorderDistanceSensor";
 import CreatureSensor from "../creature/sensors/CreatureSensor";
+import HorizontalBorderDistanceSensor from "../creature/sensors/HorizontalBorderDistanceSensor";
 import HorizontalPositionSensor from "../creature/sensors/HorizontalPositionSensor";
 import HorizontalSpeedSensor from "../creature/sensors/HorizontalSpeedSensor";
 import OscillatorSensor from "../creature/sensors/OscillatorSensor";
 import RandomSensor from "../creature/sensors/RandomSensor";
 import TouchSensor from "../creature/sensors/TouchSensor";
+import VerticalBorderDistanceSensor from "../creature/sensors/VerticalBorderDistanceSensor";
 import VerticalPositionSensor from "../creature/sensors/VerticalPositionSensor";
 import VerticalSpeedSensor from "../creature/sensors/VerticalSpeedSensor";
 import { WorldEvents } from "../events/WorldEvents";
@@ -68,6 +71,9 @@ export default class WebUI {
       Random: new RandomSensor(world),
       HorizontalSpeed: new HorizontalSpeedSensor(world),
       VerticalSpeed: new VerticalSpeedSensor(world),
+      HorizontalBorderDistance: new HorizontalBorderDistanceSensor(world),
+      VerticalBorderDistance: new VerticalBorderDistanceSensor(world),
+      BorderDistance: new BorderDistanceSensor(world),
       Touch: new TouchSensor(world),
     };
 

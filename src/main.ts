@@ -20,6 +20,9 @@ import MoveEastAction from "./creature/actions/MoveEastAction";
 import MoveWestAction from "./creature/actions/MoveWestAction";
 import RandomMoveAction from "./creature/actions/RandomMoveAction";
 import CreatureAction from "./creature/actions/CreatureAction";
+import HorizontalBorderDistanceSensor from "./creature/sensors/HorizontalBorderDistanceSensor";
+import VerticalBorderDistanceSensor from "./creature/sensors/VerticalBorderDistanceSensor";
+import BorderDistanceSensor from "./creature/sensors/BorderDistanceSensor";
 
 // Create world
 const world = new World(
@@ -97,6 +100,9 @@ const sensors = [
   new RandomSensor(world),
   new HorizontalSpeedSensor(world),
   new VerticalSpeedSensor(world),
+  new HorizontalBorderDistanceSensor(world),
+  new VerticalBorderDistanceSensor(world),
+  new BorderDistanceSensor(world),
   // new TouchSensor(world),
 ];
 
