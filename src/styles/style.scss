@@ -61,76 +61,7 @@ body {
   padding: 1rem;
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
 
-  .col {
-    flex-basis: 0;
-    flex-grow: 1;
-  }
-
-  .col-sm {
-    flex-basis: 100%;
-    @media (min-width: 576px) {
-      flex-basis: 0;
-      flex-grow: 1;
-    }
-  }
-
-  .col-md {
-    flex-basis: 100%;
-    @media (min-width: 768px) {
-      flex-basis: 0;
-      flex-grow: 1;
-    }
-  }
-
-  .col-lg {
-    flex-basis: 100%;
-    @media (min-width: 992px) {
-      flex-basis: 0;
-      flex-grow: 1;
-    }
-  }
-
-  .col-xl {
-    flex-basis: 100%;
-    @media (min-width: 1200px) {
-      flex-basis: 0;
-      flex-grow: 1;
-    }
-  }
-
-  &.g-1 {
-    gap: 1rem;
-  }
-  &.g-2 {
-    gap: 2rem;
-  }
-
-  &.g-sm-1 {
-    @media (min-width: 576px) {
-      gap: 1rem;
-    }
-  }
-  &.g-sm-2 {
-    @media (min-width: 576px) {
-      gap: 2rem;
-    }
-  }
-
-  &.g-md-1 {
-    @media (min-width: 768px) {
-      gap: 1rem;
-    }
-  }
-  &.g-md-2 {
-    @media (min-width: 768px) {
-      gap: 2rem;
-    }
-  }
-}
 
 .text-center {
   text-align: center;
@@ -212,3 +143,4 @@ body {
 
 @import "buttons";
 @import "tabs";
+@import "grid";

@@ -9,7 +9,35 @@ $dark: #1a1a1a;
 $red: rgb(171, 47, 47);
 
 // Breakpoints
+$xs: 0;
 $sm: 576px;
 $md: 768px;
 $lg: 992px;
 $xl: 1200px;
+$xxl: 1400px;
+
+$breakpoints: (
+  xs: $xs,
+  sm: $sm,
+  md: $md,
+  lg: $lg,
+  xl: $xl,
+  xxl: $xxl,
+);
+
+// Grid
+$grid-columns: 12;
+$gutter-0: 0.5em;
+$gutter-1: 1em;
+$gutter-2: 1.5em;
+$gutter-3: 2em;
+$gutter-4: 3em;
+$gutter-5: 4em;
+$grid-gutters: (
+  0: $gutter-0,
+  1: $gutter-1,
+  2: $gutter-2,
+  3: $gutter-3,
+  4: $gutter-4,
+  5: $gutter-5,
+);

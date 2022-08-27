@@ -1,0 +1,107 @@
+@use "sass:math";
+@import "variables";
+
+@mixin use-breakpoint($breakpoint-name) {
+  @media (min-width: map-get($breakpoints, $breakpoint-name)) {
+    @content;
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  --gutter-y: 0;
+  --gutter-x: #{$gutter-0};
+
+  margin-top: calc(-1 * var(--gutter-y));
+  margin-right: calc(-0.5 * var(--gutter-x));
+  margin-left: calc(-0.5 * var(--gutter-x));
+
+  & > * {
+    padding-right: calc(var(--gutter-x) * 0.5);
+    padding-left: calc(var(--gutter-x) * 0.5);
+    margin-top: var(--gutter-y);
+  }
+}
+
+.col {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+}
+
+@each $key, $value in $breakpoints {
+  @if $value != $xs {
+    .col-#{$key} {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 100%;
+
+      @include use-breakpoint($key) {
+        flex-basis: 0;
+      }
+    }
+  }
+}
+
+@for $point from 1 through $grid-columns {
+  .col-#{$point} {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: math.div($point, $grid-columns) * 100%;
+  }
+
+  @each $key, $value in $breakpoints {
+    @if $value != $xs {
+      .col-#{$key}-#{$point} {
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 100%;
+
+        @include use-breakpoint($key) {
+          flex-grow: 0;
+          flex-shrink: 0;
+          flex-basis: math.div($point, $grid-columns) * 100%;
+        }
+      }
+    }
+  }
+}
+
+@each $gutter-key, $gutter-value in $grid-gutters {
+  .g-#{$gutter-key} {
+    --gutter-x: #{$gutter-value};
+    --gutter-y: #{$gutter-value};
+  }
+
+  .gx-#{$gutter-key} {
+    --gutter-x: #{$gutter-value};
+  }
+
+  .gy-#{$gutter-key} {
+    --gutter-y: #{$gutter-value};
+  }
+
+  @each $breakpoint-key, $breakpoint-value in $breakpoints {
+    @if $breakpoint-value != $xs {
+      .g-#{$breakpoint-key}-#{$gutter-key} {
+        @include use-breakpoint($breakpoint-key) {
+          --gutter-x: #{$gutter-value};
+          --gutter-y: #{$gutter-value};
+        }
+      }
+
+      .gx-#{$breakpoint-key}-#{$gutter-key} {
+        @include use-breakpoint($breakpoint-key) {
+          --gutter-x: #{$gutter-value};
+        }
+      }
+
+      .gy-#{$breakpoint-key}-#{$gutter-key} {
+        @include use-breakpoint($breakpoint-key) {
+          --gutter-y: #{$gutter-value};
+        }
+      }
+    }
+  }
+}
