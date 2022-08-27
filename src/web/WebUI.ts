@@ -9,7 +9,6 @@ import {
   GraphSimulation,
 } from "../creature/brain/Helpers/drawNeuronalNetwork";
 import Creature from "../creature/Creature";
-import { MutationMode } from "../creature/genome/MutationMode";
 import AgeSensor from "../creature/sensors/AgeSensor";
 import BorderDistanceSensor from "../creature/sensors/BorderDistanceSensor";
 import CreatureSensor from "../creature/sensors/CreatureSensor";
@@ -24,18 +23,11 @@ import VerticalPositionSensor from "../creature/sensors/VerticalPositionSensor";
 import VerticalSpeedSensor from "../creature/sensors/VerticalSpeedSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
+import InitialSettings from "./InitialSettings";
 import { initializeTabsInDOM } from "./Tabs";
 
 export default class WebUI {
   world: World;
-
-  // Initial data Inputs
-  worldSizeInput: HTMLInputElement;
-  initialPopulationInput: HTMLInputElement;
-  initialGenomeSizeInput: HTMLInputElement;
-  maxGenomeSizeInput: HTMLInputElement;
-  maxNumberNeuronsInput: HTMLInputElement;
-  mutationModeSelect: HTMLSelectElement;
 
   // Statistics texts
   generationText: HTMLElement;
@@ -50,19 +42,17 @@ export default class WebUI {
   originalGenomePreviewText: string | null;
 
   // Sensors and actions
-  sensorsParent: HTMLElement;
-  actionsParent: HTMLElement;
   sensors: { [key: string]: CreatureSensor };
   actions: { [key: string]: CreatureAction };
 
   // d3
   d3Simulation: GraphSimulation | undefined;
 
+  // Tab classes
+  initialSettings: InitialSettings;
+
   constructor(world: World) {
     this.world = world;
-
-    this.sensorsParent = <HTMLElement>document.querySelector("#sensorList");
-    this.actionsParent = <HTMLElement>document.querySelector("#actionList");
 
     this.sensors = {
       HorizontalPosition: new HorizontalPositionSensor(world),
@@ -86,30 +76,6 @@ export default class WebUI {
       MoveWest: new MoveWestAction(world),
       RandomMove: new RandomMoveAction(world),
     };
-
-    this.createSensorAndActionCheckboxes();
-
-    // Initial data Inputs
-    this.worldSizeInput = document.querySelector(
-      "#worldSizeInput"
-    ) as HTMLInputElement;
-    this.initialPopulationInput = document.querySelector(
-      "#initialPopulationInput"
-    ) as HTMLInputElement;
-
-    this.initialGenomeSizeInput = document.querySelector(
-      "#initialGenomeSizeInput"
-    ) as HTMLInputElement;
-    this.maxGenomeSizeInput = document.querySelector(
-      "#maxGenomeSizeInput"
-    ) as HTMLInputElement;
-
-    this.maxNumberNeuronsInput = document.querySelector(
-      "#maxNumberNeuronsInput"
-    ) as HTMLInputElement;
-    this.mutationModeSelect = document.querySelector(
-      "#mutationModeSelect"
-    ) as HTMLSelectElement;
 
     // Statistics texts
     this.generationText = document.querySelector("#generation") as HTMLElement;
@@ -218,13 +184,6 @@ export default class WebUI {
       (e: MouseEvent) => this.handlePause(e)
     );
 
-    this.worldSizeInput.value = world.size.toString();
-    this.initialPopulationInput.value = world.initialPopulation.toString();
-    this.initialGenomeSizeInput.value = world.initialGenomeSize.toString();
-    this.maxGenomeSizeInput.value = world.maxGenomeSize.toString();
-    this.maxNumberNeuronsInput.value = world.maxNumberNeurons.toString();
-    this.mutationModeSelect.value = world.mutationMode;
-
     // Restart button
     document
       .querySelector("#restart")
@@ -234,6 +193,9 @@ export default class WebUI {
 
     // Tabs
     initializeTabsInDOM();
+
+    // Initial settings
+    this.initialSettings = new InitialSettings(this, world);
   }
 
   onStartGeneration() {
@@ -289,35 +251,7 @@ export default class WebUI {
   }
 
   restart() {
-    // Get initial data
-    const worldSize = parseInt(this.worldSizeInput.value);
-    const initialPopulation = parseInt(this.initialPopulationInput.value);
-    const initialGenomeSize = parseInt(this.initialGenomeSizeInput.value);
-    const maxGenomeSize = parseInt(this.maxGenomeSizeInput.value);
-    const maxNumberNeurons = parseInt(this.maxNumberNeuronsInput.value);
-    const mutationMode = this.mutationModeSelect.value as MutationMode;
-
-    if (
-      !isNaN(initialPopulation) &&
-      !isNaN(initialGenomeSize) &&
-      !isNaN(worldSize)
-    ) {
-      this.world.size = worldSize;
-      this.world.sensors = this.parseSensors();
-      this.world.actions = this.parseActions();
-      this.world.initialPopulation = initialPopulation;
-      this.world.initialGenomeSize = initialGenomeSize;
-      this.world.maxGenomeSize = maxGenomeSize;
-      this.world.maxNumberNeurons = maxNumberNeurons;
-      this.world.mutationMode = mutationMode;
-      this.world.initializeWorld();
-      this.world.startRun();
-
-      this.generationText.textContent = "0";
-      this.newPopulation.textContent = "0";
-      this.lastSurvivors.textContent = "0";
-      this.survivalRate.textContent = "0";
-    } else {
+    if (!this.initialSettings.applySettingsAndRestart()) {
       console.error("Invalid initial settings");
     }
   }
@@ -433,90 +367,5 @@ export default class WebUI {
       this.world.redraw();
       this.world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
     }
-  }
-
-  createSensorAndActionCheckboxes() {
-    const elements = [
-      ...Object.values(this.sensors).map((item) => ({
-        instance: item,
-        type: "sensor",
-      })),
-      ...Object.values(this.actions).map((item) => ({
-        instance: item,
-        type: "action",
-      })),
-    ];
-
-    // Create checkboxes
-    for (const { instance, type } of Object.values(elements)) {
-      const name = instance.name;
-      const prettyName = name.replace(/([A-Z])/g, " $1").trim();
-
-      // Create container
-      const container = document.createElement("div");
-      container.classList.add("input-checkbox-group");
-
-      // Create checkbox
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.id = name;
-      container.appendChild(input);
-
-      // Create label
-      const label = document.createElement("label");
-      label.htmlFor = name;
-      container.appendChild(label);
-
-      // Set label text, check input and add to DOM
-      if (type === "sensor") {
-        const sensor = <CreatureSensor>instance;
-
-        label.textContent = `${prettyName} (${
-          sensor.outputCount > 1
-            ? `${sensor.outputCount} neurons`
-            : `${sensor.outputCount} neuron`
-        })`;
-
-        input.checked = !!this.world.sensors.find((item) => item.name === name);
-
-        this.sensorsParent.appendChild(container);
-      } else {
-        // Actions
-        label.textContent = `${prettyName} (1 neuron)`;
-        input.checked = !!this.world.actions.find((item) => item.name === name);
-
-        this.actionsParent.appendChild(container);
-      }
-    }
-  }
-
-  parseSensors(): CreatureSensor[] {
-    const sensors: CreatureSensor[] = [];
-
-    const checkboxes = Array.from(
-      this.sensorsParent.querySelectorAll<HTMLInputElement>("input")
-    );
-    for (const checkbox of checkboxes) {
-      if (checkbox.checked) {
-        sensors.push(this.sensors[checkbox.id]);
-      }
-    }
-
-    return sensors;
-  }
-
-  parseActions(): CreatureAction[] {
-    const actions: CreatureAction[] = [];
-
-    const checkboxes = Array.from(
-      this.actionsParent.querySelectorAll<HTMLInputElement>("input")
-    );
-    for (const checkbox of checkboxes) {
-      if (checkbox.checked) {
-        actions.push(this.actions[checkbox.id]);
-      }
-    }
-
-    return actions;
   }
 }
