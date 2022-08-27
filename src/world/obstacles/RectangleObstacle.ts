@@ -4,6 +4,13 @@ import WorldObject from "../WorldObject";
 export default class RectangleObstacle implements WorldObject {
   pixels: number[][] = [];
 
+  worldX: number = 0;
+  worldY: number = 0;
+  worldWidth: number = 0;
+  worldHeight: number = 0;
+  worldRight: number = 0;
+  worldBottom: number = 0;
+
   constructor(
     public world: World,
     public x: number,
@@ -12,19 +19,29 @@ export default class RectangleObstacle implements WorldObject {
     public height: number,
     public relative: boolean = true
   ) {
-    if (relative) {
-      this.setRelativeTransform(x, y, width, height);
+    // Calculate transform and pixels
+    this.computeTransform();
+  }
+
+  computePixels(): void {
+    // Recalculate transform and pixels
+    this.computeTransform();
+  }
+
+  computeTransform(): void {
+    if (this.relative) {
+      this.setRelativeTransform(this.x, this.y, this.width, this.height);
     } else {
-      this.setWorldTransform(x, y, width, height);
+      this.setWorldTransform(this.x, this.y, this.width, this.height);
     }
   }
 
   onDrawBeforeCreatures(world: World): void {
     world.drawRect(
-      this.x,
-      this.y,
-      this.width,
-      this.height,
+      this.worldX,
+      this.worldY,
+      this.worldWidth,
+      this.worldHeight,
       "rgba(0, 0, 0, 0.5)"
     );
   }
@@ -46,19 +63,27 @@ export default class RectangleObstacle implements WorldObject {
 
   setWorldTransform(left: number, top: number, width: number, height: number) {
     // Calculate world coordinates
-    const right = left + width;
-    const bottom = top + height;
+    this.worldRight = left + width;
+    this.worldBottom = top + height;
 
     // Save rounded values
-    this.x = left;
-    this.y = top;
-    this.width = width;
-    this.height = height;
+    this.worldX = left;
+    this.worldY = top;
+    this.worldWidth = width;
+    this.worldHeight = height;
 
-    // Generate pixels
+    // Recreate pixels
     this.pixels = [];
-    for (let y = top; y < bottom && y < this.world.size; y++) {
-      for (let x = left; x < right && y < this.world.size; x++) {
+    for (
+      let y = this.worldY;
+      y < this.worldBottom && y < this.world.size;
+      y++
+    ) {
+      for (
+        let x = this.worldX;
+        x < this.worldRight && y < this.world.size;
+        x++
+      ) {
         this.pixels.push([x, y]);
       }
     }

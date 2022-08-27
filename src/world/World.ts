@@ -76,6 +76,15 @@ export default class World {
       this.currentStep = 0;
     }
 
+    // Clear previous creatures
+    this.currentCreatures = [];
+
+    // Generate obstacle pixels
+    for (let i = 0; i < this.obstacles.length; i++) {
+      const obstacle = this.obstacles[i];
+      obstacle.computePixels();
+    }
+
     this.initializeGrid();
     this.computeGrid();
     this.selectAndPopulate();
@@ -123,7 +132,7 @@ export default class World {
       const col = [];
       for (let y = 0; y < this.size; y++) {
         // Create and push row
-        col.push([null]);
+        col.push([null, null]);
       }
 
       // Push column
