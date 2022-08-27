@@ -39,7 +39,7 @@ body {
 }
 
 #app {
-  max-width: 1600px;
+  max-width: 1400px;
   padding: 2rem;
   width: 100%;
   margin: 0 auto;
@@ -182,6 +182,7 @@ body {
   height: 150px;
   max-height: 500px;
   resize: vertical;
+  margin-top: 1rem;
 }
 
 #sensorList,

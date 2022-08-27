@@ -35,6 +35,102 @@
             <button id="restart" type="button" class="btn red">Restart</button>
             <button id="pause" type="button" class="btn">Pause</button>
           </div>
+
+          <div>
+            <h2 class="text-center">Dynamic values</h2>
+
+            <div class="row g-md-2">
+              <div class="col-md">
+                <div class="input-group">
+                  <label for="timePerStepSlider"
+                    >Time per step:
+                    <span id="timePerStepValue">0</span> ms</label
+                  >
+                  <input
+                    id="timePerStepSlider"
+                    type="range"
+                    min="0"
+                    max="250"
+                    class="slider"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md">
+                <div class="input-group">
+                  <label for="immediateStepsSlider"
+                    >Immediate steps:
+                    <span id="immediateStepsValue">0</span></label
+                  >
+                  <input
+                    id="immediateStepsSlider"
+                    type="range"
+                    min="1"
+                    max="150"
+                    class="slider"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="pauseBetweenGenerationsSlider"
+                >Pause between generations:
+                <span id="pauseBetweenGenerationsValue">0</span> ms</label
+              >
+              <input
+                id="pauseBetweenGenerationsSlider"
+                type="range"
+                min="0"
+                max="2000"
+                class="slider"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="mutationProbabilitySlider"
+                >Mutation probability:
+                <span id="mutationProbabilityValue">0</span>%</label
+              >
+              <input
+                id="mutationProbabilitySlider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.001"
+                class="slider"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="geneInsertionDeletionProbabilitySlider"
+                >Probability of insertion and deletion of genes:
+                <span id="geneInsertionDeletionProbabilityValue">0</span
+                >%</label
+              >
+              <input
+                id="geneInsertionDeletionProbabilitySlider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.001"
+                class="slider"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="stepsPerGenSlider"
+                >Steps per gen: <span id="stepsPerGenValue">0</span></label
+              >
+              <input
+                id="stepsPerGenSlider"
+                type="range"
+                min="10"
+                max="2000"
+                class="slider"
+              />
+            </div>
+          </div>
         </div>
 
         <div class="col" data-tab-group>
@@ -47,6 +143,12 @@
             </button>
             <button
               class="btn btn-tab transparent-light"
+              data-tab-target="initialSettingsTabContent"
+            >
+              Initial Settings
+            </button>
+            <button
+              class="btn btn-tab transparent-light"
               data-tab-target="aboutTabContent"
             >
               About
@@ -55,13 +157,103 @@
 
           <div class="tab-content">
             <div id="genomeTabContent">
-              <h2 class="text-center">Genome</h2>
-
+              <h2 class="text-center">Preview neuronal network:</h2>
+              <canvas id="previewCanvas"></canvas>
               <textarea name="" id="genomePreview" cols="30" rows="10" readonly>
     Pause the simulation and click a creature to see its genome</textarea
               >
-              <h2 class="text-center">Preview neuronal network:</h2>
-              <canvas id="previewCanvas"></canvas>
+            </div>
+
+            <div id="initialSettingsTabContent">
+              <p>
+                You need to restart the simulation for these settings to work:
+              </p>
+
+              <div class="row g-md-2">
+                <div class="col-md">
+                  <div class="input-group">
+                    <label for="worldSizeInput">World size</label>
+                    <input
+                      id="worldSizeInput"
+                      type="number"
+                      min="10"
+                      max="500"
+                    />
+                  </div>
+                </div>
+                <div class="col-md">
+                  <div class="input-group">
+                    <label for="initialPopulationInput"
+                      >Initial population</label
+                    >
+                    <input
+                      id="initialPopulationInput"
+                      type="number"
+                      min="1"
+                      max="2000"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-md-2">
+                <div class="col-md">
+                  <div class="input-group">
+                    <label for="initialGenomeSizeInput"
+                      >Initial genome size</label
+                    >
+                    <input
+                      id="initialGenomeSizeInput"
+                      type="number"
+                      min="2"
+                      max="1000"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md">
+                  <div class="input-group">
+                    <label for="maxGenomeSizeInput">Max genome size</label>
+                    <input
+                      id="maxGenomeSizeInput"
+                      type="number"
+                      min="2"
+                      max="1000"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md">
+                  <div class="input-group">
+                    <label for="maxNumberNeuronsInput">Max neurons</label>
+                    <input
+                      id="maxNumberNeuronsInput"
+                      type="number"
+                      min="1"
+                      max="128"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-md-2">
+                <div class="col-md">
+                  <div class="input-group">
+                    <label for="mutationModeSelect">Mutation mode</label>
+                    <select id="mutationModeSelect">
+                      <option value="wholeGene">Whole gene</option>
+                      <option value="singleBit">Single bit</option>
+                      <option value="singleHexDigit">Single hex digit</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <h2>Sensors</h2>
+              <div id="sensorList"></div>
+
+              <h2>Actions</h2>
+              <div id="actionList"></div>
             </div>
 
             <div id="aboutTabContent">
@@ -72,184 +264,6 @@
                 >
               </p>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-2">
-        <div class="col">
-          <h2 class="text-center">Initial data</h2>
-          <p>You need to restart the simulation for these settings to work:</p>
-
-          <div class="row g-md-2">
-            <div class="col-md">
-              <div class="input-group">
-                <label for="worldSizeInput">World size</label>
-                <input id="worldSizeInput" type="number" min="10" max="500" />
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="input-group">
-                <label for="initialPopulationInput">Initial population</label>
-                <input
-                  id="initialPopulationInput"
-                  type="number"
-                  min="1"
-                  max="2000"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="row g-md-2">
-            <div class="col-md">
-              <div class="input-group">
-                <label for="initialGenomeSizeInput">Initial genome size</label>
-                <input
-                  id="initialGenomeSizeInput"
-                  type="number"
-                  min="2"
-                  max="1000"
-                />
-              </div>
-            </div>
-
-            <div class="col-md">
-              <div class="input-group">
-                <label for="maxGenomeSizeInput">Max genome size</label>
-                <input
-                  id="maxGenomeSizeInput"
-                  type="number"
-                  min="2"
-                  max="1000"
-                />
-              </div>
-            </div>
-
-            <div class="col-md">
-              <div class="input-group">
-                <label for="maxNumberNeuronsInput">Max neurons</label>
-                <input
-                  id="maxNumberNeuronsInput"
-                  type="number"
-                  min="1"
-                  max="128"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="row g-md-2">
-            <div class="col-md">
-              <div class="input-group">
-                <label for="mutationModeSelect">Mutation mode</label>
-                <select id="mutationModeSelect">
-                  <option value="wholeGene">Whole gene</option>
-                  <option value="singleBit">Single bit</option>
-                  <option value="singleHexDigit">Single hex digit</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <h2>Sensors</h2>
-          <div id="sensorList"></div>
-
-          <h2>Actions</h2>
-          <div id="actionList"></div>
-        </div>
-
-        <div class="col">
-          <h2 class="text-center">Dynamic values</h2>
-
-          <div class="row g-md-2">
-            <div class="col-md">
-              <div class="input-group">
-                <label for="timePerStepSlider"
-                  >Time per step: <span id="timePerStepValue">0</span> ms</label
-                >
-                <input
-                  id="timePerStepSlider"
-                  type="range"
-                  min="0"
-                  max="250"
-                  class="slider"
-                />
-              </div>
-            </div>
-
-            <div class="col-md">
-              <div class="input-group">
-                <label for="immediateStepsSlider"
-                  >Immediate steps:
-                  <span id="immediateStepsValue">0</span></label
-                >
-                <input
-                  id="immediateStepsSlider"
-                  type="range"
-                  min="1"
-                  max="150"
-                  class="slider"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="input-group">
-            <label for="pauseBetweenGenerationsSlider"
-              >Pause between generations:
-              <span id="pauseBetweenGenerationsValue">0</span> ms</label
-            >
-            <input
-              id="pauseBetweenGenerationsSlider"
-              type="range"
-              min="0"
-              max="2000"
-              class="slider"
-            />
-          </div>
-
-          <div class="input-group">
-            <label for="mutationProbabilitySlider"
-              >Mutation probability:
-              <span id="mutationProbabilityValue">0</span>%</label
-            >
-            <input
-              id="mutationProbabilitySlider"
-              type="range"
-              min="0"
-              max="1"
-              step="0.001"
-              class="slider"
-            />
-          </div>
-
-          <div class="input-group">
-            <label for="geneInsertionDeletionProbabilitySlider"
-              >Probability of insertion and deletion of genes:
-              <span id="geneInsertionDeletionProbabilityValue">0</span>%</label
-            >
-            <input
-              id="geneInsertionDeletionProbabilitySlider"
-              type="range"
-              min="0"
-              max="1"
-              step="0.001"
-              class="slider"
-            />
-          </div>
-
-          <div class="input-group">
-            <label for="stepsPerGenSlider"
-              >Steps per gen: <span id="stepsPerGenValue">0</span></label
-            >
-            <input
-              id="stepsPerGenSlider"
-              type="range"
-              min="10"
-              max="2000"
-              class="slider"
-            />
           </div>
         </div>
       </div>

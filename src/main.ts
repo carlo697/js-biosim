@@ -35,7 +35,7 @@ const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new EastWallSelection();
 const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 
-world.obstacles = [new RectangleObstacle(world, 0.15, 0.25, 0.1, 0.5)];
+// world.obstacles = [new RectangleObstacle(world, 0.15, 0.25, 0.1, 0.5)];
 
 // world.obstacles = [new RectObstacle(world, 95, 95, 5, 5, false)];
 
@@ -89,6 +89,29 @@ world.obstacles = [new RectangleObstacle(world, 0.15, 0.25, 0.1, 0.5)];
 //   new RectangleObstacle(world, 0.2, 0.2, 0.1, 0.8),
 //   new RectangleObstacle(world, 0.45, 0.2, 0.1, 0.8),
 //   new RectangleObstacle(world, 0.7, 0.2, 0.1, 0.8),
+// ];
+
+// world.obstacles = [
+//   new RectangleObstacle(world, 0.2, 0.2, 0.1, 0.8),
+//   new RectangleObstacle(world, 0.45, 0.2, 0.1, 0.8),
+//   new RectangleObstacle(world, 0.7, 0.2, 0.1, 0.8),
+//   new RectangleObstacle(world, 0, 0.6, 1, 0.4),
+// ];
+
+world.obstacles = [
+  new RectangleObstacle(world, 0.1, 0.1, 0.3, 0.8),
+  new RectangleObstacle(world, 0.6, 0.1, 0.3, 0.8),
+];
+
+// Rounding tests
+// world.obstacles = [
+//   new RectangleObstacle(world, 0, 0, 0.25, 0.4),
+//   new RectangleObstacle(world, 0, 0.4, 0.5, 0.2),
+//   new RectangleObstacle(world, 0, 0.6, 1, 0.4),
+
+//   new RectangleObstacle(world, 0, 0, 25, 40, false),
+//   new RectangleObstacle(world, 0, 40, 50, 20, false),
+//   new RectangleObstacle(world, 0, 60, 100, 40, false),
 // ];
 
 // Sensors
