@@ -24,6 +24,7 @@ import VerticalPositionSensor from "../creature/sensors/VerticalPositionSensor";
 import VerticalSpeedSensor from "../creature/sensors/VerticalSpeedSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
+import { initializeTabsInDOM } from "./Tabs";
 
 export default class WebUI {
   world: World;
@@ -230,6 +231,9 @@ export default class WebUI {
       ?.addEventListener("click", this.restart.bind(this));
 
     this.setupCanvas();
+
+    // Tabs
+    initializeTabsInDOM();
   }
 
   onStartGeneration() {

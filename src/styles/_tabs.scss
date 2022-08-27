@@ -1,0 +1,40 @@
+@import "variables";
+
+.btn {
+  &.btn-tab {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    &:first-of-type {
+      border-top-right-radius: 0;
+    }
+
+    &:last-of-type {
+      border-top-left-radius: 0;
+    }
+
+    &:not(:first-of-type):not(:last-of-type) {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    &.active {
+      border-bottom: 2px solid $white;
+      border-radius: 0;
+    }
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.tabs {
+  position: relative;
+  top: 2px;
+}
+
+.tab-content {
+  padding: 1rem 0;
+  border-top: 2px solid $grey;
+}

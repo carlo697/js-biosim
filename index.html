@@ -36,15 +36,43 @@
             <button id="pause" type="button" class="btn">Pause</button>
           </div>
         </div>
-        
-        <div class="col">
-          <h2 class="text-center">Genome</h2>
 
-          <textarea name="" id="genomePreview" cols="30" rows="10" readonly>
-Pause the simulation and click a creature to see its genome</textarea
-          >
-          <h2 class="text-center">Preview neuronal network:</h2>
-          <canvas id="previewCanvas"></canvas>
+        <div class="col" data-tab-group>
+          <div class="row tabs">
+            <button
+              class="btn btn-tab transparent-light"
+              data-tab-target="genomeTabContent"
+            >
+              Genome
+            </button>
+            <button
+              class="btn btn-tab transparent-light"
+              data-tab-target="aboutTabContent"
+            >
+              About
+            </button>
+          </div>
+
+          <div class="tab-content">
+            <div id="genomeTabContent">
+              <h2 class="text-center">Genome</h2>
+
+              <textarea name="" id="genomePreview" cols="30" rows="10" readonly>
+    Pause the simulation and click a creature to see its genome</textarea
+              >
+              <h2 class="text-center">Preview neuronal network:</h2>
+              <canvas id="previewCanvas"></canvas>
+            </div>
+
+            <div id="aboutTabContent">
+              <p>
+                Source code:
+                <a href="https://github.com/carlo697/js-biosim" target="_blank"
+                  >https://github.com/carlo697/js-biosim</a
+                >
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

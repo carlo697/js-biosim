@@ -1,7 +1,4 @@
-$sm: 576px;
-$md: 768px;
-$lg: 992px;
-$xl: 1200px;
+@import "variables";
 
 * {
   box-sizing: border-box;
@@ -46,31 +43,6 @@ body {
   padding: 2rem;
   width: 100%;
   margin: 0 auto;
-}
-
-.btn {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-
-  &:hover {
-    border-color: #646cff;
-  }
-
-  &:focus,
-  &:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
-
-  &.red {
-    background-color: rgb(171, 47, 47);
-  }
 }
 
 #canvas {
@@ -232,3 +204,10 @@ body {
     }
   }
 }
+
+.hide {
+  display: none;
+}
+
+@import "buttons";
+@import "tabs";
