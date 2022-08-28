@@ -39,7 +39,7 @@ body {
 }
 
 #app {
-  max-width: 1400px;
+  max-width: 1600px;
   padding: 2rem;
   width: 100%;
   margin: 0 auto;
@@ -139,6 +139,7 @@ body {
   display: none;
 }
 
+@import "text";
 @import "buttons";
 @import "tabs";
 @import "grid";

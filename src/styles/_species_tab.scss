@@ -12,7 +12,7 @@
   gap: 0.5rem;
 
   &.active {
-    border: 1px solid white;
+    border: 3px solid white;
   }
 }
 
@@ -25,7 +25,7 @@
   overflow-y: auto;
 }
 
-#speciesInfo {
+.species-info {
   padding: 0 1rem;
 
   @include use-breakpoint(lg) {

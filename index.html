@@ -137,21 +137,15 @@
           <div class="tabs">
             <button
               class="btn btn-tab transparent-light"
-              data-tab-target="genomeTabContent"
+              data-tab-target="populationTabContent"
             >
-              Genome
+              Population
             </button>
             <button
               class="btn btn-tab transparent-light"
               data-tab-target="initialSettingsTabContent"
             >
               Initial Settings
-            </button>
-            <button
-              class="btn btn-tab transparent-light"
-              data-tab-target="populationTabContent"
-            >
-              Population
             </button>
             <button
               class="btn btn-tab transparent-light"
@@ -162,12 +156,51 @@
           </div>
 
           <div class="tab-content">
-            <div id="genomeTabContent">
-              <h2 class="text-center">Preview neuronal network:</h2>
-              <canvas id="previewCanvas"></canvas>
-              <textarea name="" id="genomePreview" cols="30" rows="10" readonly>
-    Pause the simulation and click a creature to see its genome</textarea
-              >
+            <div id="populationTabContent">
+              <div class="row">
+                <div class="col">
+                  <div class="species-info" id="populationTabInfo">
+                    <p>
+                      In this tab you can see a list of the top 40 creatures in
+                      the simulation. This list is ordered by population
+                    </p>
+                    <p>
+                      Click a creature on the left or on the map to see more
+                      information about population, genes, and neural network.
+                    </p>
+                  </div>
+
+                  <div id="speciesInfo" class="species-info">
+                    <p>Population: <span id="speciesPopulation">0</span></p>
+                    <p>
+                      Population percentage:
+                      <span id="speciesPopulationPercentage">0</span>
+                    </p>
+                    <div class="alert danger" id="speciesWarning">
+                      This species is no longer on this list. It might have went
+                      extinct.
+                    </div>
+
+                    <h2 class="text-center">Neuronal network</h2>
+                    <canvas id="previewCanvas"></canvas>
+                    <textarea
+                      name=""
+                      id="genomePreview"
+                      cols="30"
+                      rows="10"
+                      readonly
+                    >
+                    </textarea>
+                  </div>
+                </div>
+
+                <div class="col-5 col-lg-4 col-xl-3">
+                  <div class="text-center">
+                    <span id="speciesCount">1000</span> Species
+                  </div>
+                  <div id="speciesList"></div>
+                </div>
+              </div>
             </div>
 
             <div id="initialSettingsTabContent">
@@ -260,27 +293,6 @@
 
               <h2>Actions</h2>
               <div id="actionList"></div>
-            </div>
-
-            <div id="populationTabContent">
-              <div class="row">
-                <div class="col-5 col-lg-4 col-xl-3">
-                  <div id="speciesList"></div>
-                </div>
-                <div class="col">
-                  <div id="speciesInfo">
-                    <p>Population: <span id="speciesPopulation">0</span></p>
-                    <p>
-                      Population percentage:
-                      <span id="speciesPopulationPercentage">0</span>
-                    </p>
-                    <div class="alert danger" id="speciesWarning">
-                      This species is no longer on this list. It might have
-                      died.
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div id="aboutTabContent">

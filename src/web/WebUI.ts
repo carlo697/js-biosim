@@ -4,11 +4,6 @@ import MoveNorthAction from "../creature/actions/MoveNorthAction";
 import MoveSouthAction from "../creature/actions/MoveSouthAction";
 import MoveWestAction from "../creature/actions/MoveWestAction";
 import RandomMoveAction from "../creature/actions/RandomMoveAction";
-import {
-  drawNeuronalNetwork,
-  GraphSimulation,
-} from "../creature/brain/Helpers/drawNeuronalNetwork";
-import Creature from "../creature/Creature";
 import AgeSensor from "../creature/sensors/AgeSensor";
 import BorderDistanceSensor from "../creature/sensors/BorderDistanceSensor";
 import CreatureSensor from "../creature/sensors/CreatureSensor";
@@ -36,18 +31,9 @@ export default class WebUI {
   lastSurvivors: HTMLElement;
   survivalRate: HTMLElement;
 
-  // Genome preview information
-  networkCanvas: HTMLCanvasElement;
-  networkCanvasContext: CanvasRenderingContext2D;
-  genomeTextarea: HTMLInputElement;
-  originalGenomePreviewText: string | null;
-
   // Sensors and actions
   sensors: { [key: string]: CreatureSensor };
   actions: { [key: string]: CreatureAction };
-
-  // d3
-  d3Simulation: GraphSimulation | undefined;
 
   // Tab classes
   initialSettings: InitialSettings;
@@ -88,18 +74,6 @@ export default class WebUI {
     ) as HTMLElement;
     this.survivalRate = document.querySelector("#survivalRate") as HTMLElement;
 
-    // Genome preview information
-    this.networkCanvas = document.querySelector(
-      "#previewCanvas"
-    ) as HTMLCanvasElement;
-    this.networkCanvasContext = this.networkCanvas.getContext(
-      "2d"
-    ) as CanvasRenderingContext2D;
-    this.genomeTextarea = document.querySelector(
-      "#genomePreview"
-    ) as HTMLInputElement;
-    this.originalGenomePreviewText = this.genomeTextarea.textContent;
-
     world.events.addEventListener(
       WorldEvents.startGeneration,
       this.onStartGeneration.bind(this)
@@ -108,11 +82,6 @@ export default class WebUI {
     world.events.addEventListener(
       WorldEvents.startStep,
       this.onStartStep.bind(this)
-    );
-
-    world.events.addEventListener(
-      WorldEvents.initializeWorld,
-      this.onInitializeWorld.bind(this)
     );
 
     // timePerStep slider
@@ -190,8 +159,6 @@ export default class WebUI {
       .querySelector("#restart")
       ?.addEventListener("click", this.restart.bind(this));
 
-    this.setupCanvas();
-
     // Tabs
     initializeTabsInDOM();
 
@@ -225,10 +192,6 @@ export default class WebUI {
     if (stepText) {
       stepText.textContent = this.world.currentStep.toString();
     }
-  }
-
-  onInitializeWorld() {
-    this.clearGenomePreview();
   }
 
   setupSlider(
@@ -265,109 +228,6 @@ export default class WebUI {
     } else {
       this.world.pause();
       (e.target as HTMLElement).textContent = "Resume";
-    }
-  }
-
-  setupCanvas() {
-    this.world.canvas.addEventListener("click", (e: MouseEvent) =>
-      this.onClickCanvas(e)
-    );
-
-    this.world.canvas.addEventListener("mouseenter", () =>
-      this.onMouseEnterCanvas()
-    );
-
-    this.world.canvas.addEventListener("mousemove", (e: MouseEvent) =>
-      this.onMouseMoveCanvas(e)
-    );
-  }
-
-  clearGenomePreview() {
-    this.networkCanvasContext.clearRect(
-      0,
-      0,
-      this.networkCanvas.width,
-      this.networkCanvas.height
-    );
-    this.genomeTextarea.textContent = this.originalGenomePreviewText;
-  }
-
-  getLabelForNeuron(creature: Creature, index: number, group: number) {
-    if (group === 1) {
-      // Create a list of names
-      const names: string[] = [];
-      for (let sensorIdx = 0; sensorIdx < creature.sensors.length; ) {
-        const sensor = creature.sensors[sensorIdx];
-
-        for (let i = 0; i < sensor.outputCount; i++) {
-          let name = `(In) ${sensor.name}`;
-
-          if (sensor.outputCount > 1) {
-            // If the sensor has more than one output
-            name += ` [${i + 1}]`;
-          }
-
-          names.push(name);
-          sensorIdx++;
-        }
-      }
-
-      return names[index];
-    } else if (group === 2) {
-      return `(Out) ${this.world.actions[index].name}`;
-    } else if (group === 3) {
-      return index.toString();
-    }
-    return undefined;
-  }
-
-  onClickCanvas(e: MouseEvent) {
-    const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
-
-    // Get creature
-    const creature = this.world.grid[worldX][worldY][0] as Creature;
-
-    if (creature) {
-      const inputs = creature.calculateInputs();
-      const outputs = creature.calculateOutputs(inputs);
-
-      if (this.d3Simulation) {
-        this.d3Simulation.stop();
-        this.d3Simulation = undefined;
-      }
-
-      this.d3Simulation = drawNeuronalNetwork(
-        creature.brain,
-        this.networkCanvas,
-        (index: number, group: number) =>
-          this.getLabelForNeuron(creature, index, group)
-      );
-
-      this.genomeTextarea.textContent = `Genome size, neuronal links = ${
-        creature.genome.genes.length
-      }\nTotal neurons = ${creature.brain.totalNeurons}\nInternal neurons = ${
-        creature.brain.totalInternalNeurons
-      }\n\nInputs:\n[${inputs
-        .map((value) => value.toFixed(3))
-        .join(", ")}]\nOutputs:\n[${outputs
-        .map((value) => value.toFixed(3))
-        .join(
-          ", "
-        )}]\n\nBinary:\n\n${creature.genome.toBitString()}\n\nDecimal:\n${creature.genome.toDecimalString()}\n\nHex:\n${creature.genome.toHexadecimalString()}`;
-    } else {
-      this.clearGenomePreview();
-    }
-  }
-
-  onMouseEnterCanvas() {
-    this.world.computeGrid();
-  }
-
-  onMouseMoveCanvas(e: MouseEvent) {
-    if (this.world.isPaused()) {
-      const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
-      this.world.redraw();
-      this.world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
     }
   }
 }
