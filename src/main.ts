@@ -33,6 +33,7 @@ const world = new World(
 // Environment
 const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new EastWallSelection();
+// const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 
 // world.obstacles = [new RectangleObstacle(world, 0.15, 0.25, 0.1, 0.5)];
@@ -44,13 +45,13 @@ const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 //   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
 // ];
 
-// world.obstacles = [
-//   new RectangleObstacle(world, 0, 0, 0.2, 0.2),
-//   new RectangleObstacle(world, 0.2, 0.2, 0.2, 0.2),
-//   new RectangleObstacle(world, 0.4, 0.4, 0.2, 0.2),
-//   new RectangleObstacle(world, 0.6, 0.6, 0.2, 0.2),
-//   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
-// ];
+world.obstacles = [
+  new RectangleObstacle(world, 0, 0, 0.2, 0.2),
+  new RectangleObstacle(world, 0.2, 0.2, 0.2, 0.2),
+  new RectangleObstacle(world, 0.4, 0.4, 0.2, 0.2),
+  new RectangleObstacle(world, 0.6, 0.6, 0.2, 0.2),
+  new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
+];
 
 // world.obstacles = [new RectangleObstacle(world, 0, 0, 0.6, 0.6)];
 // world.obstacles = [new RectangleObstacle(world, 0.15, 0.15, 0.5, 0.5)];
@@ -98,10 +99,10 @@ const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 //   new RectangleObstacle(world, 0, 0.6, 1, 0.4),
 // ];
 
-world.obstacles = [
-  new RectangleObstacle(world, 0.1, 0.1, 0.3, 0.8),
-  new RectangleObstacle(world, 0.6, 0.1, 0.3, 0.8),
-];
+// world.obstacles = [
+//   new RectangleObstacle(world, 0.1, 0.1, 0.3, 0.8),
+//   new RectangleObstacle(world, 0.6, 0.1, 0.3, 0.8),
+// ];
 
 // Rounding tests
 // world.obstacles = [
@@ -156,9 +157,9 @@ world.deletionRatio = 0.5;
 world.mutationMode = MutationMode.wholeGene;
 world.pauseBetweenGenerations = 0;
 
+// Create UI
+new WebUI(world);
+
 // Initialize world and start simulation
 world.initializeWorld();
 world.startRun();
-
-// Create UI
-new WebUI(world);

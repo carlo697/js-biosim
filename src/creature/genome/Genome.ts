@@ -30,100 +30,104 @@ export default class Genome {
   }
 
   clone(
-    mutationMode: MutationMode,
-    genomeMaxLength: number,
+    allowMutation: boolean = false,
+    mutationMode: MutationMode = MutationMode.wholeGene,
+    genomeMaxLength: number = 0,
     mutationProbability: number = 0,
     geneInsertionDeletionProbability: number = 0,
     deletionRate: number = 0
   ): Genome {
     const newGenes = this.genes.slice();
-    if (probabilityToBool(mutationProbability)) {
-      // Select a random gene to mutate
-      const geneIndex = this.getRandomGeneIndex();
-      const originalGene = this.genes[geneIndex];
 
-      if (mutationMode === MutationMode.singleBit) {
-        // Select a mask for a random bit in the 32 bits of the gene
-        const randomBitMask = 1 << Math.round(Math.random() * geneBitSize);
-        // Swap bit in the gene
-        let newGene = originalGene;
-        newGene ^= randomBitMask;
-        newGenes[geneIndex] = newGene;
+    if (allowMutation) {
+      if (probabilityToBool(mutationProbability)) {
+        // Select a random gene to mutate
+        const geneIndex = this.getRandomGeneIndex();
+        const originalGene = this.genes[geneIndex];
 
-        if (logMutations) {
-          console.log("Mutation");
-          if (logBeforeAndAfter) {
-            console.log(
-              "New:",
-              paddingLeft(numberToBitString(originalGene), binaryPad)
-            );
-            console.log(
-              "Old:",
-              paddingLeft(numberToBitString(newGene), binaryPad)
-            );
+        if (mutationMode === MutationMode.singleBit) {
+          // Select a mask for a random bit in the 32 bits of the gene
+          const randomBitMask = 1 << Math.round(Math.random() * geneBitSize);
+          // Swap bit in the gene
+          let newGene = originalGene;
+          newGene ^= randomBitMask;
+          newGenes[geneIndex] = newGene;
+
+          if (logMutations) {
+            console.log("Mutation");
+            if (logBeforeAndAfter) {
+              console.log(
+                "New:",
+                paddingLeft(numberToBitString(originalGene), binaryPad)
+              );
+              console.log(
+                "Old:",
+                paddingLeft(numberToBitString(newGene), binaryPad)
+              );
+            }
           }
-        }
-      } else if (mutationMode === MutationMode.singleHexDigit) {
-        // Get an array of hex digits of the whole gene
-        const hexArray = paddingLeft(
-          (originalGene >>> 0).toString(16),
-          hexadecimalPad
-        ).split("");
+        } else if (mutationMode === MutationMode.singleHexDigit) {
+          // Get an array of hex digits of the whole gene
+          const hexArray = paddingLeft(
+            (originalGene >>> 0).toString(16),
+            hexadecimalPad
+          ).split("");
 
-        // Select a random digit and change it with a random character
-        const randomBitIndex: number = Math.round(
-          Math.random() * (hexArray.length - 1)
-        );
-        hexArray[randomBitIndex] = getRandomHexChar();
+          // Select a random digit and change it with a random character
+          const randomBitIndex: number = Math.round(
+            Math.random() * (hexArray.length - 1)
+          );
+          hexArray[randomBitIndex] = getRandomHexChar();
 
-        // Set new gene
-        const newGene = parseInt(hexArray.join(""), 16);
-        newGenes[geneIndex] = newGene;
+          // Set new gene
+          const newGene = parseInt(hexArray.join(""), 16);
+          newGenes[geneIndex] = newGene;
 
-        if (logMutations) {
-          console.log("Mutation");
-          if (logBeforeAndAfter) {
-            console.log(
-              "New:",
-              paddingLeft(numberToBitString(originalGene), binaryPad)
-            );
-            console.log(
-              "Old:",
-              paddingLeft(numberToBitString(newGene), binaryPad)
-            );
+          if (logMutations) {
+            console.log("Mutation");
+            if (logBeforeAndAfter) {
+              console.log(
+                "New:",
+                paddingLeft(numberToBitString(originalGene), binaryPad)
+              );
+              console.log(
+                "Old:",
+                paddingLeft(numberToBitString(newGene), binaryPad)
+              );
+            }
           }
-        }
-      } else if (mutationMode === MutationMode.wholeGene) {
-        // Set new gene
-        const newGene = Math.round(Math.random() * (4294967296 - 1));
-        newGenes[geneIndex] = newGene;
+        } else if (mutationMode === MutationMode.wholeGene) {
+          // Set new gene
+          const newGene = Math.round(Math.random() * (4294967296 - 1));
+          newGenes[geneIndex] = newGene;
 
-        if (logMutations) {
-          console.log("Mutation");
-          if (logBeforeAndAfter) {
-            console.log(
-              "New:",
-              paddingLeft(numberToBitString(originalGene), binaryPad)
-            );
-            console.log(
-              "Old:",
-              paddingLeft(numberToBitString(newGene), binaryPad)
-            );
+          if (logMutations) {
+            console.log("Mutation");
+            if (logBeforeAndAfter) {
+              console.log(
+                "New:",
+                paddingLeft(numberToBitString(originalGene), binaryPad)
+              );
+              console.log(
+                "Old:",
+                paddingLeft(numberToBitString(newGene), binaryPad)
+              );
+            }
           }
         }
       }
-    }
 
-    if (Math.random() < geneInsertionDeletionProbability) {
-      if (Math.random() < deletionRate) {
-        // Deletion
-        if (newGenes.length > 1) {
-          const randomIndex = Math.floor(Math.random() * newGenes.length);
-          newGenes.splice(randomIndex, 1);
+      if (Math.random() < geneInsertionDeletionProbability) {
+        if (Math.random() < deletionRate) {
+          // Deletion
+          if (newGenes.length > 1) {
+            const randomIndex = Math.floor(Math.random() * newGenes.length);
+            newGenes.splice(randomIndex, 1);
+          }
+        } else if (newGenes.length < genomeMaxLength) {
+          // Insertion
+          newGenes.push(Genome.generateRandomGene());
         }
-      } else if (newGenes.length < genomeMaxLength) {
-        // Insertion
-        newGenes.push(Genome.generateRandomGene());
       }
     }
 
@@ -144,7 +148,11 @@ export default class Genome {
       .join(" ");
   }
 
-  toDecimalString(): string {
+  toDecimalString(usePad: boolean = true): string {
+    if (!usePad) {
+      return this.genes.map((value) => value.toString()).join("");
+    }
+
     return this.genes
       .map((value) => paddingLeft(value.toString(), decimalPad))
       .join(" ");
@@ -179,5 +187,19 @@ export default class Genome {
     }
 
     return numberToRGB(sum);
+  }
+
+  compare(genome: Genome): boolean {
+    if (this.genes.length != genome.genes.length) {
+      return false;
+    }
+
+    for (let geneIdx = 0; geneIdx < this.genes.length; geneIdx++) {
+      if (this.genes[geneIdx] != genome.genes[geneIdx]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

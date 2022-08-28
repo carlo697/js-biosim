@@ -193,6 +193,10 @@ export default class World {
     this.currentGen = 0;
     this.currentStep = 0;
 
+    this.events.dispatchEvent(
+      new CustomEvent(WorldEvents.startGeneration, { detail: { world: this } })
+    );
+
     this.computeStep();
   }
 

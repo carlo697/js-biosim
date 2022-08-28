@@ -1,0 +1,34 @@
+@import "grid";
+
+.species-icon {
+  width: 100%;
+  aspect-ratio: 1/1;
+  max-width: 50px;
+}
+
+.btn-species {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+
+  &.active {
+    border: 1px solid white;
+  }
+}
+
+#speciesList {
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#speciesInfo {
+  padding: 0 1rem;
+
+  @include use-breakpoint(lg) {
+    padding: 0 1.5rem;
+  }
+}

@@ -61,8 +61,6 @@ body {
   padding: 1rem;
 }
 
-
-
 .text-center {
   text-align: center;
 }
@@ -144,3 +142,7 @@ body {
 @import "buttons";
 @import "tabs";
 @import "grid";
+@import "alerts";
+
+// Web
+@import "species_tab";

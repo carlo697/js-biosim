@@ -9,7 +9,7 @@
   <body>
     <div id="app">
       <div class="row g-2">
-        <div class="col">
+        <div class="col-md">
           <div class="header">
             <h1 class="text-center">
               Generation: <span id="generation">0</span>, step:
@@ -133,8 +133,8 @@
           </div>
         </div>
 
-        <div class="col" data-tab-group>
-          <div class="row tabs">
+        <div class="col-md" data-tab-group>
+          <div class="tabs">
             <button
               class="btn btn-tab transparent-light"
               data-tab-target="genomeTabContent"
@@ -146,6 +146,12 @@
               data-tab-target="initialSettingsTabContent"
             >
               Initial Settings
+            </button>
+            <button
+              class="btn btn-tab transparent-light"
+              data-tab-target="populationTabContent"
+            >
+              Population
             </button>
             <button
               class="btn btn-tab transparent-light"
@@ -254,6 +260,27 @@
 
               <h2>Actions</h2>
               <div id="actionList"></div>
+            </div>
+
+            <div id="populationTabContent">
+              <div class="row">
+                <div class="col-5 col-lg-4 col-xl-3">
+                  <div id="speciesList"></div>
+                </div>
+                <div class="col">
+                  <div id="speciesInfo">
+                    <p>Population: <span id="speciesPopulation">0</span></p>
+                    <p>
+                      Population percentage:
+                      <span id="speciesPopulationPercentage">0</span>
+                    </p>
+                    <div class="alert danger" id="speciesWarning">
+                      This species is no longer on this list. It might have
+                      died.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div id="aboutTabContent">

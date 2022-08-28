@@ -1,0 +1,9 @@
+@import "variables";
+
+.alert {
+  padding: 1rem;
+
+  &.danger {
+    background-color: $red;
+  }
+}

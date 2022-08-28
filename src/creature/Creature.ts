@@ -42,6 +42,7 @@ export default class Creature {
 
     if (genome) {
       this.genome = genome.clone(
+        true,
         this.world.mutationMode,
         this.world.maxGenomeSize,
         this.world.mutationProbability,

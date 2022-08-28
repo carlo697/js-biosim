@@ -24,6 +24,7 @@ import VerticalSpeedSensor from "../creature/sensors/VerticalSpeedSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
 import InitialSettings from "./InitialSettings";
+import PopulationTab from "./PopulationTab";
 import { initializeTabsInDOM } from "./Tabs";
 
 export default class WebUI {
@@ -196,6 +197,7 @@ export default class WebUI {
 
     // Initial settings
     this.initialSettings = new InitialSettings(this, world);
+    new PopulationTab(this);
   }
 
   onStartGeneration() {
