@@ -187,7 +187,7 @@ function ForceGraph(
     const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
     const bend =
-      (0.1 + Math.min(1, distance / 1000) * 0.5) *
+      (0.1 + (d.value / 4) * 0.5 + Math.min(1, distance / 1000) * 0.5) *
       (d.source.index % 2 === 0 ? -1 : 1);
 
     drawBendLine(
