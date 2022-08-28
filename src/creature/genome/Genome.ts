@@ -98,7 +98,7 @@ export default class Genome {
           }
         } else if (mutationMode === MutationMode.wholeGene) {
           // Set new gene
-          const newGene = Math.round(Math.random() * (4294967296 - 1));
+          const newGene = Genome.generateRandomGene();
           newGenes[geneIndex] = newGene;
 
           if (logMutations) {
@@ -135,7 +135,16 @@ export default class Genome {
   }
 
   static generateRandomGene(): number {
-    return Math.round(Math.random() * maxGenNumber);
+    let result = 0;
+    for (let i = 1; i <= geneBitSize; i++) {
+      if (Math.random() < 0.5) {
+        // Random flip
+        result ^= 1 << i;
+      }
+    }
+    return result;
+
+    // return Math.round(Math.random() * maxGenNumber);
   }
 
   getRandomGeneIndex() {
