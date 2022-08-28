@@ -149,6 +149,8 @@ export default class PopulationTab {
       button.addEventListener("click", () => {
         if (species.genomeKey !== this.selectedSpecies?.genomeKey) {
           this.selectSpecies(species.genomeKey);
+        } else {
+          this.selectSpecies(undefined);
         }
       });
     });
@@ -161,7 +163,7 @@ export default class PopulationTab {
     return this.species.find((species) => species.genomeKey === genomeString);
   }
 
-  public selectSpecies(genomeString: string) {
+  public selectSpecies(genomeString: string | undefined) {
     this.selectedCreature = undefined;
 
     if (genomeString) {
