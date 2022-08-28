@@ -31,6 +31,7 @@ export default class WebUI {
   lastSurvivors: HTMLElement;
   survivalRate: HTMLElement;
   totalTime: HTMLElement;
+  lastGenerationDuration: HTMLElement;
 
   // Sensors and actions
   sensors: { [key: string]: CreatureSensor };
@@ -75,6 +76,9 @@ export default class WebUI {
     ) as HTMLElement;
     this.survivalRate = document.querySelector("#survivalRate") as HTMLElement;
     this.totalTime = document.querySelector("#totalTime") as HTMLElement;
+    this.lastGenerationDuration = document.querySelector(
+      "#lastGenerationDuration"
+    ) as HTMLElement;
 
     world.events.addEventListener(
       WorldEvents.startGeneration,
@@ -194,6 +198,10 @@ export default class WebUI {
     this.totalTime.textContent = (
       Math.round(this.world.totalTime / 100) / 10
     ).toString();
+
+    // Show the duration of the last generation
+    this.lastGenerationDuration.textContent =
+      this.world.lastGenerationDuration.toString();
   }
 
   onStartStep() {
