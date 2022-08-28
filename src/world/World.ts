@@ -32,11 +32,16 @@ export default class World {
   pauseBetweenGenerations: number = 0;
 
   currentCreatures: Creature[] = [];
+
+  // Stats
   lastCreatureCount: number = 0;
   lastSurvivorsCount: number = 0;
   lastSurvivalRate: number = 0;
   lastGenerationDate: Date = new Date();
   lastGenerationDuration: number = 0;
+  lastPauseDate: Date | undefined = new Date();
+  pauseTime: number = 0;
+  totalTime: number = 0;
 
   populationStrategy: PopulationStrategy = new AsexualRandomPopulation();
   selectionMethod: SelectionMethod = new EastWallSelection();
@@ -84,6 +89,8 @@ export default class World {
       const obstacle = this.obstacles[i];
       obstacle.computePixels();
     }
+
+    this.totalTime = 0;
 
     this.initializeGrid();
     this.computeGrid();
@@ -193,14 +200,22 @@ export default class World {
     this.currentGen = 0;
     this.currentStep = 0;
 
-    this.events.dispatchEvent(
-      new CustomEvent(WorldEvents.startGeneration, { detail: { world: this } })
-    );
-
     this.computeStep();
   }
 
   private async computeStep(): Promise<void> {
+    if (this.currentStep === 0) {
+      this.lastPauseDate = undefined;
+      this.pauseTime = 0;
+      this.lastGenerationDate = new Date();
+
+      this.events.dispatchEvent(
+        new CustomEvent(WorldEvents.startGeneration, {
+          detail: { world: this },
+        })
+      );
+    }
+
     for (let i = 0; i < this.immediateSteps; i++) {
       this.events.dispatchEvent(
         new CustomEvent(WorldEvents.startStep, { detail: { world: this } })
@@ -237,8 +252,10 @@ export default class World {
 
   private async startGeneration(): Promise<void> {
     this.lastGenerationDuration =
-      new Date().getTime() - this.lastGenerationDate.getTime();
+      new Date().getTime() - this.lastGenerationDate.getTime() - this.pauseTime;
     this.lastGenerationDate = new Date();
+    this.pauseTime = 0;
+    this.totalTime += this.lastGenerationDuration;
 
     this.selectAndPopulate();
 
@@ -255,12 +272,21 @@ export default class World {
   }
 
   pause(): void {
-    window.clearTimeout(this.timeoutId);
-    this.timeoutId = undefined;
+    if (this.timeoutId) {
+      window.clearTimeout(this.timeoutId);
+      this.timeoutId = undefined;
+      this.lastPauseDate = new Date();
+    }
   }
 
   resume(): void {
-    this.computeStep();
+    if (!this.timeoutId) {
+      this.pauseTime += this.lastPauseDate
+        ? new Date().getTime() - this.lastPauseDate.getTime()
+        : 0;
+
+      this.computeStep();
+    }
   }
 
   hasBeenInitiated(): boolean {
