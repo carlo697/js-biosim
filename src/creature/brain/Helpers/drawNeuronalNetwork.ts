@@ -335,6 +335,14 @@ export const drawNeuronalNetwork = (
     });
   }
 
+  // Filter unconnected neurons
+  data.nodes = data.nodes.filter(
+    (node) =>
+      data.links.find(
+        (link) => link.source === node.id || link.target === node.id
+      )
+  );
+
   const simulation = ForceGraph(data, canvas, {
     nodeId: (d: any) => d.id,
     nodeGroup: (d: any) => d.group,
