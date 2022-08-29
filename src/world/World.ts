@@ -445,6 +445,30 @@ export default class World {
     this.ctx.fill();
   }
 
+  public drawEllipse(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string
+  ): void {
+    const radiusX = width / 2;
+    const radiusY = height / 2;
+    this.ctx.fillStyle = color;
+
+    this.ctx.beginPath();
+    this.ctx.ellipse(
+      this.canvas.width * ((x + radiusX) / this.size),
+      this.canvas.height * ((y + radiusY) / this.size),
+      this.canvas.width * (radiusX / this.size),
+      this.canvas.height * (radiusY / this.size),
+      0,
+      0,
+      2 * Math.PI
+    );
+    this.ctx.fill();
+  }
+
   public drawRelativeRect(
     x: number,
     y: number,
