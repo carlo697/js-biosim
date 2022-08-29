@@ -385,15 +385,15 @@ export default class World {
 
       const normalizedX = position[0] / this.size;
       const normalizedY = position[1] / this.size;
-      const absoluteSize = (this.canvas.width / this.size) * 0.9;
+      const absoluteSize = 1 / this.size;
 
       this.ctx.fillStyle = creature.getColor();
       this.ctx.beginPath();
       this.ctx.rect(
         normalizedX * this.canvas.width,
         normalizedY * this.canvas.height,
-        absoluteSize,
-        absoluteSize
+        absoluteSize * this.canvas.width,
+        absoluteSize * this.canvas.height
       );
       this.ctx.fill();
     }
