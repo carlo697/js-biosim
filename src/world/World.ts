@@ -372,13 +372,10 @@ export default class World {
 
     // Draw obstacles
     for (let i = 0; i < this.obstacles.length; i++) {
-      const obstacle = this.obstacles[i];
-      if (obstacle.onDrawBeforeCreatures) {
-        obstacle.onDrawBeforeCreatures(this);
-      }
+      this.obstacles[i].onDrawBeforeCreatures?.(this);
     }
 
-    this.selectionMethod.onDrawBeforeCreatures(this);
+    this.selectionMethod?.onDrawBeforeCreatures?.(this);
 
     // Draw creatures
     for (let i = 0; i < this.currentCreatures.length; i++) {
@@ -401,7 +398,12 @@ export default class World {
       this.ctx.fill();
     }
 
-    this.selectionMethod.onDrawAfterCreatures(this);
+    this.selectionMethod?.onDrawAfterCreatures?.(this);
+
+    // Draw obstacles
+    for (let i = 0; i < this.obstacles.length; i++) {
+      this.obstacles[i].onDrawAfterCreatures?.(this);
+    }
   }
 
   public drawRectStroke(

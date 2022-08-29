@@ -17,7 +17,8 @@ export default class RectangleObstacle implements WorldObject {
     public y: number,
     public width: number,
     public height: number,
-    public relative: boolean = true
+    public relative: boolean = true,
+    public color: string = "rgb(60, 60, 60)"
   ) {
     // Calculate transform and pixels
     this.computeTransform();
@@ -36,13 +37,13 @@ export default class RectangleObstacle implements WorldObject {
     }
   }
 
-  onDrawBeforeCreatures(world: World): void {
+  onDrawAfterCreatures(world: World): void {
     world.drawRect(
       this.worldX,
       this.worldY,
       this.worldWidth,
       this.worldHeight,
-      "rgba(0, 0, 0, 0.5)"
+      this.color
     );
   }
 
@@ -81,7 +82,7 @@ export default class RectangleObstacle implements WorldObject {
     ) {
       for (
         let x = this.worldX;
-        x < this.worldRight && y < this.world.size;
+        x < this.worldRight && x < this.world.size;
         x++
       ) {
         this.pixels.push([x, y]);
