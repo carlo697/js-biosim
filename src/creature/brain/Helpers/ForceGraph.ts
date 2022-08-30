@@ -180,28 +180,75 @@ function ForceGraph(
     context.moveTo(d.source.x, d.source.y);
     context.lineTo(d.target.x, d.target.y);
 
+    // Calculate the distance between the two nodes
     const diffX = d.source.x - d.target.x;
     const diffY = d.source.y - d.target.y;
     const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-    const bend =
-      (0.1 + (d.value / 4) * 0.5 + Math.min(1, distance / 1000) * 0.5) *
-      (d.source.index % 2 === 0 ? -1 : 1);
+    if (distance > 0) {
+      // Calculate the bending of the line
+      const bend =
+        (0.1 + (d.value / 4) * 0.5 + Math.min(1, distance / 1000) * 0.5) *
+        (d.source.index % 2 === 0 ? -1 : 1);
 
-    drawBendLine(
-      context,
-      d.source.x,
-      d.source.y,
-      d.target.x,
-      d.target.y,
-      bend,
-      0.015 * width,
-      0.015 * width,
-      false,
-      true,
-      nodeRadius,
-      nodeRadius
-    );
+      // A connection between two different nodes
+      drawBendLine(
+        context,
+        d.source.x,
+        d.source.y,
+        d.target.x,
+        d.target.y,
+        bend,
+        0.015 * width,
+        0.015 * width,
+        false,
+        true,
+        nodeRadius,
+        nodeRadius
+      );
+    } else {
+      // A connection between the same node
+
+      // Find a point away from the nodes
+      const pivotDistance = 0.075 * width;
+      const angle = d.index * 0.5;
+      const pivotDirX = pivotDistance * Math.cos(angle);
+      const pivotDirY = pivotDistance * Math.sin(angle);
+      const pivotX = d.source.x + pivotDirX;
+      const pivotY = d.source.y + pivotDirY;
+
+      // Draw a line from the node to the point
+      drawBendLine(
+        context,
+        d.source.x,
+        d.source.y,
+        pivotX,
+        pivotY,
+        0.5,
+        0.015 * width,
+        0.015 * width,
+        false,
+        false,
+        nodeRadius,
+        0
+      );
+
+      // Draw a line from the point back to the node
+      drawBendLine(
+        context,
+        pivotX,
+        pivotY,
+        d.target.x,
+        d.target.y,
+        0.5,
+        0.015 * width,
+        0.015 * width,
+        false,
+        true,
+        0,
+        nodeRadius
+      );
+    }
   }
 
   function drawNode(d: SimulationNodeDatum) {
