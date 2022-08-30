@@ -1,7 +1,5 @@
-import {
-  drawNeuronalNetwork,
-  GraphSimulation,
-} from "../creature/brain/Helpers/drawNeuronalNetwork";
+import { drawNeuronalNetwork } from "../creature/brain/Helpers/drawNeuronalNetwork";
+import { GraphSimulation } from "../creature/brain/Helpers/ForceGraph";
 import Creature from "../creature/Creature";
 import Genome from "../creature/genome/Genome";
 import { WorldEvents } from "../events/WorldEvents";
