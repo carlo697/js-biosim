@@ -91,12 +91,12 @@ export default class EllipseObject implements WorldObject {
     this.pixels = [];
     for (
       let y = this.worldY;
-      y < this.worldBottom && y < this.world.size;
+      y >= 0 && y < this.worldBottom && y < this.world.size;
       y++
     ) {
       for (
         let x = this.worldX;
-        x < this.worldRight && x < this.world.size;
+        x >= 0 && x < this.worldRight && x < this.world.size;
         x++
       ) {
         // We want to measure the distance to the center of the pixels and
