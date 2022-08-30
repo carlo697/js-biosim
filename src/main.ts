@@ -20,7 +20,7 @@ import CreatureAction from "./creature/actions/CreatureAction";
 import HorizontalBorderDistanceSensor from "./creature/sensors/HorizontalBorderDistanceSensor";
 import VerticalBorderDistanceSensor from "./creature/sensors/VerticalBorderDistanceSensor";
 import BorderDistanceSensor from "./creature/sensors/BorderDistanceSensor";
-import RectangleObject from "./world/objects/RectangleObject";
+import EllipseHealthArea from "./world/areas/EllipseHealthArea";
 
 // Create world
 const world = new World(
@@ -43,13 +43,13 @@ const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 //   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
 // ];
 
-world.obstacles = [
-  new RectangleObject(world, 0, 0, 0.2, 0.2),
-  new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
-  new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
-  new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
-  new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
-];
+// world.obstacles = [
+//   new RectangleObject(world, 0, 0, 0.2, 0.2),
+//   new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
+//   new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
+//   new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
+//   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
+// ];
 
 // world.obstacles = [
 //   new RectangleObject(world, 0, 0, 0.2, 0.2),
@@ -66,6 +66,10 @@ world.obstacles = [
 //   new RectangleHealthArea(world, 0.4, 0.0, 0.2, 1, true, -1),
 //   new EllipseHealthArea(world, 0, 0.0, 0.3, 0.2, true, -1),
 // ];
+
+world.areas = [
+  new EllipseHealthArea(world, 0.375, 0.35, 0.25, 0.3, true, -1),
+];
 
 // world.obstacles = [new RectangleObject(world, 0, 0, 0.6, 0.6)];
 // world.obstacles = [new RectangleObject(world, 0.15, 0.15, 0.5, 0.5)];
