@@ -20,8 +20,8 @@ import HorizontalBorderDistanceSensor from "./creature/sensors/HorizontalBorderD
 import VerticalBorderDistanceSensor from "./creature/sensors/VerticalBorderDistanceSensor";
 import BorderDistanceSensor from "./creature/sensors/BorderDistanceSensor";
 import EllipseHealthArea from "./world/areas/EllipseHealthArea";
-import RectangleReproductiveArea from "./world/areas/reproduction/RectangleReproductiveArea";
-import InsideReproductiveAreaSelection from "./creature/selection/InsideReproductiveAreaSelection";
+import RectangleReproductionArea from "./world/areas/reproduction/RectangleReproductionArea";
+import InsideReproductionAreaSelection from "./creature/selection/InsideReproductionAreaSelection";
 
 // Create world
 const world = new World(
@@ -33,7 +33,7 @@ const world = new World(
 const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new EastWallSelection();
 // const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
-const selectionMethod = new InsideReproductiveAreaSelection();
+const selectionMethod = new InsideReproductionAreaSelection();
 
 // world.obstacles = [new RectangleObject(world, 0.15, 0.25, 0.1, 0.5)];
 
@@ -69,7 +69,7 @@ const selectionMethod = new InsideReproductiveAreaSelection();
 // ];
 
 world.areas = [
-  new RectangleReproductiveArea(world, 0.25, 0.25, 0.5, 0.5, true),
+  new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
   new EllipseHealthArea(world, 0.375, 0.35, 0.25, 0.3, true, -1),
 ];
 
