@@ -2,6 +2,9 @@ import World from "../../world/World";
 import Creature from "../Creature";
 import SelectionMethod from "./SelectionMethod";
 
+/**
+ * @deprecated Use world areas instead
+ */
 export default class CenterRectangleSelection implements SelectionMethod {
   x: number;
   y: number;
@@ -34,8 +37,6 @@ export default class CenterRectangleSelection implements SelectionMethod {
 
     return parents;
   }
-
-  onDrawBeforeCreatures(_world: World): void {}
 
   onDrawAfterCreatures(world: World): void {
     world.drawRelativeRect(
