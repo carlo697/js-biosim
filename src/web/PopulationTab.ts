@@ -306,12 +306,11 @@ export default class PopulationTab {
     const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
 
     // Get creature
-    const creature = this.world.grid[worldX][worldY][0] as Creature;
+    const creature = this.world.grid[worldX][worldY].creature;
 
     if (creature) {
       this.selectCreature(creature);
     } else {
-      // this.clearGenomePreview();
       this.selectCreature(undefined);
     }
   }

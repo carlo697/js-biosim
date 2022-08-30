@@ -1,7 +1,7 @@
 import World from "../World";
 import WorldObject from "../WorldObject";
 
-export default class EllipseObstacle implements WorldObject {
+export default class RectangleObject implements WorldObject {
   pixels: number[][] = [];
 
   worldX: number = 0;
@@ -18,7 +18,6 @@ export default class EllipseObstacle implements WorldObject {
     public width: number,
     public height: number,
     public relative: boolean = true,
-    public drawIndividualPixels: boolean = false,
     public color: string = "rgb(60, 60, 60)"
   ) {
     // Calculate transform and pixels
@@ -38,21 +37,14 @@ export default class EllipseObstacle implements WorldObject {
     }
   }
 
-  onDrawAfterCreatures(world: World): void {
-    if (this.drawIndividualPixels) {
-      for (let pixelIdx = 0; pixelIdx < this.pixels.length; pixelIdx++) {
-        const pixel = this.pixels[pixelIdx];
-        world.drawRect(pixel[0], pixel[1], 1.1, 1.1, this.color);
-      }
-    } else {
-      world.drawEllipse(
-        this.worldX,
-        this.worldY,
-        this.worldWidth,
-        this.worldHeight,
-        this.color
-      );
-    }
+  onDrawAfterCreatures(): void {
+    this.world.drawRect(
+      this.worldX,
+      this.worldY,
+      this.worldWidth,
+      this.worldHeight,
+      this.color
+    );
   }
 
   setRelativeTransform(
@@ -81,12 +73,6 @@ export default class EllipseObstacle implements WorldObject {
     this.worldWidth = width;
     this.worldHeight = height;
 
-    // Center
-    const radiusX = width / 2;
-    const radiusY = height / 2;
-    const centerX = this.worldX + radiusX;
-    const centerY = this.worldY + radiusY;
-
     // Recreate pixels
     this.pixels = [];
     for (
@@ -99,21 +85,7 @@ export default class EllipseObstacle implements WorldObject {
         x < this.worldRight && x < this.world.size;
         x++
       ) {
-        // We want to measure the distance to the center of the pixels and
-        // not to their upper left corners, so me add 0.5
-        const centeredX = x + 0.5;
-        const centeredY = y + 0.5;
-
-        // If the pixel is inside the ellipse
-        if (
-          ((centeredX - centerX) * (centeredX - centerX)) /
-            (radiusX * radiusX) +
-            ((centeredY - centerY) * (centeredY - centerY)) /
-              (radiusY * radiusY) <=
-          1
-        ) {
-          this.pixels.push([x, y]);
-        }
+        this.pixels.push([x, y]);
       }
     }
   }

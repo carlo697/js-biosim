@@ -17,7 +17,7 @@ export default class TouchSensor extends CreatureSensor {
     let tile;
     if (y >= 0) {
       tile = world.grid[x][y];
-      outputs[0] = tile[0] || tile[1] ? 1.0 : 0;
+      outputs[0] = tile.creature || tile.obstacle ? 1.0 : 0;
     }
 
     // Right
@@ -25,7 +25,7 @@ export default class TouchSensor extends CreatureSensor {
     y = creature.position[1];
     if (x < world.size) {
       tile = world.grid[x][y];
-      outputs[1] = tile[0] || tile[1] ? 1.0 : 0;
+      outputs[1] = tile.creature || tile.obstacle ? 1.0 : 0;
     }
 
     // Bottom
@@ -33,7 +33,7 @@ export default class TouchSensor extends CreatureSensor {
     y = creature.position[1] + 1;
     if (y < world.size) {
       tile = world.grid[x][y];
-      outputs[2] = tile[0] || tile[1] ? 1.0 : 0;
+      outputs[2] = tile.creature || tile.obstacle ? 1.0 : 0;
     }
 
     // Left
@@ -41,7 +41,7 @@ export default class TouchSensor extends CreatureSensor {
     y = creature.position[1];
     if (x >= 0) {
       tile = world.grid[x][y];
-      outputs[3] = tile[0] || tile[1] ? 1.0 : 0;
+      outputs[3] = tile.creature || tile.obstacle ? 1.0 : 0;
     }
 
     return outputs;

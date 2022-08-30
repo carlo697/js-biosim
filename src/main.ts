@@ -1,18 +1,15 @@
 import "./styles/style.scss";
 import AsexualRandomPopulation from "./creature/population/AsexualRandomPopulation";
 import CenterRectangleSelection from "./creature/selection/CenterRectangleSelection";
-// import EastWallSelection from "./creature/selection/EastWallSelection";
 import World from "./world/World";
 import { MutationMode } from "./creature/genome/MutationMode";
 import WebUI from "./web/WebUI";
-import RectangleObstacle from "./world/obstacles/RectangleObstacle";
 import HorizontalPositionSensor from "./creature/sensors/HorizontalPositionSensor";
 import VerticalPositionSensor from "./creature/sensors/VerticalPositionSensor";
 import AgeSensor from "./creature/sensors/AgeSensor";
 import HorizontalSpeedSensor from "./creature/sensors/HorizontalSpeedSensor";
 import OscillatorSensor from "./creature/sensors/OscillatorSensor";
 import RandomSensor from "./creature/sensors/RandomSensor";
-// import TouchSensor from "./creature/sensors/TouchSensor";
 import VerticalSpeedSensor from "./creature/sensors/VerticalSpeedSensor";
 import MoveNorthAction from "./creature/actions/MoveNorthAction";
 import MoveSouthAction from "./creature/actions/MoveSouthAction";
@@ -23,6 +20,7 @@ import CreatureAction from "./creature/actions/CreatureAction";
 import HorizontalBorderDistanceSensor from "./creature/sensors/HorizontalBorderDistanceSensor";
 import VerticalBorderDistanceSensor from "./creature/sensors/VerticalBorderDistanceSensor";
 import BorderDistanceSensor from "./creature/sensors/BorderDistanceSensor";
+import RectangleObject from "./world/objects/RectangleObject";
 
 // Create world
 const world = new World(
@@ -36,31 +34,47 @@ const populationStrategy = new AsexualRandomPopulation();
 // const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 const selectionMethod = new CenterRectangleSelection(0.5, 0.5);
 
-// world.obstacles = [new RectangleObstacle(world, 0.15, 0.25, 0.1, 0.5)];
+// world.obstacles = [new RectangleObject(world, 0.15, 0.25, 0.1, 0.5)];
 
-// world.obstacles = [new RectObstacle(world, 95, 95, 5, 5, false)];
+// world.obstacles = [new RectangleObject(world, 95, 95, 5, 5, false)];
 
 // world.obstacles = [
-//   new RectangleObstacle(world, 0, 0, 0.2, 0.2),
-//   new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
+//   new RectangleObject(world, 0, 0, 0.2, 0.2),
+//   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
 // ];
 
 world.obstacles = [
-  new RectangleObstacle(world, 0, 0, 0.2, 0.2),
-  new RectangleObstacle(world, 0.2, 0.2, 0.2, 0.2),
-  new RectangleObstacle(world, 0.4, 0.4, 0.2, 0.2),
-  new RectangleObstacle(world, 0.6, 0.6, 0.2, 0.2),
-  new RectangleObstacle(world, 0.8, 0.8, 0.2, 0.2),
+  new RectangleObject(world, 0, 0, 0.2, 0.2),
+  new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
+  new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
+  new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
+  new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
 ];
 
-// world.obstacles = [new RectangleObstacle(world, 0, 0, 0.6, 0.6)];
-// world.obstacles = [new RectangleObstacle(world, 0.15, 0.15, 0.5, 0.5)];
+// world.obstacles = [
+//   new RectangleObject(world, 0, 0, 0.2, 0.2),
+//   new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
+//   new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
+//   new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
+//   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
+//   new EllipseObject(world, 0.5, 0, 0.2, 0.2, true, true),
+//   new EllipseObject(world, 0.7, 0, 0.15, 0.2),
+//   new EllipseObject(world, 0.9, 0, 0.05, 0.05, true),
+// ];
+
+// world.areas = [
+//   new RectangleHealthArea(world, 0.4, 0.0, 0.2, 1, true, -1),
+//   new EllipseHealthArea(world, 0, 0.0, 0.3, 0.2, true, -1),
+// ];
+
+// world.obstacles = [new RectangleObject(world, 0, 0, 0.6, 0.6)];
+// world.obstacles = [new RectangleObject(world, 0.15, 0.15, 0.5, 0.5)];
 
 // |    |
 // |    |
 // world.obstacles = [
-//   new RectangleObstacle(world, 0.2, 0.2, 0.05, 0.6),
-//   new RectangleObstacle(world, 0.75, 0.2, 0.05, 0.6),
+//   new RectangleObject(world, 0.2, 0.2, 0.05, 0.6),
+//   new RectangleObject(world, 0.75, 0.2, 0.05, 0.6),
 // ];
 
 //  _  _
@@ -68,51 +82,51 @@ world.obstacles = [
 // |_  _|
 //
 // world.obstacles = [
-//   new RectangleObstacle(world, 0.2, 0.2, 0.05, 0.6),
-//   new RectangleObstacle(world, 0.25, 0.2, 0.15, 0.05),
-//   new RectangleObstacle(world, 0.25, 0.75, 0.15, 0.05),
-//   new RectangleObstacle(world, 0.75, 0.2, 0.05, 0.6),
-//   new RectangleObstacle(world, 0.6, 0.2, 0.15, 0.05),
-//   new RectangleObstacle(world, 0.6, 0.75, 0.15, 0.05),
+//   new RectangleObject(world, 0.2, 0.2, 0.05, 0.6),
+//   new RectangleObject(world, 0.25, 0.2, 0.15, 0.05),
+//   new RectangleObject(world, 0.25, 0.75, 0.15, 0.05),
+//   new RectangleObject(world, 0.75, 0.2, 0.05, 0.6),
+//   new RectangleObject(world, 0.6, 0.2, 0.15, 0.05),
+//   new RectangleObject(world, 0.6, 0.75, 0.15, 0.05),
 // ];
 
 // |   |
 // |   |
 // world.obstacles = [
-//   new RectangleObstacle(world, 0.2, 0.2, 0.05, 0.8),
-//   // new RectangleObstacle(world, 0.75, 0, 0.05, 0.8),
-//   new RectangleObstacle(world, 0.75, 0.2, 0.05, 0.8),
+//   new RectangleObject(world, 0.2, 0.2, 0.05, 0.8),
+//   // new RectangleObject(world, 0.75, 0, 0.05, 0.8),
+//   new RectangleObject(world, 0.75, 0.2, 0.05, 0.8),
 // ];
 
 // |  |  |
 // |  |  |
 // world.obstacles = [
-//   new RectangleObstacle(world, 0.2, 0.2, 0.1, 0.8),
-//   new RectangleObstacle(world, 0.45, 0.2, 0.1, 0.8),
-//   new RectangleObstacle(world, 0.7, 0.2, 0.1, 0.8),
+//   new RectangleObject(world, 0.2, 0.2, 0.1, 0.8),
+//   new RectangleObject(world, 0.45, 0.2, 0.1, 0.8),
+//   new RectangleObject(world, 0.7, 0.2, 0.1, 0.8),
 // ];
 
 // world.obstacles = [
-//   new RectangleObstacle(world, 0.2, 0.2, 0.1, 0.8),
-//   new RectangleObstacle(world, 0.45, 0.2, 0.1, 0.8),
-//   new RectangleObstacle(world, 0.7, 0.2, 0.1, 0.8),
-//   new RectangleObstacle(world, 0, 0.6, 1, 0.4),
+//   new RectangleObject(world, 0.2, 0.2, 0.1, 0.8),
+//   new RectangleObject(world, 0.45, 0.2, 0.1, 0.8),
+//   new RectangleObject(world, 0.7, 0.2, 0.1, 0.8),
+//   new RectangleObject(world, 0, 0.6, 1, 0.4),
 // ];
 
 // world.obstacles = [
-//   new RectangleObstacle(world, 0.1, 0.1, 0.3, 0.8),
-//   new RectangleObstacle(world, 0.6, 0.1, 0.3, 0.8),
+//   new RectangleObject(world, 0.1, 0.1, 0.3, 0.8),
+//   new RectangleObject(world, 0.6, 0.1, 0.3, 0.8),
 // ];
 
 // Rounding tests
 // world.obstacles = [
-//   new RectangleObstacle(world, 0, 0, 0.25, 0.4),
-//   new RectangleObstacle(world, 0, 0.4, 0.5, 0.2),
-//   new RectangleObstacle(world, 0, 0.6, 1, 0.4),
+//   new RectangleObject(world, 0, 0, 0.25, 0.4),
+//   new RectangleObject(world, 0, 0.4, 0.5, 0.2),
+//   new RectangleObject(world, 0, 0.6, 1, 0.4),
 
-//   new RectangleObstacle(world, 0, 0, 25, 40, false),
-//   new RectangleObstacle(world, 0, 40, 50, 20, false),
-//   new RectangleObstacle(world, 0, 60, 100, 40, false),
+//   new RectangleObject(world, 0, 0, 25, 40, false),
+//   new RectangleObject(world, 0, 40, 50, 20, false),
+//   new RectangleObject(world, 0, 60, 100, 40, false),
 // ];
 
 // Sensors

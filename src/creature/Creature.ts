@@ -9,6 +9,7 @@ import Neuron, { NeuronType } from "./brain/Neuron";
 import NeuronNode from "./NeuronNode";
 
 export const initialNeuronOutput = 0.5;
+export const maxHealth = 100;
 
 export default class Creature {
   world: World;
@@ -27,6 +28,8 @@ export default class Creature {
   networkOutputCount: number;
   brain!: Network;
   genome: Genome;
+
+  private _health: number = maxHealth;
 
   constructor(world: World, position: number[], genome?: Genome) {
     this.world = world;
@@ -336,5 +339,17 @@ export default class Creature {
       [this.position[0], this.position[1]],
       this.genome
     );
+  }
+
+  get isAlive() {
+    return this._health > 0;
+  }
+
+  set health(value: number) {
+    this._health = Math.max(0, Math.min(maxHealth, value));
+  }
+
+  get health() {
+    return this._health;
   }
 }

@@ -18,6 +18,7 @@ export default class CenterRectangleSelection implements SelectionMethod {
       const creature = world.currentCreatures[idx];
 
       if (
+        creature.isAlive &&
         world.isInsideRelativeRect(
           creature.position[0],
           creature.position[1],
@@ -42,7 +43,7 @@ export default class CenterRectangleSelection implements SelectionMethod {
       this.y,
       this.width,
       this.height,
-      "rgba(0, 255, 0, 0.1)"
+      "rgba(0,0,255,0.1)"
     );
   }
 }

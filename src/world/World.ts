@@ -7,7 +7,15 @@ import EastWallSelection from "../creature/selection/EastWallSelection";
 import SelectionMethod from "../creature/selection/SelectionMethod";
 import CreatureSensor from "../creature/sensors/CreatureSensor";
 import { WorldEvents } from "../events/WorldEvents";
+import WorldArea from "./areas/WorldArea";
 import WorldObject from "./WorldObject";
+
+type GridPoint = {
+  creature: Creature | null;
+  obstacle: WorldObject | null;
+  areas: WorldArea[];
+};
+type Grid = Array<Array<GridPoint>>;
 
 export default class World {
   static instance: World;
@@ -49,8 +57,10 @@ export default class World {
   events: EventTarget = new EventTarget();
   timeoutId?: number;
 
-  grid: Array<Array<Array<Creature | WorldObject | null>>> = [];
+  // World
+  grid: Grid = [];
   obstacles: WorldObject[] = [];
+  areas: WorldArea[] = [];
 
   // Sensors and actions
   sensors: CreatureSensor[] = [];
@@ -84,10 +94,14 @@ export default class World {
     // Clear previous creatures
     this.currentCreatures = [];
 
-    // Generate obstacle pixels
+    // Generate pixels of obstacles
     for (let i = 0; i < this.obstacles.length; i++) {
-      const obstacle = this.obstacles[i];
-      obstacle.computePixels();
+      this.obstacles[i].computePixels();
+    }
+
+    // Generate pixels of areas
+    for (let i = 0; i < this.areas.length; i++) {
+      this.areas[i].computePixels();
     }
 
     this.totalTime = 0;
@@ -136,10 +150,10 @@ export default class World {
     this.grid = [];
     for (let x = 0; x < this.size; x++) {
       // Create column
-      const col = [];
+      const col: Array<GridPoint> = [];
       for (let y = 0; y < this.size; y++) {
         // Create and push row
-        col.push([null, null]);
+        col.push({ creature: null, obstacle: null, areas: [] });
       }
 
       // Push column
@@ -162,8 +176,10 @@ export default class World {
   private clearGrid() {
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        this.grid[x][y][0] = null;
-        this.grid[x][y][1] = null;
+        const point = this.grid[x][y];
+        point.creature = null;
+        point.obstacle = null;
+        point.areas = [];
       }
     }
   }
@@ -175,8 +191,11 @@ export default class World {
     for (let i = 0; i < this.currentCreatures.length; i++) {
       const creature = this.currentCreatures[i];
 
-      // Set creature
-      this.grid[creature.position[0]][creature.position[1]][0] = creature;
+      if (creature.isAlive) {
+        // Set creature if it's alive
+        this.grid[creature.position[0]][creature.position[1]].creature =
+          creature;
+      }
     }
 
     // Check obstacles
@@ -188,10 +207,20 @@ export default class World {
       const obstacle: WorldObject = this.obstacles[obstacleIdx];
 
       for (let pixelIdx = 0; pixelIdx < obstacle.pixels.length; pixelIdx++) {
-        const [x, y] = obstacle.pixels[pixelIdx];
-
+        const position = obstacle.pixels[pixelIdx];
         // Set pixel
-        this.grid[x][y][1] = obstacle;
+        this.grid[position[0]][position[1]].obstacle = obstacle;
+      }
+    }
+
+    // Check areas
+    for (let areaIdx = 0; areaIdx < this.areas.length; areaIdx++) {
+      const area: WorldArea = this.areas[areaIdx];
+
+      for (let pixelIdx = 0; pixelIdx < area.pixels.length; pixelIdx++) {
+        const position = area.pixels[pixelIdx];
+        // Set pixel
+        this.grid[position[0]][position[1]].areas.push(area);
       }
     }
   }
@@ -226,7 +255,16 @@ export default class World {
 
       // Compute step of every creature
       for (let i = 0; i < this.currentCreatures.length; i++) {
-        this.currentCreatures[i].computeStep();
+        const creature = this.currentCreatures[i];
+        if (creature.isAlive) {
+          // Effect of the areas the creature is in
+          const point = this.grid[creature.position[0]][creature.position[1]];
+          for (let areaIdx = 0; areaIdx < point.areas.length; areaIdx++) {
+            point.areas[areaIdx].computeStepOnCreature?.(creature);
+          }
+
+          creature.computeStep();
+        }
       }
       // console.log("step!");
 
@@ -327,7 +365,7 @@ export default class World {
     //   }
     // }
     // return true;
-    return !this.grid[x][y][0] && !this.grid[x][y][1];
+    return !this.grid[x][y].creature && !this.grid[x][y].obstacle;
   }
 
   public isTileInsideWorld(x: number, y: number): boolean {
@@ -370,9 +408,14 @@ export default class World {
     this.clearCanvas();
     this.resizeCanvas();
 
+    // Draw areas
+    for (let i = 0; i < this.areas.length; i++) {
+      this.areas[i].onDrawBeforeCreatures?.();
+    }
+
     // Draw obstacles
     for (let i = 0; i < this.obstacles.length; i++) {
-      this.obstacles[i].onDrawBeforeCreatures?.(this);
+      this.obstacles[i].onDrawBeforeCreatures?.();
     }
 
     this.selectionMethod?.onDrawBeforeCreatures?.(this);
@@ -381,28 +424,35 @@ export default class World {
     for (let i = 0; i < this.currentCreatures.length; i++) {
       const creature = this.currentCreatures[i];
 
-      const position = creature.position;
+      if (creature.isAlive) {
+        const position = creature.position;
 
-      const normalizedX = position[0] / this.size;
-      const normalizedY = position[1] / this.size;
-      const absoluteSize = 1 / this.size;
+        const normalizedX = position[0] / this.size;
+        const normalizedY = position[1] / this.size;
+        const absoluteSize = 1 / this.size;
 
-      this.ctx.fillStyle = creature.getColor();
-      this.ctx.beginPath();
-      this.ctx.rect(
-        normalizedX * this.canvas.width,
-        normalizedY * this.canvas.height,
-        absoluteSize * this.canvas.width,
-        absoluteSize * this.canvas.height
-      );
-      this.ctx.fill();
+        this.ctx.fillStyle = creature.getColor();
+        this.ctx.beginPath();
+        this.ctx.rect(
+          normalizedX * this.canvas.width,
+          normalizedY * this.canvas.height,
+          absoluteSize * this.canvas.width,
+          absoluteSize * this.canvas.height
+        );
+        this.ctx.fill();
+      }
     }
 
     this.selectionMethod?.onDrawAfterCreatures?.(this);
 
+    // Draw areas
+    for (let i = 0; i < this.areas.length; i++) {
+      this.areas[i].onDrawAfterCreatures?.();
+    }
+
     // Draw obstacles
     for (let i = 0; i < this.obstacles.length; i++) {
-      this.obstacles[i].onDrawAfterCreatures?.(this);
+      this.obstacles[i].onDrawAfterCreatures?.();
     }
   }
 
