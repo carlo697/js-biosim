@@ -91,30 +91,34 @@ export default class EllipseObject implements WorldObject {
     this.pixels = [];
     for (
       let y = this.worldY;
-      y >= 0 && y < this.worldBottom && y < this.world.size;
+      y < this.worldBottom && y < this.world.size;
       y++
     ) {
       for (
         let x = this.worldX;
-        x >= 0 && x < this.worldRight && x < this.world.size;
+        x < this.worldRight && x < this.world.size;
         x++
       ) {
-        // We want to measure the distance to the center of the pixels and
-        // not to their upper left corners, so me add 0.5
-        const centeredX = x + 0.5;
-        const centeredY = y + 0.5;
+        if (y >= 0 && x >= 0) {
+          // We want to measure the distance to the center of the pixels and
+          // not to their upper left corners, so me add 0.5
+          const centeredX = x + 0.5;
+          const centeredY = y + 0.5;
 
-        // If the pixel is inside the ellipse
-        if (
-          ((centeredX - centerX) * (centeredX - centerX)) /
-            (radiusX * radiusX) +
-            ((centeredY - centerY) * (centeredY - centerY)) /
-              (radiusY * radiusY) <=
-          1
-        ) {
-          this.pixels.push([x, y]);
+          // If the pixel is inside the ellipse
+          if (
+            ((centeredX - centerX) * (centeredX - centerX)) /
+              (radiusX * radiusX) +
+              ((centeredY - centerY) * (centeredY - centerY)) /
+                (radiusY * radiusY) <=
+            1
+          ) {
+            this.pixels.push([x, y]);
+          }
         }
       }
     }
+
+    console.log(this.pixels);
   }
 }

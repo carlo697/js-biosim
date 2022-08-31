@@ -77,15 +77,17 @@ export default class RectangleObject implements WorldObject {
     this.pixels = [];
     for (
       let y = this.worldY;
-      y >= 0 && y < this.worldBottom && y < this.world.size;
+      y < this.worldBottom && y < this.world.size;
       y++
     ) {
       for (
         let x = this.worldX;
-        x >= 0 && x < this.worldRight && x < this.world.size;
+        x < this.worldRight && x < this.world.size;
         x++
       ) {
-        this.pixels.push([x, y]);
+        if (y >= 0 && x >= 0) {
+          this.pixels.push([x, y]);
+        }
       }
     }
   }
