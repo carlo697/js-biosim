@@ -89,7 +89,7 @@ export const drawNeuronalNetwork = (
     width: canvas.offsetWidth,
     height: canvas.offsetHeight,
     nodeRadius: 0.02,
-    linkStrength: 0.1,
+    linkStrength: 0.01,
     linkStrokeWidth: (link: LinkDatum) => {
       return (
         0.0005 + 0.006 * (link.value > 0 ? link.value / 4 : link.value / -4)
@@ -98,12 +98,6 @@ export const drawNeuronalNetwork = (
     linkStrokeOpacity: 0.9,
     linkStroke: (link: any) => {
       return link.value > 0 ? `rgba(0, 255, 0)` : `rgba(255, 0, 0)`;
-    },
-    nodeStrength: (node: Node) => {
-      if (node.group === 1 || node.group === 2) {
-        return -100;
-      }
-      return -50;
     },
   });
 

@@ -113,20 +113,43 @@ function ForceGraph(
     .force("link", forceLink)
     .force("charge", forceNode)
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("bounds", boxingForce)
+    .force("bounds", boundsForce)
     .on("tick", ticked);
 
   DOM.width = width;
   DOM.height = height;
   const context = <CanvasRenderingContext2D>DOM.getContext("2d");
 
-  function boxingForce() {
-    const margin = nodeRadius * 1.5;
+  function boundsForce() {
+    // const margin = nodeRadius * 1.5;
 
     for (let node of nodes) {
-      if (node.x && node.y) {
-        node.x = Math.max(margin, Math.min(width - margin, node.x));
-        node.y = Math.max(margin, Math.min(height - margin, node.y));
+      if (node.x && node.y && node.index != undefined && node.vx && node.vy) {
+        // node.x = Math.max(margin, Math.min(width - margin, node.x));
+        // node.y = Math.max(margin, Math.min(height - margin, node.y));
+
+        const force = 0.1;
+        const maxExtraMargin = 0.1;
+        const extraMargin = (node.index / nodes.length) * maxExtraMargin;
+        const margin = width * (0.05 + extraMargin);
+
+        let vX = 0;
+        let vY = 0;
+
+        if (node.x < margin) {
+          vX = margin - node.x;
+        } else if (node.x > width - margin) {
+          vX = width - margin - node.x;
+        }
+
+        if (node.y < margin) {
+          vY = margin - node.y;
+        } else if (node.y > height - margin) {
+          vY = height - margin - node.y;
+        }
+
+        node.vx += vX * force;
+        node.vy += vY * force;
       }
     }
   }
