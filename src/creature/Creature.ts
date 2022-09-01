@@ -18,6 +18,7 @@ export default class Creature {
   position: number[];
   lastPosition: number[];
   urgeToMove: number[];
+  lastMovement: number[];
 
   // Sensors and actions
   sensors: CreatureSensor[];
@@ -38,6 +39,7 @@ export default class Creature {
     this.position = position;
     this.lastPosition = [position[0], position[1]];
     this.urgeToMove = [0, 0];
+    this.lastMovement = [0, 0];
 
     // Sensors and actions
     this.sensors = world.sensors;
@@ -325,6 +327,8 @@ export default class Creature {
     ) {
       this.position[0] = finalX;
       this.position[1] = finalY;
+      this.lastMovement[0] = x;
+      this.lastMovement[1] = y;
     }
   }
 

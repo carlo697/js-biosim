@@ -1,5 +1,6 @@
 import CreatureAction from "../creature/actions/CreatureAction";
 import MoveEastAction from "../creature/actions/MoveEastAction";
+import MoveForwardAction from "../creature/actions/MoveForwardAction";
 import MoveNorthAction from "../creature/actions/MoveNorthAction";
 import MoveSouthAction from "../creature/actions/MoveSouthAction";
 import MoveWestAction from "../creature/actions/MoveWestAction";
@@ -64,6 +65,7 @@ export default class WebUI {
       MoveEast: new MoveEastAction(world),
       MoveWest: new MoveWestAction(world),
       RandomMove: new RandomMoveAction(world),
+      MoveForward: new MoveForwardAction(world),
     };
 
     // Statistics texts

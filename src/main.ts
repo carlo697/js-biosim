@@ -22,6 +22,7 @@ import BorderDistanceSensor from "./creature/sensors/BorderDistanceSensor";
 import EllipseHealthArea from "./world/areas/EllipseHealthArea";
 import RectangleReproductionArea from "./world/areas/reproduction/RectangleReproductionArea";
 import InsideReproductionAreaSelection from "./creature/selection/InsideReproductionAreaSelection";
+import MoveForwardAction from "./creature/actions/MoveForwardAction";
 
 // Create world
 const world = new World(
@@ -157,6 +158,7 @@ const actions: CreatureAction[] = [
   new MoveEastAction(world),
   new MoveWestAction(world),
   new RandomMoveAction(world),
+  new MoveForwardAction(world),
 ];
 
 // Default values
