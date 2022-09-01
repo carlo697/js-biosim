@@ -41,7 +41,7 @@ export default class PopulationTab {
   // Genome preview information
   networkCanvas: HTMLCanvasElement;
   networkCanvasContext: CanvasRenderingContext2D;
-  genomeTextarea: HTMLInputElement;
+  genomeTextarea: HTMLTextAreaElement;
   originalGenomePreviewText: string | null;
   d3Simulation: GraphSimulation | undefined;
 
@@ -50,7 +50,7 @@ export default class PopulationTab {
 
     this.world.events.addEventListener(
       WorldEvents.startGeneration,
-      this.onStartGeneration.bind(this)
+      this.updateList.bind(this)
     );
 
     this.speciesList = <HTMLElement>document.getElementById("speciesList");
@@ -79,7 +79,7 @@ export default class PopulationTab {
     ) as CanvasRenderingContext2D;
     this.genomeTextarea = document.querySelector(
       "#genomePreview"
-    ) as HTMLInputElement;
+    ) as HTMLTextAreaElement;
     this.originalGenomePreviewText = this.genomeTextarea.textContent;
 
     this.world.events.addEventListener(
@@ -90,7 +90,7 @@ export default class PopulationTab {
     this.setupCanvas();
   }
 
-  onStartGeneration() {
+  public updateList() {
     const creatureMap = new Map<string, Species>();
 
     // Create the species from the creature list
@@ -314,13 +314,13 @@ export default class PopulationTab {
   }
 
   private onMouseEnterCanvas() {
-    if (this.world.isPaused()) {
+    if (this.world.isPaused) {
       this.world.computeGrid();
     }
   }
 
   private onMouseMoveCanvas(e: MouseEvent) {
-    if (this.world.isPaused()) {
+    if (this.world.isPaused) {
       const [worldX, worldY] = this.world.mouseEventPosToWorld(e);
       this.world.redraw();
       this.world.drawRectStroke(worldX, worldY, 1, 1, "rgba(0,0,0,0.5)", 1.5);
@@ -364,5 +364,9 @@ export default class PopulationTab {
       this.networkCanvas.height
     );
     this.genomeTextarea.textContent = this.originalGenomePreviewText;
+  }
+
+  renderDataFromWorld(): void {
+    this.updateList();
   }
 }

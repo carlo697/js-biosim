@@ -46,14 +46,7 @@ export default class Creature {
     this.actions = world.actions;
 
     if (genome) {
-      this.genome = genome.clone(
-        true,
-        this.world.mutationMode,
-        this.world.maxGenomeSize,
-        this.world.mutationProbability,
-        this.world.geneInsertionDeletionProbability,
-        this.world.deletionRatio
-      );
+      this.genome = genome;
     } else {
       this.genome = new Genome(
         [...new Array(this.world.initialGenomeSize)].map(() =>
@@ -341,7 +334,14 @@ export default class Creature {
     return new Creature(
       this.world,
       [this.position[0], this.position[1]],
-      this.genome
+      this.genome.clone(
+        true,
+        this.world.mutationMode,
+        this.world.maxGenomeSize,
+        this.world.mutationProbability,
+        this.world.geneInsertionDeletionProbability,
+        this.world.deletionRatio
+      )
     );
   }
 

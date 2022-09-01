@@ -157,6 +157,18 @@
             </button>
             <button
               class="btn btn-tab transparent-light"
+              data-tab-target="saveTabContent"
+            >
+              Save
+            </button>
+            <button
+              class="btn btn-tab transparent-light"
+              data-tab-target="loadTabContent"
+            >
+              Load
+            </button>
+            <button
+              class="btn btn-tab transparent-light"
               data-tab-target="aboutTabContent"
             >
               About
@@ -301,6 +313,38 @@
 
               <h2>Actions</h2>
               <div id="actionList"></div>
+            </div>
+
+            <div id="saveTabContent">
+              <div class="text-center">
+                <p>
+                  Use the following button to generate a JSON of the whole
+                  simulation at the current status:
+                </p>
+
+                <textarea
+                  id="saveOutputTextarea"
+                  readonly
+                  class="textarea-full-width"
+                >
+                </textarea>
+
+                <button class="btn" id="saveButton">Save</button>
+              </div>
+            </div>
+
+            <div id="loadTabContent">
+              <div class="text-center">
+                <p>
+                  Copy into the following input a previously saved JSON of the
+                  simulation:
+                </p>
+                <textarea
+                  id="saveInputTextarea"
+                  class="textarea-full-width"
+                ></textarea>
+                <button class="btn" id="loadButton">Load</button>
+              </div>
             </div>
 
             <div id="aboutTabContent">

@@ -83,16 +83,17 @@ export default class World {
     }
   }
 
-  public initializeWorld(): void {
+  public initializeWorld(restart: boolean): void {
     // If there's a simulation already running
-    if (this.hasBeenInitiated()) {
+    if (restart) {
       this.pause();
       this.currentGen = 0;
       this.currentStep = 0;
-    }
+      this.totalTime = 0;
 
-    // Clear previous creatures
-    this.currentCreatures = [];
+      // Clear previous creatures
+      this.currentCreatures = [];
+    }
 
     // Generate pixels of obstacles
     for (let i = 0; i < this.obstacles.length; i++) {
@@ -104,11 +105,11 @@ export default class World {
       this.areas[i].computePixels();
     }
 
-    this.totalTime = 0;
-
     this.initializeGrid();
     this.computeGrid();
-    this.selectAndPopulate();
+    if (restart) {
+      this.selectAndPopulate();
+    }
     this.redraw();
 
     this.events.dispatchEvent(
@@ -226,9 +227,6 @@ export default class World {
   }
 
   startRun(): void {
-    this.currentGen = 0;
-    this.currentStep = 0;
-
     this.computeStep();
   }
 
@@ -336,7 +334,7 @@ export default class World {
     );
   }
 
-  isPaused(): boolean {
+  get isPaused(): boolean {
     return !this.timeoutId;
   }
 

@@ -183,5 +183,5 @@ world.pauseBetweenGenerations = 0;
 new WebUI(world);
 
 // Initialize world and start simulation
-world.initializeWorld();
+world.initializeWorld(true);
 world.startRun();

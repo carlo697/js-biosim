@@ -43,12 +43,16 @@ export default class InitialSettings {
       "#mutationModeSelect"
     ) as HTMLSelectElement;
 
-    this.worldSizeInput.value = world.size.toString();
-    this.initialPopulationInput.value = world.initialPopulation.toString();
-    this.initialGenomeSizeInput.value = world.initialGenomeSize.toString();
-    this.maxGenomeSizeInput.value = world.maxGenomeSize.toString();
-    this.maxNumberNeuronsInput.value = world.maxNumberNeurons.toString();
-    this.mutationModeSelect.value = world.mutationMode;
+    this.renderDataFromWorld();
+  }
+
+  renderDataFromWorld(): void {
+    this.worldSizeInput.value = this.world.size.toString();
+    this.initialPopulationInput.value = this.world.initialPopulation.toString();
+    this.initialGenomeSizeInput.value = this.world.initialGenomeSize.toString();
+    this.maxGenomeSizeInput.value = this.world.maxGenomeSize.toString();
+    this.maxNumberNeuronsInput.value = this.world.maxNumberNeurons.toString();
+    this.mutationModeSelect.value = this.world.mutationMode;
 
     this.createSensorAndActionCheckboxes();
   }
@@ -78,8 +82,11 @@ export default class InitialSettings {
       this.world.maxGenomeSize = maxGenomeSize;
       this.world.maxNumberNeurons = maxNumberNeurons;
       this.world.mutationMode = mutationMode;
-      this.world.initializeWorld();
-      this.world.startRun();
+      const isPaused = this.world.isPaused;
+      this.world.initializeWorld(true);
+      if (!isPaused) {
+        this.world.startRun();
+      }
 
       return true;
     }
@@ -118,6 +125,10 @@ export default class InitialSettings {
   }
 
   createSensorAndActionCheckboxes() {
+    // Clear children
+    this.sensorsParent.textContent = "";
+    this.actionsParent.textContent = "";
+
     const elements = [
       ...Object.values(this.webUI.sensors).map((item) => ({
         instance: item,

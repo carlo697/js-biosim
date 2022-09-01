@@ -21,6 +21,8 @@ import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
 import InitialSettings from "./InitialSettings";
 import PopulationTab from "./PopulationTab";
+import LoadTab from "./saveLoad/LoadTab";
+import SaveTab from "./saveLoad/SaveTab";
 import { initializeTabsInDOM } from "./Tabs";
 
 export default class WebUI {
@@ -33,6 +35,7 @@ export default class WebUI {
   survivalRate: HTMLElement;
   totalTime: HTMLElement;
   lastGenerationDuration: HTMLElement;
+  currentStep: HTMLElement;
 
   // Sensors and actions
   sensors: { [key: string]: CreatureSensor };
@@ -40,6 +43,9 @@ export default class WebUI {
 
   // Tab classes
   initialSettings: InitialSettings;
+  populationTab: PopulationTab;
+  saveTab: SaveTab;
+  loadTab: LoadTab;
 
   constructor(world: World) {
     this.world = world;
@@ -81,6 +87,7 @@ export default class WebUI {
     this.lastGenerationDuration = document.querySelector(
       "#lastGenerationDuration"
     ) as HTMLElement;
+    this.currentStep = document.querySelector("#step") as HTMLElement;
 
     world.events.addEventListener(
       WorldEvents.startGeneration,
@@ -92,70 +99,6 @@ export default class WebUI {
       this.onStartStep.bind(this)
     );
 
-    // timePerStep slider
-    this.setupSlider(
-      "#timePerStepSlider",
-      "#timePerStepValue",
-      world.timePerStep,
-      (value: string) => {
-        world.timePerStep = parseFloat(value);
-      }
-    );
-
-    // immediateSteps slider
-    this.setupSlider(
-      "#immediateStepsSlider",
-      "#immediateStepsValue",
-      world.immediateSteps,
-      (value: string) => {
-        world.immediateSteps = parseFloat(value);
-      }
-    );
-
-    // pauseBetweenGenerations slider
-    this.setupSlider(
-      "#pauseBetweenGenerationsSlider",
-      "#pauseBetweenGenerationsValue",
-      world.pauseBetweenGenerations,
-      (value: string) => {
-        world.pauseBetweenGenerations = parseFloat(value);
-      }
-    );
-
-    // mutationProbability slider
-    this.setupSlider(
-      "#mutationProbabilitySlider",
-      "#mutationProbabilityValue",
-      world.mutationProbability,
-      (value: string) => {
-        world.mutationProbability = parseFloat(value);
-      },
-      (value: string) =>
-        (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
-    );
-
-    // geneInsertionDeletionProbabilitySlider slider
-    this.setupSlider(
-      "#geneInsertionDeletionProbabilitySlider",
-      "#geneInsertionDeletionProbabilityValue",
-      world.geneInsertionDeletionProbability,
-      (value: string) => {
-        world.geneInsertionDeletionProbability = parseFloat(value);
-      },
-      (value: string) =>
-        (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
-    );
-
-    // stepsPerGen slider
-    this.setupSlider(
-      "#stepsPerGenSlider",
-      "#stepsPerGenValue",
-      world.stepsPerGen,
-      (value: string) => {
-        world.stepsPerGen = parseFloat(value);
-      }
-    );
-
     // Pause button
     (document.querySelector("#pause") as HTMLElement).addEventListener(
       "click",
@@ -165,27 +108,97 @@ export default class WebUI {
     // Restart button
     document
       .querySelector("#restart")
-      ?.addEventListener("click", this.restart.bind(this));
+      ?.addEventListener("click", this.restartSimulation.bind(this));
 
     // Tabs
     initializeTabsInDOM();
 
     // Initial settings
     this.initialSettings = new InitialSettings(this, world);
-    new PopulationTab(this);
+    this.populationTab = new PopulationTab(this);
+    this.saveTab = new SaveTab(this);
+    this.loadTab = new LoadTab(this);
+
+    // Load data from the world to the UI
+    this.renderDataFromWorld();
   }
 
-  onStartGeneration() {
-    console.log(
-      `Start generation ${this.world.currentGen},\nLast generation duration: ${
-        this.world.lastGenerationDuration
-      } ms\nSurvivors: ${this.world.lastSurvivorsCount},\nNew population: ${
-        this.world.currentCreatures.length
-      },\nSurvival rate: ${
-        Math.round(this.world.lastSurvivalRate * 100 * 100) / 100
-      }%`
+  setupSliders() {
+    // timePerStep slider
+    this.setupSlider(
+      "#timePerStepSlider",
+      "#timePerStepValue",
+      this.world.timePerStep,
+      (value: string) => {
+        this.world.timePerStep = parseFloat(value);
+      }
     );
 
+    // immediateSteps slider
+    this.setupSlider(
+      "#immediateStepsSlider",
+      "#immediateStepsValue",
+      this.world.immediateSteps,
+      (value: string) => {
+        this.world.immediateSteps = parseFloat(value);
+      }
+    );
+
+    // pauseBetweenGenerations slider
+    this.setupSlider(
+      "#pauseBetweenGenerationsSlider",
+      "#pauseBetweenGenerationsValue",
+      this.world.pauseBetweenGenerations,
+      (value: string) => {
+        this.world.pauseBetweenGenerations = parseFloat(value);
+      }
+    );
+
+    // mutationProbability slider
+    this.setupSlider(
+      "#mutationProbabilitySlider",
+      "#mutationProbabilityValue",
+      this.world.mutationProbability,
+      (value: string) => {
+        this.world.mutationProbability = parseFloat(value);
+      },
+      (value: string) =>
+        (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
+    );
+
+    // geneInsertionDeletionProbabilitySlider slider
+    this.setupSlider(
+      "#geneInsertionDeletionProbabilitySlider",
+      "#geneInsertionDeletionProbabilityValue",
+      this.world.geneInsertionDeletionProbability,
+      (value: string) => {
+        this.world.geneInsertionDeletionProbability = parseFloat(value);
+      },
+      (value: string) =>
+        (Math.round(parseFloat(value) * 100 * 100) / 100).toString()
+    );
+
+    // stepsPerGen slider
+    this.setupSlider(
+      "#stepsPerGenSlider",
+      "#stepsPerGenValue",
+      this.world.stepsPerGen,
+      (value: string) => {
+        this.world.stepsPerGen = parseFloat(value);
+      }
+    );
+  }
+
+  renderDataFromWorld(): void {
+    this.renderStatTexts();
+    this.setupSliders();
+
+    this.initialSettings.renderDataFromWorld();
+    this.populationTab.renderDataFromWorld();
+    this.saveTab.renderDataFromWorld();
+  }
+
+  renderStatTexts() {
     this.generationText.textContent = this.world.currentGen.toString();
     this.newPopulation.textContent =
       this.world.currentCreatures.length.toString();
@@ -204,16 +217,30 @@ export default class WebUI {
     // Show the duration of the last generation
     this.lastGenerationDuration.textContent =
       this.world.lastGenerationDuration.toString();
+
+    // Step text
+    this.onStartStep();
   }
 
-  onStartStep() {
-    const stepText = document.querySelector("#step");
-    if (stepText) {
-      stepText.textContent = this.world.currentStep.toString();
-    }
+  private onStartGeneration() {
+    console.log(
+      `Start generation ${this.world.currentGen},\nLast generation duration: ${
+        this.world.lastGenerationDuration
+      } ms\nSurvivors: ${this.world.lastSurvivorsCount},\nNew population: ${
+        this.world.currentCreatures.length
+      },\nSurvival rate: ${
+        Math.round(this.world.lastSurvivalRate * 100 * 100) / 100
+      }%`
+    );
+
+    this.renderStatTexts();
   }
 
-  setupSlider(
+  private onStartStep() {
+    this.currentStep.textContent = this.world.currentStep.toString();
+  }
+
+  private setupSlider(
     sliderId: string,
     valueId: string,
     initialValue: any,
@@ -226,22 +253,22 @@ export default class WebUI {
     value.textContent = formatText(initialValue);
 
     if (slider && value) {
-      slider.addEventListener("input", (e) => {
+      slider.onclick = (e) => {
         const target = e.target as HTMLInputElement;
         value.textContent = formatText(target.value);
         callback(target.value);
-      });
+      };
     }
   }
 
-  restart() {
+  restartSimulation() {
     if (!this.initialSettings.applySettingsAndRestart()) {
       console.error("Invalid initial settings");
     }
   }
 
-  handlePause(e: MouseEvent) {
-    if (this.world.isPaused()) {
+  private handlePause(e: MouseEvent) {
+    if (this.world.isPaused) {
       this.world.resume();
       (e.target as HTMLElement).textContent = "Pause";
     } else {

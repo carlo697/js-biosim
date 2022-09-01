@@ -105,12 +105,15 @@ body {
   background-color: white;
 }
 
-#genomePreview {
+.textarea-full-width {
   width: 100%;
   min-height: 50px;
+  resize: vertical;
+}
+
+#genomePreview {
   height: 150px;
   max-height: 500px;
-  resize: vertical;
   margin-top: 1rem;
 }
 
@@ -147,3 +150,4 @@ body {
 
 // Web
 @import "species_tab";
+@import "save_load_tab";
