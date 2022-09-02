@@ -40,6 +40,5 @@ export default interface SavedWorld {
   species: SavedSpecies[];
 
   obstacles: SavedWorldObject[];
-  // TODO: Handle world areas
-  // areas: WorldArea[] = [];
+  areas: SavedWorldObject[];
 }

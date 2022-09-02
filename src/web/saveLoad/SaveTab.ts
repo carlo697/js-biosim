@@ -3,6 +3,7 @@ import WebUI from "../WebUI";
 import SavedSpecies from "./data/SavedSpecies";
 import SavedWorld from "./data/SavedWorld";
 import SavedWorldObject from "./data/SavedWorldObject";
+import areaFormatters from "./formatters/areaFormatters";
 import objectFormatters from "./formatters/objectFormatters";
 
 export default class SaveTab {
@@ -90,6 +91,31 @@ export default class SaveTab {
       }
     }
 
+    // Save areas
+    const areas: SavedWorldObject[] = [];
+    for (
+      let areaIdx = 0;
+      areaIdx < world.areas.length;
+      areaIdx++
+    ) {
+      const area = world.areas[areaIdx];
+
+      // Find the formatter
+      const className: string =
+        Object.getPrototypeOf(area).constructor.name;
+      const formatter = areaFormatters[className];
+      if (formatter) {
+        // If the formatter was found, serialize the object
+        const data = formatter.serialize(area);
+        // Save it
+        const item: SavedWorldObject = {
+          data,
+          type: className,
+        };
+        areas.push(item);
+      }
+    }
+
     return {
       size: world.size,
       initialPopulation: world.initialPopulation,
@@ -119,6 +145,7 @@ export default class SaveTab {
       actions,
 
       obstacles,
+      areas
     };
   }
 
