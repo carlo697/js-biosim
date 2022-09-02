@@ -19,10 +19,7 @@ export default class RectangleObject implements WorldObject {
     public height: number,
     public relative: boolean = true,
     public color: string = "rgb(60, 60, 60)"
-  ) {
-    // Calculate transform and pixels
-    this.computeTransform();
-  }
+  ) {}
 
   computePixels(): void {
     // Recalculate transform and pixels

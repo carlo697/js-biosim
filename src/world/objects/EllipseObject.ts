@@ -20,10 +20,7 @@ export default class EllipseObject implements WorldObject {
     public relative: boolean = true,
     public drawIndividualPixels: boolean = false,
     public color: string = "rgb(60, 60, 60)"
-  ) {
-    // Calculate transform and pixels
-    this.computeTransform();
-  }
+  ) {}
 
   computePixels(): void {
     // Recalculate transform and pixels
@@ -118,7 +115,5 @@ export default class EllipseObject implements WorldObject {
         }
       }
     }
-
-    console.log(this.pixels);
   }
 }
