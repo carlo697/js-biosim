@@ -253,7 +253,7 @@ export default class WebUI {
     value.textContent = formatText(initialValue);
 
     if (slider && value) {
-      slider.onclick = (e) => {
+      slider.oninput = (e) => {
         const target = e.target as HTMLInputElement;
         value.textContent = formatText(target.value);
         callback(target.value);
