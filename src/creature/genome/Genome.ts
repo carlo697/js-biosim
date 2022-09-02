@@ -148,7 +148,7 @@ export default class Genome {
   }
 
   getRandomGeneIndex() {
-    return Math.round(Math.random() * (this.genes.length - 1));
+    return Math.floor(Math.random() * this.genes.length);
   }
 
   toBitString(): string {
