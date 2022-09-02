@@ -1,5 +1,6 @@
 import { MutationMode } from "../../../creature/genome/MutationMode";
 import SavedSpecies from "./SavedSpecies";
+import SavedWorldObject from "./SavedWorldObject";
 
 export default interface SavedWorld {
   // World
@@ -31,15 +32,14 @@ export default interface SavedWorld {
   // TODO: Handle selectionMethod
   // selectionMethod: SelectionMethod = new EastWallSelection();
 
-  // TODO: Handle world obstacles
-  // obstacles: WorldObject[] = [];
-  // TODO: Handle world areas
-  // areas: WorldArea[] = [];
-
   // Sensors and actions
   sensors: string[];
   actions: string[];
 
   // Species
   species: SavedSpecies[];
+
+  obstacles: SavedWorldObject[];
+  // TODO: Handle world areas
+  // areas: WorldArea[] = [];
 }

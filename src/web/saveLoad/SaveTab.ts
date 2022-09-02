@@ -2,6 +2,8 @@ import World from "../../world/World";
 import WebUI from "../WebUI";
 import SavedSpecies from "./data/SavedSpecies";
 import SavedWorld from "./data/SavedWorld";
+import SavedWorldObject from "./data/SavedWorldObject";
+import objectFormatters from "./formatters/objectFormatters";
 
 export default class SaveTab {
   world: World;
@@ -58,9 +60,35 @@ export default class SaveTab {
       });
     }
 
+    // Create the final array of species
     const species: SavedSpecies[] = Array.from(creatureMap.values()).sort(
       (a, b) => b.creatures.length - a.creatures.length
     );
+
+    // Save obstacles
+    const obstacles: SavedWorldObject[] = [];
+    for (
+      let obstacleIdx = 0;
+      obstacleIdx < world.obstacles.length;
+      obstacleIdx++
+    ) {
+      const obstacle = world.obstacles[obstacleIdx];
+
+      // Find the formatter
+      const className: string =
+        Object.getPrototypeOf(obstacle).constructor.name;
+      const formatter = objectFormatters[className];
+      if (formatter) {
+        // If the formatter was found, serialize the object
+        const data = formatter.serialize(obstacle);
+        // Save it
+        const item: SavedWorldObject = {
+          data,
+          type: className,
+        };
+        obstacles.push(item);
+      }
+    }
 
     return {
       size: world.size,
@@ -89,6 +117,8 @@ export default class SaveTab {
 
       sensors,
       actions,
+
+      obstacles,
     };
   }
 

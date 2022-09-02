@@ -1,8 +1,10 @@
 import Creature from "../../creature/Creature";
 import Genome from "../../creature/genome/Genome";
 import World from "../../world/World";
+import WorldObject from "../../world/WorldObject";
 import WebUI from "../WebUI";
 import SavedWorld from "./data/SavedWorld";
+import objectFormatters from "./formatters/objectFormatters";
 
 export default class LoadTab {
   world: World;
@@ -72,6 +74,22 @@ export default class LoadTab {
       });
     });
     this.world.currentCreatures = creatures;
+
+    // Clear worls obstacles
+    this.world.obstacles = [];
+
+    // Load obstacles
+    parsed.obstacles.forEach((savedObject) => {
+      const formatter = objectFormatters[savedObject.type];
+
+      if (formatter) {
+        const worldObject: WorldObject = formatter.deserialize(
+          savedObject.data,
+          this.world
+        );
+        this.world.obstacles.push(worldObject);
+      }
+    });
 
     // Initialize world
     this.world.initializeWorld(false);
