@@ -91,6 +91,13 @@ export default class World {
       this.currentStep = 0;
       this.totalTime = 0;
 
+      // Stats
+      this.lastCreatureCount = 0;
+      this.lastSurvivorsCount = 0;
+      this.lastSurvivalRate = 0;
+      this.lastGenerationDuration = 0;
+      this.totalTime = 0;
+
       // Clear previous creatures
       this.currentCreatures = [];
     }
@@ -236,11 +243,13 @@ export default class World {
       this.pauseTime = 0;
       this.lastGenerationDate = new Date();
 
-      this.events.dispatchEvent(
-        new CustomEvent(WorldEvents.startGeneration, {
-          detail: { world: this },
-        })
-      );
+      if (this.currentGen === 0) {
+        this.events.dispatchEvent(
+          new CustomEvent(WorldEvents.startGeneration, {
+            detail: { world: this },
+          })
+        );
+      }
     }
 
     for (let i = 0; i < this.immediateSteps; i++) {
