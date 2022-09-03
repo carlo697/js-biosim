@@ -11,7 +11,10 @@ export default class InsideReproductionAreaSelection
     for (const creature of world.currentCreatures) {
       const gridPoint = world.grid[creature.position[0]][creature.position[1]];
 
-      if (gridPoint.areas.find((area) => area.areaType === 0)) {
+      if (
+        creature.isAlive &&
+        gridPoint.areas.find((area) => area.areaType === 0)
+      ) {
         parents.push(creature);
       }
     }

@@ -10,7 +10,7 @@ export default class EastWallSelection implements SelectionMethod {
     const parents = [];
 
     for (const creature of world.currentCreatures) {
-      if (creature.position[0] >= world.size / 2) {
+      if (creature.isAlive && creature.position[0] >= world.size / 2) {
         parents.push(creature);
       }
     }
