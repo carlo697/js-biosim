@@ -90,8 +90,6 @@ export default class StatsTab {
           return [x, y];
         };
 
-        console.log(dataToCanvasPoint(points[0]));
-
         // Begin path
         this.context.beginPath();
 
@@ -165,15 +163,15 @@ export default class StatsTab {
 
     // Apply mean filter
     const filtering = 10;
-    for (let index = 0; index < newPoints.length; index++) {
+    for (let index = 1; index < newPoints.length; index++) {
       const point = newPoints[index];
 
       let count = 0;
       let survivorCountSum = 0;
 
       for (
-        let j = Math.max(1, index - filtering);
-        j < Math.min(newPoints.length - 2, index + filtering);
+        let j = Math.max(0, index - filtering);
+        j < Math.min(newPoints.length - 1, index + filtering);
         j++
       ) {
         survivorCountSum += newPoints[j].survivorCount;

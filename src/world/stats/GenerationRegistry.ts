@@ -22,7 +22,9 @@ export class GenerationRegistry {
 
       if (survivorCount > this.maxSurvivorCount) {
         this.maxSurvivorCount = survivorCount;
-      } else if (survivorCount < this.minSurvivorCount) {
+      }
+
+      if (survivorCount < this.minSurvivorCount) {
         this.minSurvivorCount = survivorCount;
       }
 
