@@ -1,5 +1,5 @@
 import { WorldEvents } from "../events/WorldEvents";
-import { interpolate, lerp } from "../helpers/helpers";
+import { clamp, interpolate, lerp } from "../helpers/helpers";
 import World from "../world/World";
 import WebUI from "./WebUI";
 
@@ -22,6 +22,12 @@ export default class StatsTab {
   resolution: number = 1;
   margins = { top: 20, bottom: 20, left: 20, right: 20 };
 
+  // Zoom
+  zoomLevel: number = 1;
+  mouseNormalized: number = 0.5;
+  zoomViewportLeft: number = 0;
+  zoomViewportWidth: number = 1;
+
   constructor(public webUI: WebUI) {
     this.world = webUI.world;
 
@@ -36,12 +42,13 @@ export default class StatsTab {
     this.canvas = <HTMLCanvasElement>document.getElementById("populationGraph");
     this.context = <CanvasRenderingContext2D>this.canvas.getContext("2d");
 
+    // Event listeners
     this.world.events.addEventListener(
       WorldEvents.startGeneration,
       this.onStartGeneration.bind(this)
     );
-
     this.tabButton.addEventListener("click", this.drawGraph.bind(this));
+    this.canvas.addEventListener("wheel", this.handleWheel.bind(this), false);
   }
 
   onStartGeneration() {
@@ -67,22 +74,22 @@ export default class StatsTab {
         context.lineWidth = 2;
 
         // Get the points to render
-        const points: GraphPoint[] = this.getFilteredData();
+        const { points, minX, maxX, minY, maxY } = this.getFilteredData();
 
         // Function to get coordinates of point
         const dataToCanvasPoint = (point: GraphPoint): number[] => {
           const x = interpolate(
             point.generation,
-            points[0].generation,
-            this.world.currentGen - 1,
+            minX,
+            maxX,
             this.margins.left,
             width - this.margins.right
           );
 
           const y = interpolate(
             point.survivorCount,
-            registry.minSurvivorCount,
-            registry.maxSurvivorCount,
+            minY,
+            maxY,
             height - this.margins.bottom,
             this.margins.top
           );
@@ -105,13 +112,32 @@ export default class StatsTab {
 
         // Draw the path
         context.stroke();
+
+        // Draw zoom viewport
+        // const left =
+        //   this.margins.left + this.zoomViewportLeft * this.absoluteGraphWidth;
+        // const right = left + this.zoomViewportWidth * this.absoluteGraphWidth;
+        // this.context.beginPath();
+        // context.moveTo(left, 0);
+        // context.lineTo(left, height);
+        // context.stroke();
+        // this.context.beginPath();
+        // context.moveTo(right, 0);
+        // context.lineTo(right, height);
+        // context.stroke();
       } else {
         context.clearRect(0, 0, width, height);
       }
     }
   }
 
-  getFilteredData(): GraphPoint[] {
+  getFilteredData(): {
+    points: GraphPoint[];
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+  } {
     const points = this.world.generationRegistry.generations;
 
     // Calculate the new size of array
@@ -121,15 +147,36 @@ export default class StatsTab {
     // Create new array
     const newPoints: GraphPoint[] = [];
 
+    // Calculations for zoom
+    const oldViewportWidth = this.zoomViewportWidth;
+    let newViewportWidth = 1 / this.zoomLevel;
+    const oldMouse = this.mouseNormalized * oldViewportWidth;
+    const newMouse = this.mouseNormalized * newViewportWidth;
+
+    const oldViewportLeft = this.zoomViewportLeft;
+    let newViewportLeft =
+      oldViewportLeft +
+      (oldViewportLeft + oldMouse - (oldViewportLeft + newMouse));
+
+    // Clamp values because of loss of precision on the results
+    newViewportLeft = clamp(newViewportLeft, 0, 1 - newViewportWidth);
+
+    this.zoomViewportLeft = newViewportLeft;
+    this.zoomViewportWidth = newViewportWidth;
+
+    // console.log("new", newViewportLeft, newViewportWidth);
+
     // Set the first element
-    newPoints[0] = {
-      ...points[0],
-    };
+    // newPoints[0] = {
+    //   ...points[0],
+    // };
+
+    const offset = this.zoomViewportLeft * (points.length - 1);
 
     for (let index = 1; index < sampleSize - 1; index++) {
       // This decimal value represents where this index
       // would lay on the original array
-      const position = index * resizeFactor;
+      const position = offset + index * resizeFactor * this.zoomViewportWidth;
 
       // Get the point to the left and to the right on the
       // original array by rounding the variable above
@@ -154,34 +201,108 @@ export default class StatsTab {
         atPoint
       );
 
+      // Set first element in array
+      if (index === 1) {
+        newPoints[0] = {
+          generation: leftPoint.generation,
+          survivorCount: leftPoint.survivorCount,
+        };
+      }
+
+      // Set last element in array
+      if (index === sampleSize - 2) {
+        newPoints[sampleSize - 1] = {
+          generation: rightPoint.generation,
+          survivorCount: rightPoint.survivorCount,
+        };
+      }
+
       // Set the data
       newPoints[index] = { generation, survivorCount };
     }
 
     // Set the last element
-    newPoints[sampleSize - 1] = { ...points[points.length - 1] };
+    // newPoints[sampleSize - 1] = { ...points[points.length - 1] };
+
+    // Record min and max values
+    let minX = Number.MAX_VALUE;
+    let maxX = Number.MIN_VALUE;
+    let minY = Number.MAX_VALUE;
+    let maxY = Number.MIN_VALUE;
 
     // Apply mean filter
     const filtering = 10;
-    for (let index = 1; index < newPoints.length; index++) {
+    for (let index = 0; index < newPoints.length; index++) {
       const point = newPoints[index];
 
-      let count = 0;
-      let survivorCountSum = 0;
+      // We don't want to filter the first element
+      if (index > 0) {
+        let count = 0;
+        let survivorCountSum = 0;
 
-      for (
-        let j = Math.max(0, index - filtering);
-        j < Math.min(newPoints.length - 1, index + filtering);
-        j++
-      ) {
-        survivorCountSum += newPoints[j].survivorCount;
-        count++;
+        for (
+          let j = Math.max(0, index - filtering);
+          j < Math.min(newPoints.length - 1, index + filtering);
+          j++
+        ) {
+          survivorCountSum += newPoints[j].survivorCount;
+          count++;
+        }
+
+        point.survivorCount = survivorCountSum / count;
       }
 
-      point.survivorCount = survivorCountSum / count;
+      if (point.generation < minX) {
+        minX = point.generation;
+      }
+      if (point.generation > maxX) {
+        maxX = point.generation;
+      }
+
+      if (point.survivorCount < minY) {
+        minY = point.survivorCount;
+      }
+      if (point.survivorCount > maxY) {
+        maxY = point.survivorCount;
+      }
     }
 
-    return newPoints;
+    return { points: newPoints, minX, maxX, minY, maxY };
+  }
+
+  handleWheel(e: WheelEvent) {
+    // Calculate relative mouse position to the graph
+    const relativeX = e.clientX - this.canvas.getBoundingClientRect().left;
+
+    if (
+      relativeX > this.margins.left &&
+      relativeX < this.canvas.width - this.margins.right
+    ) {
+      // Calculate normalized position
+      this.mouseNormalized = interpolate(
+        relativeX,
+        this.margins.left,
+        this.canvas.width - this.margins.right,
+        0,
+        1
+      );
+
+      const oldZoom = this.zoomLevel;
+
+      // Calculate new zoom
+      if (e.deltaY > 0) {
+        this.zoomLevel /= 1.02;
+      } else {
+        this.zoomLevel *= 1.02;
+      }
+      this.zoomLevel = clamp(this.zoomLevel, 1, 1000);
+
+      if (oldZoom != this.zoomLevel) {
+        this.drawGraph();
+      }
+
+      e.preventDefault();
+    }
   }
 
   private get absoluteGraphWidth() {
