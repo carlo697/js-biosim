@@ -142,6 +142,10 @@ body {
   display: none;
 }
 
+.crosshair {
+  cursor: crosshair;
+}
+
 @import "text";
 @import "buttons";
 @import "tabs";

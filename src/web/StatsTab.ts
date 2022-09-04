@@ -22,11 +22,20 @@ export default class StatsTab {
   resolution: number = 1;
   margins = { top: 20, bottom: 20, left: 20, right: 20 };
 
+  // Mouse
+  isMouseInsideGraph: boolean = false;
+  relativeMouseX: number = 0;
+  relativeMouseY: number = 0;
+
   // Zoom
   zoomLevel: number = 1;
   mouseNormalized: number = 0.5;
   zoomViewportLeft: number = 0;
   zoomViewportWidth: number = 1;
+
+  // Panning
+  mouseMovementX: number = 0;
+  mouseLastX: number = 0;
 
   constructor(public webUI: WebUI) {
     this.world = webUI.world;
@@ -49,6 +58,16 @@ export default class StatsTab {
     );
     this.tabButton.addEventListener("click", this.drawGraph.bind(this));
     this.canvas.addEventListener("wheel", this.handleWheel.bind(this), false);
+    this.canvas.addEventListener(
+      "mousemove",
+      this.handleMouseMove.bind(this),
+      false
+    );
+    this.canvas.addEventListener(
+      "mouseleave",
+      this.handleMouseLeave.bind(this),
+      false
+    );
   }
 
   onStartGeneration() {
@@ -158,6 +177,9 @@ export default class StatsTab {
       oldViewportLeft +
       (oldViewportLeft + oldMouse - (oldViewportLeft + newMouse));
 
+    // Add mouse movement
+    newViewportLeft -= this.mouseMovementX * newViewportWidth;
+
     // Clamp values because of loss of precision on the results
     newViewportLeft = clamp(newViewportLeft, 0, 1 - newViewportWidth);
 
@@ -235,22 +257,19 @@ export default class StatsTab {
     for (let index = 0; index < newPoints.length; index++) {
       const point = newPoints[index];
 
-      // We don't want to filter the first element
-      if (index > 0) {
-        let count = 0;
-        let survivorCountSum = 0;
+      let count = 0;
+      let survivorCountSum = 0;
 
-        for (
-          let j = Math.max(0, index - filtering);
-          j < Math.min(newPoints.length - 1, index + filtering);
-          j++
-        ) {
-          survivorCountSum += newPoints[j].survivorCount;
-          count++;
-        }
-
-        point.survivorCount = survivorCountSum / count;
+      for (
+        let j = Math.max(0, index - filtering);
+        j < Math.min(newPoints.length - 1, index + filtering);
+        j++
+      ) {
+        survivorCountSum += newPoints[j].survivorCount;
+        count++;
       }
+
+      point.survivorCount = survivorCountSum / count;
 
       if (point.generation < minX) {
         minX = point.generation;
@@ -271,16 +290,10 @@ export default class StatsTab {
   }
 
   handleWheel(e: WheelEvent) {
-    // Calculate relative mouse position to the graph
-    const relativeX = e.clientX - this.canvas.getBoundingClientRect().left;
-
-    if (
-      relativeX > this.margins.left &&
-      relativeX < this.canvas.width - this.margins.right
-    ) {
+    if (this.isMouseInsideGraph) {
       // Calculate normalized position
       this.mouseNormalized = interpolate(
-        relativeX,
+        this.relativeMouseX,
         this.margins.left,
         this.canvas.width - this.margins.right,
         0,
@@ -291,7 +304,7 @@ export default class StatsTab {
 
       // Calculate new zoom
       if (e.deltaY > 0) {
-        this.zoomLevel /= 1.02;
+        this.zoomLevel /= 1.1;
       } else {
         this.zoomLevel *= 1.02;
       }
@@ -303,6 +316,42 @@ export default class StatsTab {
 
       e.preventDefault();
     }
+  }
+
+  handleMouseMove(e: MouseEvent) {
+    this.relativeMouseX = e.clientX - this.canvas.getBoundingClientRect().left;
+    this.relativeMouseY = e.clientY - this.canvas.getBoundingClientRect().top;
+
+    this.isMouseInsideGraph =
+      this.relativeMouseX > this.margins.left &&
+      this.relativeMouseX < this.canvas.width - this.margins.right &&
+      this.relativeMouseY > this.margins.top &&
+      this.relativeMouseY < this.canvas.height - this.margins.bottom;
+
+    if (this.isMouseInsideGraph) {
+      this.canvas.classList.add("crosshair");
+    } else {
+      this.canvas.classList.remove("crosshair");
+    }
+
+    if (e.buttons === 1 && this.isMouseInsideGraph) {
+      if (this.mouseLastX) {
+        this.mouseMovementX =
+          (e.clientX - this.mouseLastX) / this.absoluteGraphWidth;
+        this.drawGraph();
+      }
+
+      this.mouseLastX = e.clientX;
+    } else {
+      this.mouseMovementX = 0;
+      this.mouseLastX = 0;
+    }
+  }
+
+  handleMouseLeave() {
+    this.isMouseInsideGraph = false;
+    this.mouseMovementX = 0;
+    this.mouseLastX = 0;
   }
 
   private get absoluteGraphWidth() {
