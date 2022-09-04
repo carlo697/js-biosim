@@ -1,4 +1,5 @@
 import { MutationMode } from "../../../creature/genome/MutationMode";
+import SavedGenerationRegistry from "./SavedGenerationRegistry";
 import SavedSpecies from "./SavedSpecies";
 import SavedWorldObject from "./SavedWorldObject";
 
@@ -41,4 +42,6 @@ export default interface SavedWorld {
 
   obstacles: SavedWorldObject[];
   areas: SavedWorldObject[];
+
+  generations: SavedGenerationRegistry;
 }

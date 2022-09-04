@@ -4,6 +4,7 @@ import SavedSpecies from "./data/SavedSpecies";
 import SavedWorld from "./data/SavedWorld";
 import SavedWorldObject from "./data/SavedWorldObject";
 import areaFormatters from "./formatters/areaFormatters";
+import generationRegistryFormatter from "./formatters/generationRegistryFormatter";
 import objectFormatters from "./formatters/objectFormatters";
 
 export default class SaveTab {
@@ -93,16 +94,11 @@ export default class SaveTab {
 
     // Save areas
     const areas: SavedWorldObject[] = [];
-    for (
-      let areaIdx = 0;
-      areaIdx < world.areas.length;
-      areaIdx++
-    ) {
+    for (let areaIdx = 0; areaIdx < world.areas.length; areaIdx++) {
       const area = world.areas[areaIdx];
 
       // Find the formatter
-      const className: string =
-        Object.getPrototypeOf(area).constructor.name;
+      const className: string = Object.getPrototypeOf(area).constructor.name;
       const formatter = areaFormatters[className];
       if (formatter) {
         // If the formatter was found, serialize the object
@@ -115,6 +111,11 @@ export default class SaveTab {
         areas.push(item);
       }
     }
+
+    // Save generation registry
+    const generations = generationRegistryFormatter.serialize(
+      world.generationRegistry
+    );
 
     return {
       size: world.size,
@@ -145,7 +146,8 @@ export default class SaveTab {
       actions,
 
       obstacles,
-      areas
+      areas,
+      generations,
     };
   }
 

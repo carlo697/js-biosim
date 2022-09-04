@@ -1,11 +1,13 @@
 import Creature from "../../creature/Creature";
 import Genome from "../../creature/genome/Genome";
 import WorldArea from "../../world/areas/WorldArea";
+import { GenerationRegistry } from "../../world/stats/GenerationRegistry";
 import World from "../../world/World";
 import WorldObject from "../../world/WorldObject";
 import WebUI from "../WebUI";
 import SavedWorld from "./data/SavedWorld";
 import areaFormatters from "./formatters/areaFormatters";
+import generationRegistryFormatter from "./formatters/generationRegistryFormatter";
 import objectFormatters from "./formatters/objectFormatters";
 
 export default class LoadTab {
@@ -108,6 +110,16 @@ export default class LoadTab {
         this.world.areas.push(worldArea);
       }
     });
+
+    // Load generation registry
+    if (parsed.generations) {
+      this.world.generationRegistry = generationRegistryFormatter.deserialize(
+        parsed.generations,
+        this.world
+      );
+    } else {
+      this.world.generationRegistry = new GenerationRegistry(this.world);
+    }
 
     // Initialize world
     this.world.initializeWorld(false);

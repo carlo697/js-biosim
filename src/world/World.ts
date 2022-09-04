@@ -8,6 +8,7 @@ import SelectionMethod from "../creature/selection/SelectionMethod";
 import CreatureSensor from "../creature/sensors/CreatureSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import WorldArea from "./areas/WorldArea";
+import { GenerationRegistry } from "./stats/GenerationRegistry";
 import WorldObject from "./WorldObject";
 
 type GridPoint = {
@@ -50,6 +51,7 @@ export default class World {
   lastPauseDate: Date | undefined = new Date();
   pauseTime: number = 0;
   totalTime: number = 0;
+  generationRegistry: GenerationRegistry = new GenerationRegistry(this);
 
   populationStrategy: PopulationStrategy = new AsexualRandomPopulation();
   selectionMethod: SelectionMethod = new EastWallSelection();
@@ -97,6 +99,7 @@ export default class World {
       this.lastSurvivalRate = 0;
       this.lastGenerationDuration = 0;
       this.totalTime = 0;
+      this.generationRegistry = new GenerationRegistry(this);
 
       // Clear previous creatures
       this.currentCreatures = [];
@@ -303,6 +306,9 @@ export default class World {
     this.totalTime += this.lastGenerationDuration;
 
     this.selectAndPopulate();
+
+    // Generation registry
+    this.generationRegistry.startGeneration();
 
     this.events.dispatchEvent(
       new CustomEvent(WorldEvents.startGeneration, { detail: { world: this } })

@@ -2,9 +2,11 @@ import EllipseHealthArea from "../../../world/areas/EllipseHealthArea";
 import RectangleHealthArea from "../../../world/areas/RectangleHealthArea";
 import EllipseReproductionArea from "../../../world/areas/reproduction/EllipseReproductionArea";
 import RectangleReproductionArea from "../../../world/areas/reproduction/RectangleReproductionArea";
-import DataFormatter from "./DataFormatter";
+import { DataFormatter } from "./DataFormatter";
 
-const areaFormatters: { [key: string]: DataFormatter<any> } = {
+const areaFormatters: {
+  [key: string]: DataFormatter<any, { [key: string]: any }>;
+} = {
   RectangleReproductionArea: {
     serialize({ x, y, width, height, relative }: RectangleReproductionArea) {
       return { x, y, width, height, relative };

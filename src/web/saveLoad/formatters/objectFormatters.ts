@@ -1,8 +1,10 @@
 import EllipseObject from "../../../world/objects/EllipseObject";
 import RectangleObject from "../../../world/objects/RectangleObject";
-import DataFormatter from "./DataFormatter";
+import { DataFormatter } from "./DataFormatter";
 
-const objectFormatters: { [key: string]: DataFormatter<any> } = {
+const objectFormatters: {
+  [key: string]: DataFormatter<any, { [key: string]: any }>;
+} = {
   RectangleObject: {
     serialize({ x, y, width, height, relative, color }: RectangleObject) {
       return { x, y, width, height, relative, color };

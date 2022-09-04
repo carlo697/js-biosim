@@ -30,3 +30,13 @@ export const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
 
 export const clamp = (value: number, min: number, max: number): number =>
   Math.min(Math.max(value, min), max);
+
+export const interpolate = (
+  value: number,
+  minX: number,
+  maxX: number,
+  minY: number,
+  maxY: number
+) => {
+  return ((value - minX) / (maxX - minX)) * (maxY - minY) + minY;
+};

@@ -23,6 +23,7 @@ import InitialSettings from "./InitialSettings";
 import PopulationTab from "./PopulationTab";
 import LoadTab from "./saveLoad/LoadTab";
 import SaveTab from "./saveLoad/SaveTab";
+import StatsTab from "./StatsTab";
 import { initializeTabsInDOM } from "./Tabs";
 
 export default class WebUI {
@@ -46,6 +47,7 @@ export default class WebUI {
   populationTab: PopulationTab;
   saveTab: SaveTab;
   loadTab: LoadTab;
+  statsTab: StatsTab;
 
   constructor(world: World) {
     this.world = world;
@@ -118,6 +120,7 @@ export default class WebUI {
     this.populationTab = new PopulationTab(this);
     this.saveTab = new SaveTab(this);
     this.loadTab = new LoadTab(this);
+    this.statsTab = new StatsTab(this);
 
     // Load data from the world to the UI
     this.renderDataFromWorld();
