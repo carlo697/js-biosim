@@ -1,6 +1,6 @@
 import World from "../../../world/World";
 
-export default interface DataFormatter<T> {
-  serialize(item: T): { [key: string]: any };
-  deserialize(data: { [key: string]: any }, world: World): T;
-}
+export type DataFormatter<T, U> = {
+  serialize(item: T): U;
+  deserialize(data: U, world: World): T;
+};

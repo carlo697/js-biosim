@@ -169,6 +169,13 @@
             </button>
             <button
               class="btn btn-tab transparent-light"
+              id="statsTabButton"
+              data-tab-target="statsTabContent"
+            >
+              Stats
+            </button>
+            <button
+              class="btn btn-tab transparent-light"
               data-tab-target="aboutTabContent"
             >
               About
@@ -345,6 +352,10 @@
                 ></textarea>
                 <button class="btn" id="loadButton">Load</button>
               </div>
+            </div>
+
+            <div id="statsTabContent">
+              <canvas id="populationGraph"></canvas>
             </div>
 
             <div id="aboutTabContent">
