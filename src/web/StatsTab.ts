@@ -30,7 +30,7 @@ export default class StatsTab {
 
   // Zoom
   zoomLevel: number = 1;
-  mouseNormalized: number = 0.5;
+  mouseNormalized: number = 0;
   zoomViewportLeft: number = 0;
   zoomViewportWidth: number = 1;
 
@@ -61,6 +61,10 @@ export default class StatsTab {
       WorldEvents.startGeneration,
       this.onStartGeneration.bind(this)
     );
+    this.world.events.addEventListener(
+      WorldEvents.initializeWorld,
+      this.onInitializeWorld.bind(this)
+    );
     this.tabButton.addEventListener("click", this.drawGraph.bind(this));
     this.canvas.addEventListener("wheel", this.handleWheel.bind(this), false);
     this.canvas.addEventListener(
@@ -74,6 +78,12 @@ export default class StatsTab {
       false
     );
     window.addEventListener("resize", this.drawGraph.bind(this));
+  }
+
+  onInitializeWorld() {
+    this.zoomLevel = 1;
+    this.zoomViewportLeft = 0;
+    this.zoomViewportWidth = 1;
   }
 
   onStartGeneration() {
