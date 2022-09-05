@@ -298,6 +298,11 @@ export default class StatsTab {
   }
 
   getInterpolatedPointAt(points: GraphPoint[], position: number) {
+    // Position can be greater than (points.length - 1) (because of float
+    // precision) for a extremely tiny value, for example (0.000000000002)
+    // so let's clamp the value
+    position = clamp(position, 0, points.length - 1);
+
     // Get the point to the left and to the right on the
     // original array by rounding the variable above
     const leftIndex = Math.floor(position);
@@ -371,11 +376,6 @@ export default class StatsTab {
       // let position =
       //   offset +
       //   ((index / (sampleSize - 1)) * (points.length - 1)) / this.zoomLevel;
-
-      // Position can be greater than (points.length - 1) (because of float
-      // precision) for a extremely tiny value, for example (0.000000000002)
-      // so let's clamp the value
-      position = clamp(position, 0, points.length - 1);
 
       // Set the data
       newPoints[index] = this.getInterpolatedPointAt(points, position);
