@@ -84,6 +84,7 @@ export default class StatsTab {
     this.zoomLevel = 1;
     this.zoomViewportLeft = 0;
     this.zoomViewportWidth = 1;
+    this.drawGraph();
   }
 
   onStartGeneration() {
