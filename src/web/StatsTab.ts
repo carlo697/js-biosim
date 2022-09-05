@@ -20,10 +20,11 @@ export default class StatsTab {
   context: CanvasRenderingContext2D;
 
   resolution: number = 1;
-  margins = { top: 20, bottom: 20, left: 20, right: 20 };
+  margins = { top: 20, bottom: 40, left: 20, right: 40 };
 
   // Mouse
   isMouseInsideGraph: boolean = false;
+  isMouseInsideCanvas: boolean = false;
   relativeMouseX: number = 0;
   relativeMouseY: number = 0;
 
@@ -36,6 +37,10 @@ export default class StatsTab {
   // Panning
   mouseMovementX: number = 0;
   mouseLastX: number = 0;
+
+  // Cursor
+  drawLinesToCursor: boolean = true;
+  useIntersection: boolean = true;
 
   constructor(public webUI: WebUI) {
     this.world = webUI.world;
@@ -68,6 +73,7 @@ export default class StatsTab {
       this.handleMouseLeave.bind(this),
       false
     );
+    window.addEventListener("resize", this.drawGraph.bind(this));
   }
 
   onStartGeneration() {
@@ -87,11 +93,26 @@ export default class StatsTab {
       canvas.width = width;
       canvas.height = height;
 
-      if (data.length > 1) {
-        context.fillStyle = "blue";
-        context.strokeStyle = "blue";
-        context.lineWidth = 2;
+      // Draw X axis
+      this.context.strokeStyle = "red";
+      this.context.beginPath();
+      const y = height - this.margins.bottom;
+      context.moveTo(this.margins.left, y);
+      context.lineTo(width - this.margins.right, y);
+      context.stroke();
 
+      // Draw Y axis
+      this.context.strokeStyle = "green";
+      this.context.beginPath();
+      const x = width - this.margins.right;
+      context.moveTo(x, this.margins.top);
+      context.lineTo(x, height - this.margins.bottom);
+      context.stroke();
+
+      if (data.length > 1) {
+        const textSize = 12;
+        context.lineWidth = 2;
+        context.strokeStyle = "blue";
         // Get the points to render
         const { points, minX, maxX, minY, maxY } = this.getFilteredData();
 
@@ -132,22 +153,166 @@ export default class StatsTab {
         // Draw the path
         context.stroke();
 
-        // Draw zoom viewport
-        // const left =
-        //   this.margins.left + this.zoomViewportLeft * this.absoluteGraphWidth;
-        // const right = left + this.zoomViewportWidth * this.absoluteGraphWidth;
-        // this.context.beginPath();
-        // context.moveTo(left, 0);
-        // context.lineTo(left, height);
-        // context.stroke();
-        // this.context.beginPath();
-        // context.moveTo(right, 0);
-        // context.lineTo(right, height);
-        // context.stroke();
-      } else {
-        context.clearRect(0, 0, width, height);
+        if (this.isMouseInsideCanvas && this.drawLinesToCursor) {
+          if (this.useIntersection) {
+            // Find the survivor count on the cursor
+            const normalizedCursorX =
+              (this.relativeMouseX - this.margins.left) /
+              this.absoluteGraphWidth;
+            const targetIndex = normalizedCursorX * (points.length - 1);
+
+            const { survivorCount, generation } = this.getInterpolatedPointAt(
+              points,
+              targetIndex
+            );
+
+            // Draw X line to cursor intersection
+            this.context.strokeStyle = "rgba(0,0,255,0.2)";
+            this.context.beginPath();
+            const intersectionY =
+              this.margins.top +
+              interpolate(
+                survivorCount,
+                minY,
+                maxY,
+                this.absoluteGraphHeight,
+                0
+              );
+            context.moveTo(this.relativeMouseX, intersectionY);
+            context.lineTo(width - this.margins.right, intersectionY);
+            context.stroke();
+
+            // Draw Y line to cursor intersection
+            this.context.beginPath();
+            context.moveTo(this.relativeMouseX, intersectionY);
+            context.lineTo(this.relativeMouseX, height - this.margins.bottom);
+            context.stroke();
+
+            const roundedGeneration = Math.round(generation);
+            const roundedSurvivors = Math.round(survivorCount);
+            const survivorsPercentage =
+              Math.round((survivorCount / registry.maxSurvivorCount) * 1000) /
+              10;
+
+            // // Draw cursor coodinates
+            context.font = "bold 12px arial";
+            context.textAlign = "center";
+            context.fillText(
+              roundedGeneration.toString(),
+              this.relativeMouseX,
+              height - this.margins.bottom + textSize * 2
+            );
+            context.textAlign = "left";
+            context.fillText(
+              roundedSurvivors.toString(),
+              width - this.margins.right + textSize / 2,
+              intersectionY
+            );
+            context.fillText(
+              survivorsPercentage + "%",
+              width - this.margins.right + textSize / 2,
+              intersectionY + textSize
+            );
+          } else {
+            // Draw X line to cursor
+            this.context.strokeStyle = "rgba(0,0,0,0.2)";
+            this.context.beginPath();
+            context.moveTo(this.relativeMouseX, this.relativeMouseY);
+            context.lineTo(width - this.margins.right, this.relativeMouseY);
+            context.stroke();
+            // Draw Y line to cursor
+            this.context.beginPath();
+            context.moveTo(this.relativeMouseX, this.relativeMouseY);
+            context.lineTo(this.relativeMouseX, height - this.margins.bottom);
+            context.stroke();
+
+            // Calculate graph coordinates of cursor
+            const cursorGeneration = Math.round(
+              interpolate(
+                this.relativeMouseX - this.margins.left,
+                0,
+                this.absoluteGraphWidth,
+                minX,
+                maxX
+              )
+            );
+            const cursorSurvivors = Math.round(
+              interpolate(
+                this.relativeMouseY - this.margins.top,
+                0,
+                this.absoluteGraphHeight,
+                maxY,
+                minY
+              )
+            );
+            const survivorsPercentage =
+              Math.round((cursorSurvivors / registry.maxSurvivorCount) * 1000) /
+              10;
+
+            // Draw cursor coodinates
+            context.font = "bold 12px arial";
+            context.textAlign = "center";
+            context.fillText(
+              cursorGeneration.toString(),
+              this.relativeMouseX,
+              height - this.margins.bottom + textSize * 2
+            );
+            context.textAlign = "left";
+            context.fillText(
+              cursorSurvivors.toString(),
+              width - this.margins.right + textSize / 2,
+              this.relativeMouseY
+            );
+            context.fillText(
+              survivorsPercentage + "%",
+              width - this.margins.right + textSize / 2,
+              this.relativeMouseY + textSize
+            );
+          }
+        }
       }
+
+      // Draw zoom viewport
+      // const left =
+      //   this.margins.left + this.zoomViewportLeft * this.absoluteGraphWidth;
+      // const right = left + this.zoomViewportWidth * this.absoluteGraphWidth;
+      // this.context.beginPath();
+      // context.moveTo(left, 0);
+      // context.lineTo(left, height);
+      // context.stroke();
+      // this.context.beginPath();
+      // context.moveTo(right, 0);
+      // context.lineTo(right, height);
+      // context.stroke();
     }
+  }
+
+  getInterpolatedPointAt(points: GraphPoint[], position: number) {
+    // Get the point to the left and to the right on the
+    // original array by rounding the variable above
+    const leftIndex = Math.floor(position);
+    const rightIndex = Math.ceil(position);
+
+    // This value (between 0 and 1) is used to interpolate
+    // the left and right points
+    const atPoint = position - leftIndex;
+
+    // Get left and right points
+    const leftPoint = points[leftIndex];
+    const rightPoint = points[rightIndex];
+
+    // Interpolate the points
+    const generation = lerp(
+      leftPoint.generation,
+      rightPoint.generation,
+      atPoint
+    );
+    const survivorCount = lerp(
+      leftPoint.survivorCount,
+      rightPoint.survivorCount,
+      atPoint
+    );
+    return { generation, survivorCount };
   }
 
   getFilteredData(): {
@@ -183,68 +348,28 @@ export default class StatsTab {
     // Clamp values because of loss of precision on the results
     newViewportLeft = clamp(newViewportLeft, 0, 1 - newViewportWidth);
 
+    // Set new values for viewport
     this.zoomViewportLeft = newViewportLeft;
     this.zoomViewportWidth = newViewportWidth;
 
-    // console.log("new", newViewportLeft, newViewportWidth);
-
-    // Set the first element
-    // newPoints[0] = {
-    //   ...points[0],
-    // };
-
     const offset = this.zoomViewportLeft * (points.length - 1);
 
-    for (let index = 1; index < sampleSize - 1; index++) {
+    for (let index = 0; index < sampleSize; index++) {
       // This decimal value represents where this index
       // would lay on the original array
-      const position = offset + index * resizeFactor * this.zoomViewportWidth;
+      let position = offset + index * resizeFactor * this.zoomViewportWidth;
+      // let position =
+      //   offset +
+      //   ((index / (sampleSize - 1)) * (points.length - 1)) / this.zoomLevel;
 
-      // Get the point to the left and to the right on the
-      // original array by rounding the variable above
-      const leftIndex = Math.floor(position);
-      const rightIndex = Math.ceil(position);
-
-      // This value (between 0 and 1) is used to interpolate
-      // the left and right points
-      const atPoint = position - leftIndex;
-
-      // Interpolate the points
-      const leftPoint = points[leftIndex];
-      const rightPoint = points[rightIndex];
-      const generation = lerp(
-        leftPoint.generation,
-        rightPoint.generation,
-        atPoint
-      );
-      const survivorCount = lerp(
-        leftPoint.survivorCount,
-        rightPoint.survivorCount,
-        atPoint
-      );
-
-      // Set first element in array
-      if (index === 1) {
-        newPoints[0] = {
-          generation: leftPoint.generation,
-          survivorCount: leftPoint.survivorCount,
-        };
-      }
-
-      // Set last element in array
-      if (index === sampleSize - 2) {
-        newPoints[sampleSize - 1] = {
-          generation: rightPoint.generation,
-          survivorCount: rightPoint.survivorCount,
-        };
-      }
+      // Position can be greater than (points.length - 1) (because of float
+      // precision) for a extremely tiny value, for example (0.000000000002)
+      // so let's clamp the value
+      position = clamp(position, 0, points.length - 1);
 
       // Set the data
-      newPoints[index] = { generation, survivorCount };
+      newPoints[index] = this.getInterpolatedPointAt(points, position);
     }
-
-    // Set the last element
-    // newPoints[sampleSize - 1] = { ...points[points.length - 1] };
 
     // Record min and max values
     let minX = Number.MAX_VALUE;
@@ -257,9 +382,9 @@ export default class StatsTab {
     for (let index = 0; index < newPoints.length; index++) {
       const point = newPoints[index];
 
+      // Apply median filter
       let count = 0;
       let survivorCountSum = 0;
-
       for (
         let j = Math.max(0, index - filtering);
         j < Math.min(newPoints.length - 1, index + filtering);
@@ -268,16 +393,15 @@ export default class StatsTab {
         survivorCountSum += newPoints[j].survivorCount;
         count++;
       }
-
       point.survivorCount = survivorCountSum / count;
 
+      // Find min and max values
       if (point.generation < minX) {
         minX = point.generation;
       }
       if (point.generation > maxX) {
         maxX = point.generation;
       }
-
       if (point.survivorCount < minY) {
         minY = point.survivorCount;
       }
@@ -323,22 +447,17 @@ export default class StatsTab {
     this.relativeMouseY = e.clientY - this.canvas.getBoundingClientRect().top;
 
     this.isMouseInsideGraph =
-      this.relativeMouseX > this.margins.left &&
-      this.relativeMouseX < this.canvas.width - this.margins.right &&
-      this.relativeMouseY > this.margins.top &&
-      this.relativeMouseY < this.canvas.height - this.margins.bottom;
+      this.relativeMouseX >= this.margins.left &&
+      this.relativeMouseX <= this.canvas.width - this.margins.right &&
+      this.relativeMouseY >= this.margins.top &&
+      this.relativeMouseY <= this.canvas.height - this.margins.bottom;
 
-    if (this.isMouseInsideGraph) {
-      this.canvas.classList.add("crosshair");
-    } else {
-      this.canvas.classList.remove("crosshair");
-    }
+    this.isMouseInsideCanvas = true;
 
     if (e.buttons === 1 && this.isMouseInsideGraph) {
       if (this.mouseLastX) {
         this.mouseMovementX =
           (e.clientX - this.mouseLastX) / this.absoluteGraphWidth;
-        this.drawGraph();
       }
 
       this.mouseLastX = e.clientX;
@@ -346,15 +465,28 @@ export default class StatsTab {
       this.mouseMovementX = 0;
       this.mouseLastX = 0;
     }
+
+    if (this.isMouseInsideGraph) {
+      this.canvas.classList.add("crosshair");
+      this.drawGraph();
+    } else {
+      this.canvas.classList.remove("crosshair");
+    }
   }
 
   handleMouseLeave() {
     this.isMouseInsideGraph = false;
+    this.isMouseInsideCanvas = false;
     this.mouseMovementX = 0;
     this.mouseLastX = 0;
+    this.drawGraph();
   }
 
   private get absoluteGraphWidth() {
     return this.canvas.width - this.margins.left - this.margins.right;
+  }
+
+  private get absoluteGraphHeight() {
+    return this.canvas.height - this.margins.top - this.margins.bottom;
   }
 }
