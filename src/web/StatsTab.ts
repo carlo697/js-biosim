@@ -6,6 +6,7 @@ import WebUI from "./WebUI";
 export type GraphPoint = {
   generation: number;
   survivorCount: number;
+  startingPopulation: number;
 };
 
 export default class StatsTab {
@@ -172,10 +173,8 @@ export default class StatsTab {
               this.absoluteGraphWidth;
             const targetIndex = normalizedCursorX * (points.length - 1);
 
-            const { survivorCount, generation } = this.getInterpolatedPointAt(
-              points,
-              targetIndex
-            );
+            const { survivorCount, generation, startingPopulation } =
+              this.getInterpolatedPointAt(points, targetIndex);
 
             // Draw X line to cursor intersection
             this.context.strokeStyle = "rgba(0,0,255,0.2)";
@@ -201,9 +200,8 @@ export default class StatsTab {
 
             const roundedGeneration = Math.round(generation);
             const roundedSurvivors = Math.round(survivorCount);
-            const survivorsPercentage =
-              Math.round((survivorCount / registry.maxSurvivorCount) * 1000) /
-              10;
+            const survivalRate =
+              Math.round((survivorCount / startingPopulation) * 1000) / 10;
 
             // // Draw cursor coodinates
             context.font = "bold 12px arial";
@@ -220,7 +218,7 @@ export default class StatsTab {
               intersectionY
             );
             context.fillText(
-              survivorsPercentage + "%",
+              survivalRate + "%",
               width - this.margins.right + textSize / 2,
               intersectionY + textSize
             );
@@ -256,9 +254,9 @@ export default class StatsTab {
                 minY
               )
             );
-            const survivorsPercentage =
-              Math.round((cursorSurvivors / registry.maxSurvivorCount) * 1000) /
-              10;
+            // const survivorsPercentage =
+            //   Math.round((cursorSurvivors / registry.maxSurvivorCount) * 1000) /
+            //   10;
 
             // Draw cursor coodinates
             context.font = "bold 12px arial";
@@ -274,11 +272,11 @@ export default class StatsTab {
               width - this.margins.right + textSize / 2,
               this.relativeMouseY
             );
-            context.fillText(
-              survivorsPercentage + "%",
-              width - this.margins.right + textSize / 2,
-              this.relativeMouseY + textSize
-            );
+            // context.fillText(
+            //   survivorsPercentage + "%",
+            //   width - this.margins.right + textSize / 2,
+            //   this.relativeMouseY + textSize
+            // );
           }
         }
       }
@@ -328,7 +326,12 @@ export default class StatsTab {
       rightPoint.survivorCount,
       atPoint
     );
-    return { generation, survivorCount };
+    const startingPopulation = lerp(
+      leftPoint.startingPopulation,
+      rightPoint.startingPopulation,
+      atPoint
+    );
+    return { generation, survivorCount, startingPopulation };
   }
 
   getFilteredData(): {
