@@ -23,6 +23,9 @@ export default class Creature {
   // Sensors and actions
   sensors: CreatureSensor[];
   actions: CreatureAction[];
+  onlySensorsWithSingleOutput: boolean = false;
+  singleOutputSensorFunctions: ((creature: Creature) => number)[] = [];
+  singleInputs: number[] = [];
 
   // Neuronal network and genome
   networkInputCount: number;
@@ -62,6 +65,18 @@ export default class Creature {
     this.networkInputCount = 0;
     for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
       this.networkInputCount += this.sensors[sensorIdx].outputCount;
+    }
+
+    // I discovered that calling sensor.calculateOutput or sensor.calculateOutputs
+    // is a bit slower, and that storing those functions in an array and then
+    // calling them from the array is faster (in chrome)...
+    // This way we can reduce up to 40ms in time with generations of 1000 creatures
+    this.onlySensorsWithSingleOutput =
+      this.networkInputCount === this.sensors.length;
+    if (this.onlySensorsWithSingleOutput) {
+      this.singleOutputSensorFunctions = this.sensors.map((sensor) =>
+        (<() => number>sensor.calculateOutput).bind(sensor)
+      );
     }
 
     // Calculate outputs of neuronal network
@@ -259,21 +274,31 @@ export default class Creature {
   }
 
   calculateInputs(): number[] {
-    const inputs = [];
-    for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
-      const sensor = this.sensors[sensorIdx];
+    if (this.onlySensorsWithSingleOutput) {
+      for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
+        this.singleInputs[sensorIdx] =
+          this.singleOutputSensorFunctions[sensorIdx](this);
+      }
 
-      if (sensor.calculateOutput) {
-        inputs.push(sensor.calculateOutput(this));
-      } else if (sensor.calculateOutputs) {
-        const results = sensor.calculateOutputs(this);
+      return this.singleInputs;
+    } else {
+      const inputs = [];
+      for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
+        const sensor = this.sensors[sensorIdx];
 
-        for (let j = 0; j < results.length; j++) {
-          inputs.push(results[j]);
+        if (sensor.calculateOutput) {
+          inputs.push(sensor.calculateOutput(this));
+        } else if (sensor.calculateOutputs) {
+          const results = sensor.calculateOutputs(this);
+
+          for (let j = 0; j < results.length; j++) {
+            inputs.push(results[j]);
+          }
         }
       }
+
+      return inputs;
     }
-    return inputs;
   }
 
   calculateOutputs(inputs: number[]): number[] {
