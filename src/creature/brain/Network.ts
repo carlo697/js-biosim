@@ -2,16 +2,28 @@ import Connection from "./Connection";
 import Neuron, { NeuronType } from "./Neuron";
 
 export class Network {
+  outputs: number[] = [];
+  neuronAccumulators: number[] = [];
+
   constructor(
     public inputCount: number,
     public outputCount: number,
     public neurons: Neuron[],
     public connections: Connection[]
-  ) {}
+  ) {
+    this.outputs = Array(this.outputCount).fill(0);
+    this.neuronAccumulators = Array(this.neurons.length).fill(0);
+  }
 
   feedForward(inputs: number[]): number[] {
-    const outputs: number[] = Array(this.outputCount).fill(0);
-    const neuronAccumulators = Array(this.neurons.length).fill(0);
+    // const outputs: number[] = Array(this.outputCount).fill(0);
+    // const neuronAccumulators = Array(this.neurons.length).fill(0);
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.outputs[i] = 0;
+    }
+    for (let i = 0; i < this.neuronAccumulators.length; i++) {
+      this.neuronAccumulators[i] = 0;
+    }
 
     let neuronOutputsComputed = false;
 
@@ -26,7 +38,7 @@ export class Network {
         for (let neuronIdx = 0; neuronIdx < this.neurons.length; neuronIdx++) {
           const neuron = this.neurons[neuronIdx];
           if (neuron.driven) {
-            neuron.output = Math.tanh(neuronAccumulators[neuronIdx]);
+            neuron.output = Math.tanh(this.neuronAccumulators[neuronIdx]);
           }
         }
         neuronOutputsComputed = true;
@@ -40,17 +52,18 @@ export class Network {
       }
 
       if (connection.sinkType === NeuronType.ACTION) {
-        outputs[connection.sinkId] += inputValue * connection.weight;
+        this.outputs[connection.sinkId] += inputValue * connection.weight;
       } else {
-        neuronAccumulators[connection.sinkId] += inputValue * connection.weight;
+        this.neuronAccumulators[connection.sinkId] +=
+          inputValue * connection.weight;
       }
     }
 
-    for (let i = 0; i < outputs.length; i++) {
-      outputs[i] = Math.tanh(outputs[i]);
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.outputs[i] = Math.tanh(this.outputs[i]);
     }
 
-    return outputs;
+    return this.outputs;
   }
 
   get totalNeurons(): number {
