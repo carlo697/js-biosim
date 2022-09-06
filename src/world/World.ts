@@ -171,44 +171,6 @@ export default class World {
       this.grid.push(col);
     }
 
-    // Another way of initializing the array is with map functions
-    // this.grid = [...new Array(this.size)].map(() =>
-    //   [...new Array(this.size)].map(() => [null, null, null])
-    // );
-
-    // This for loop is used to iterate over every pixel in the grid
-    // for (let y = 0; y < this.size; y++) {
-    //   for (let x = 0; x < this.size; x++) {
-    //     console.log(this.grid[x][y]);
-    //   }
-    // }
-  }
-
-  private clearGrid() {
-    for (let y = 0; y < this.size; y++) {
-      for (let x = 0; x < this.size; x++) {
-        const point = this.grid[x][y];
-        point.creature = null;
-        point.obstacle = null;
-        point.areas = [];
-      }
-    }
-  }
-
-  public computeGrid() {
-    this.clearGrid();
-
-    // Set creatures
-    for (let i = 0; i < this.currentCreatures.length; i++) {
-      const creature = this.currentCreatures[i];
-
-      if (creature.isAlive) {
-        // Set creature if it's alive
-        this.grid[creature.position[0]][creature.position[1]].creature =
-          creature;
-      }
-    }
-
     // Check obstacles
     for (
       let obstacleIdx = 0;
@@ -232,6 +194,44 @@ export default class World {
         const position = area.pixels[pixelIdx];
         // Set pixel
         this.grid[position[0]][position[1]].areas.push(area);
+      }
+    }
+
+    // Another way of initializing the array is with map functions
+    // this.grid = [...new Array(this.size)].map(() =>
+    //   [...new Array(this.size)].map(() => [null, null, null])
+    // );
+
+    // This for loop is used to iterate over every pixel in the grid
+    // for (let y = 0; y < this.size; y++) {
+    //   for (let x = 0; x < this.size; x++) {
+    //     console.log(this.grid[x][y]);
+    //   }
+    // }
+  }
+
+  private clearGrid() {
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const point = this.grid[x][y];
+        point.creature = null;
+        // point.obstacle = null;
+        // point.areas = [];
+      }
+    }
+  }
+
+  public computeGrid() {
+    this.clearGrid();
+
+    // Set creatures
+    for (let i = 0; i < this.currentCreatures.length; i++) {
+      const creature = this.currentCreatures[i];
+
+      if (creature.isAlive) {
+        // Set creature if it's alive
+        this.grid[creature.position[0]][creature.position[1]].creature =
+          creature;
       }
     }
   }
