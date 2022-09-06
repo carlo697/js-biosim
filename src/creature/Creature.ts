@@ -343,6 +343,12 @@ export default class Creature {
         this.world.isTileEmpty(this.position[0] + x, this.position[1]) ||
         this.world.isTileEmpty(this.position[0], this.position[1] + y))
     ) {
+      // Mark the grid point so that no other creature
+      // can translate to this position
+      this.world.grid[finalX][finalY].creature = this;
+      // Free the grid point
+      this.world.grid[this.position[0]][this.position[1]].creature = null;
+
       this.position[0] = finalX;
       this.position[1] = finalY;
       this.lastMovement[0] = x;
@@ -375,7 +381,15 @@ export default class Creature {
   }
 
   set health(value: number) {
-    this._health = Math.max(0, Math.min(maxHealth, value));
+    const result = Math.max(0, Math.min(maxHealth, value));
+
+    if (result <= 0 && result !== this._health) {
+      // Free grid point
+      this.world.grid[this.position[0]][this.position[1]].creature = null;
+      // console.log("free!!!")
+    }
+
+    this._health = result;
   }
 
   get health() {

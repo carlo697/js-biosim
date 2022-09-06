@@ -234,6 +234,33 @@ export default class World {
           creature;
       }
     }
+
+    // // Use this to check if there are more than one creature in any
+    // // grid point
+    // let creatureAliveCount = 0;
+    // for (let i = 0; i < this.currentCreatures.length; i++) {
+    //   if (this.currentCreatures[i].isAlive) {
+    //     creatureAliveCount++;
+    //   }
+    // }
+    // let creaturesInGrid = 0;
+    // for (let y = 0; y < this.size; y++) {
+    //   for (let x = 0; x < this.size; x++) {
+    //     if (this.grid[x][y].creature) {
+    //       creaturesInGrid++;
+    //     }
+    //   }
+    // }
+    // if (creaturesInGrid != creatureAliveCount) {
+    //   console.log(
+    //     "creatureCount",
+    //     creaturesInGrid,
+    //     "creatureAliveCount",
+    //     creatureAliveCount,
+    //     this.currentCreatures.length,
+    //     this.currentStep
+    //   );
+    // }
   }
 
   startRun(): void {
@@ -373,12 +400,44 @@ export default class World {
   public isTileEmpty(x: number, y: number): boolean {
     // for (let i = 0; i < this.currentCreatures.length; i++) {
     //   const creature = this.currentCreatures[i];
-    //   if (creature.position[0] === x && creature.position[1] === y) {
+    //   if (creature.isAlive && creature.position[0] === x && creature.position[1] === y) {
     //     return false;
     //   }
     // }
     // return true;
     return !this.grid[x][y].creature && !this.grid[x][y].obstacle;
+  }
+
+  public getRandomAvailablePositionDeepCheck(creatures: Creature[]): number[] {
+    // Generate a position until it corresponds to an empty tile
+    let position: number[];
+    do {
+      position = this.getRandomPosition();
+    } while (!this.isTileEmptyDeepCheck(creatures, position[0], position[1]));
+
+    return position;
+  }
+
+  public isTileEmptyDeepCheck(
+    creatures: Creature[],
+    x: number,
+    y: number
+  ): boolean {
+    let hasCreature = false;
+
+    for (let i = 0; i < creatures.length; i++) {
+      const creature = creatures[i];
+      if (
+        creature.isAlive &&
+        creature.position[0] === x &&
+        creature.position[1] === y
+      ) {
+        hasCreature = true;
+        break;
+      }
+    }
+
+    return !hasCreature && !this.grid[x][y].obstacle;
   }
 
   public isTileInsideWorld(x: number, y: number): boolean {
