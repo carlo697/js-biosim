@@ -1,3 +1,4 @@
+import { rationalTanh } from "../../helpers/helpers";
 import Connection from "./Connection";
 import Neuron, { NeuronType } from "./Neuron";
 
@@ -38,7 +39,7 @@ export class Network {
         for (let neuronIdx = 0; neuronIdx < this.neurons.length; neuronIdx++) {
           const neuron = this.neurons[neuronIdx];
           if (neuron.driven) {
-            neuron.output = Math.tanh(this.neuronAccumulators[neuronIdx]);
+            neuron.output = rationalTanh(this.neuronAccumulators[neuronIdx]);
           }
         }
         neuronOutputsComputed = true;
@@ -60,7 +61,7 @@ export class Network {
     }
 
     for (let i = 0; i < this.outputs.length; i++) {
-      this.outputs[i] = Math.tanh(this.outputs[i]);
+      this.outputs[i] = rationalTanh(this.outputs[i]);
     }
 
     return this.outputs;

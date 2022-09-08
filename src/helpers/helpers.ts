@@ -40,3 +40,21 @@ export const interpolate = (
 ) => {
   return ((value - minX) / (maxX - minX)) * (maxY - minY) + minY;
 };
+
+// From https://stackoverflow.com/questions/6118028/fast-hyperbolic-tangent-approximation-in-javascript
+export const rationalTanh = (x: number) => {
+  if (x < -3) return -1;
+  else if (x > 3) return 1;
+
+  return (x * (27 + x * x)) / (27 + 9 * x * x);
+};
+
+export const rationalTanh2 = (x: number) => {
+  return (x * (27 + x * x)) / (27 + 9 * x * x);
+};
+
+export const linearTanhActivation = (x: number) => {
+  if (x <= -1) return -1;
+  else if (x >= 1) return 1;
+  return x;
+};
