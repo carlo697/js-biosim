@@ -1,12 +1,12 @@
 import World from "../world/World";
-import CreatureSensor from "./sensors/CreatureSensor";
-import CreatureAction from "./actions/CreatureAction";
 import { Network } from "./brain/Network";
 import Genome from "./genome/Genome";
 import { probabilityToBool } from "../helpers/helpers";
 import Connection from "./brain/Connection";
 import Neuron, { NeuronType } from "./brain/Neuron";
 import NeuronNode from "./NeuronNode";
+import CreatureSensors from "./sensors/CreatureSensors";
+import CreatureActions from "./actions/CreatureActions";
 
 export const initialNeuronOutput = 0.5;
 export const maxHealth = 100;
@@ -21,8 +21,8 @@ export default class Creature {
   lastMovement: number[];
 
   // Sensors and actions
-  sensors: CreatureSensor[];
-  actions: CreatureAction[];
+  sensors: CreatureSensors;
+  actions: CreatureActions;
   onlySensorsWithSingleOutput: boolean = false;
   singleOutputSensorFunctions: ((creature: Creature) => number)[] = [];
   singleInputs: number[] = [];
@@ -61,26 +61,9 @@ export default class Creature {
       // console.log(this.genome.toBitString())
     }
 
-    // Calculate inputs of neuronal network
-    this.networkInputCount = 0;
-    for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
-      this.networkInputCount += this.sensors[sensorIdx].outputCount;
-    }
-
-    // I discovered that calling sensor.calculateOutput or sensor.calculateOutputs
-    // is a bit slower, and that storing those functions in an array and then
-    // calling them from the array is faster (in chrome)...
-    // This way we can reduce up to 40ms in time with generations of 1000 creatures
-    this.onlySensorsWithSingleOutput =
-      this.networkInputCount === this.sensors.length;
-    if (this.onlySensorsWithSingleOutput) {
-      this.singleOutputSensorFunctions = this.sensors.map((sensor) =>
-        (<() => number>sensor.calculateOutput).bind(sensor)
-      );
-    }
-
-    // Calculate outputs of neuronal network
-    this.networkOutputCount = this.actions.length;
+    // Network input and output count
+    this.networkInputCount = this.sensors.neuronsCount;
+    this.networkOutputCount = this.actions.neuronsCount;
 
     this.createBrainFromGenome();
   }
@@ -94,14 +77,14 @@ export default class Creature {
 
       // Renumber sourceId
       if (sourceType === NeuronType.SENSOR) {
-        sourceId %= this.world.sensors.length;
+        sourceId %= this.networkInputCount;
       } else {
         sourceId %= this.world.maxNumberNeurons;
       }
 
       // Renumber sinkId
       if (sinkType === NeuronType.ACTION) {
-        sinkId %= this.world.actions.length;
+        sinkId %= this.networkOutputCount;
       } else {
         sinkId %= this.world.maxNumberNeurons;
       }
@@ -274,31 +257,7 @@ export default class Creature {
   }
 
   calculateInputs(): number[] {
-    if (this.onlySensorsWithSingleOutput) {
-      for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
-        this.singleInputs[sensorIdx] =
-          this.singleOutputSensorFunctions[sensorIdx](this);
-      }
-
-      return this.singleInputs;
-    } else {
-      const inputs = [];
-      for (let sensorIdx = 0; sensorIdx < this.sensors.length; sensorIdx++) {
-        const sensor = this.sensors[sensorIdx];
-
-        if (sensor.calculateOutput) {
-          inputs.push(sensor.calculateOutput(this));
-        } else if (sensor.calculateOutputs) {
-          const results = sensor.calculateOutputs(this);
-
-          for (let j = 0; j < results.length; j++) {
-            inputs.push(results[j]);
-          }
-        }
-      }
-
-      return inputs;
-    }
+    return this.sensors.calculateOutputs(this);
   }
 
   calculateOutputs(inputs: number[]): number[] {
@@ -312,9 +271,7 @@ export default class Creature {
     const outputs = this.calculateOutputs(this.calculateInputs());
 
     // Execute actions with outputs
-    for (let i = 0; i < this.actions.length; i++) {
-      this.actions[i].execute(this, outputs[i]);
-    }
+    this.actions.executeActions(this, outputs);
 
     // Calculate probability of movement
     const moveX = Math.tanh(this.urgeToMove[0]);

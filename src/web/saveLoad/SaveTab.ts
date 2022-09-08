@@ -33,8 +33,12 @@ export default class SaveTab {
   }
 
   serializeWorld(world: World): SavedWorld {
-    const sensors = world.sensors.map(({ name }) => name);
-    const actions = world.actions.map(({ name }) => name);
+    const sensors: string[] = Object.entries(world.sensors.data)
+      .filter(([_, { enabled }]) => enabled)
+      .map(([key]) => key);
+    const actions: string[] = Object.entries(world.actions.data)
+      .filter(([_, { enabled }]) => enabled)
+      .map(([key]) => key);
 
     const creatureMap = new Map<string, SavedSpecies>();
     // Create the species from the creature list

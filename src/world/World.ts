@@ -1,11 +1,11 @@
-import CreatureAction from "../creature/actions/CreatureAction";
+import CreatureActions from "../creature/actions/CreatureActions";
 import Creature from "../creature/Creature";
 import { MutationMode } from "../creature/genome/MutationMode";
 import AsexualRandomPopulation from "../creature/population/AsexualRandomPopulation";
 import PopulationStrategy from "../creature/population/PopulationStrategy";
 import EastWallSelection from "../creature/selection/EastWallSelection";
 import SelectionMethod from "../creature/selection/SelectionMethod";
-import CreatureSensor from "../creature/sensors/CreatureSensor";
+import CreatureSensors from "../creature/sensors/CreatureSensors";
 import { WorldEvents } from "../events/WorldEvents";
 import WorldArea from "./areas/WorldArea";
 import { GenerationRegistry } from "./stats/GenerationRegistry";
@@ -65,8 +65,8 @@ export default class World {
   areas: WorldArea[] = [];
 
   // Sensors and actions
-  sensors: CreatureSensor[] = [];
-  actions: CreatureAction[] = [];
+  sensors: CreatureSensors = new CreatureSensors();
+  actions: CreatureActions = new CreatureActions();
 
   constructor(canvas: HTMLCanvasElement | null, size: number) {
     if (World.instance) {
@@ -86,6 +86,9 @@ export default class World {
   }
 
   public initializeWorld(restart: boolean): void {
+    this.sensors.updateInternalValues();
+    this.actions.updateInternalValues();
+
     // If there's a simulation already running
     if (restart) {
       this.pause();

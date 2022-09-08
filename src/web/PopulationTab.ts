@@ -331,25 +331,35 @@ export default class PopulationTab {
     if (group === 1) {
       // Create a list of names
       const names: string[] = [];
-      for (let sensorIdx = 0; sensorIdx < creature.sensors.length; ) {
-        const sensor = creature.sensors[sensorIdx];
+      for (const { enabled, name, neuronCount } of Object.values(
+        creature.sensors.data
+      )) {
+        if (enabled) {
+          for (let i = 0; i < neuronCount; i++) {
+            let finalName = `(In) ${name}`;
+            if (neuronCount > 1) {
+              // If the sensor has more than one output
+              finalName += ` [${i + 1}]`;
+            }
 
-        for (let i = 0; i < sensor.outputCount; i++) {
-          let name = `(In) ${sensor.name}`;
-
-          if (sensor.outputCount > 1) {
-            // If the sensor has more than one output
-            name += ` [${i + 1}]`;
+            names.push(finalName);
           }
-
-          names.push(name);
-          sensorIdx++;
         }
       }
 
       return names[index];
     } else if (group === 2) {
-      return `(Out) ${this.world.actions[index].name}`;
+      // Create a list of names
+      const names: string[] = [];
+      for (const { enabled, name } of Object.values(creature.actions.data)) {
+        if (enabled) {
+          names.push(name);
+        }
+      }
+
+      return names[index];
+
+      // return `(Out) ${this.world.actions[index].name}`;
     } else if (group === 3) {
       return index.toString();
     }

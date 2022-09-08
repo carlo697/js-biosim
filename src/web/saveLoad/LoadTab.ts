@@ -58,8 +58,12 @@ export default class LoadTab {
     this.world.totalTime = parsed.totalTime;
 
     // Load actions and sensors
-    this.world.sensors = parsed.sensors.map((name) => this.webUI.sensors[name]);
-    this.world.actions = parsed.actions.map((name) => this.webUI.actions[name]);
+    // this.world.sensors = parsed.sensors.map((name) => this.webUI.sensors[name]);
+    // this.world.actions = parsed.actions.map((name) => this.webUI.actions[name]);
+
+    // Enable sensors and actions
+    this.world.sensors.loadFromList(parsed.sensors);
+    this.world.actions.loadFromList(parsed.actions);
 
     // Load creatures
     const creatures: Creature[] = [];

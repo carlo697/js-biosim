@@ -3,26 +3,9 @@ import AsexualRandomPopulation from "./creature/population/AsexualRandomPopulati
 import World from "./world/World";
 import { MutationMode } from "./creature/genome/MutationMode";
 import WebUI from "./web/WebUI";
-import HorizontalPositionSensor from "./creature/sensors/HorizontalPositionSensor";
-import VerticalPositionSensor from "./creature/sensors/VerticalPositionSensor";
-import AgeSensor from "./creature/sensors/AgeSensor";
-import HorizontalSpeedSensor from "./creature/sensors/HorizontalSpeedSensor";
-import OscillatorSensor from "./creature/sensors/OscillatorSensor";
-import RandomSensor from "./creature/sensors/RandomSensor";
-import VerticalSpeedSensor from "./creature/sensors/VerticalSpeedSensor";
-import MoveNorthAction from "./creature/actions/MoveNorthAction";
-import MoveSouthAction from "./creature/actions/MoveSouthAction";
-import MoveEastAction from "./creature/actions/MoveEastAction";
-import MoveWestAction from "./creature/actions/MoveWestAction";
-import RandomMoveAction from "./creature/actions/RandomMoveAction";
-import CreatureAction from "./creature/actions/CreatureAction";
-import HorizontalBorderDistanceSensor from "./creature/sensors/HorizontalBorderDistanceSensor";
-import VerticalBorderDistanceSensor from "./creature/sensors/VerticalBorderDistanceSensor";
-import BorderDistanceSensor from "./creature/sensors/BorderDistanceSensor";
-import EllipseHealthArea from "./world/areas/EllipseHealthArea";
 import RectangleReproductionArea from "./world/areas/reproduction/RectangleReproductionArea";
 import InsideReproductionAreaSelection from "./creature/selection/InsideReproductionAreaSelection";
-import MoveForwardAction from "./creature/actions/MoveForwardAction";
+import EllipseHealthArea from "./world/areas/EllipseHealthArea";
 
 // Create world
 const world = new World(
@@ -45,12 +28,16 @@ const selectionMethod = new InsideReproductionAreaSelection();
 //   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
 // ];
 
+// A map divided in two sections by 5 squares and a reproduction zone in the center
 // world.obstacles = [
 //   new RectangleObject(world, 0, 0, 0.2, 0.2),
 //   new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
 //   new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
 //   new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
 //   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
 // ];
 
 // world.obstacles = [
@@ -136,34 +123,7 @@ world.areas = [
 //   new RectangleObject(world, 0, 60, 100, 40, false),
 // ];
 
-// Sensors
-const sensors = [
-  new HorizontalPositionSensor(world),
-  new VerticalPositionSensor(world),
-  new AgeSensor(world),
-  new OscillatorSensor(world),
-  new RandomSensor(world),
-  new HorizontalSpeedSensor(world),
-  new VerticalSpeedSensor(world),
-  new HorizontalBorderDistanceSensor(world),
-  new VerticalBorderDistanceSensor(world),
-  new BorderDistanceSensor(world),
-  // new TouchSensor(world),
-];
-
-// Actions
-const actions: CreatureAction[] = [
-  new MoveNorthAction(world),
-  new MoveSouthAction(world),
-  new MoveEastAction(world),
-  new MoveWestAction(world),
-  new RandomMoveAction(world),
-  new MoveForwardAction(world),
-];
-
 // Default values
-world.sensors = sensors;
-world.actions = actions;
 world.initialPopulation = 1000;
 world.populationStrategy = populationStrategy;
 world.selectionMethod = selectionMethod;
@@ -185,3 +145,30 @@ new WebUI(world);
 // Initialize world and start simulation
 world.initializeWorld(true);
 world.startRun();
+
+// // A
+// let date;
+// let result;
+
+// date = new Date();
+
+// const a = 1000;
+// result = 0;
+
+// for (let i = 0; i < 10000000; i++) {
+//   result += i + 6 / a;
+// }
+
+// console.log(new Date().getTime() - date.getTime(), result);
+
+// // B
+// date = new Date();
+
+// const b = 1 / 1000;
+// result = 0;
+
+// for (let i = 0; i < 10000000; i++) {
+//   result += i + 6 * b;
+// }
+
+// console.log(new Date().getTime() - date.getTime(), result);

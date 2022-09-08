@@ -1,6 +1,5 @@
-import CreatureAction from "../creature/actions/CreatureAction";
 import { MutationMode } from "../creature/genome/MutationMode";
-import CreatureSensor from "../creature/sensors/CreatureSensor";
+import { SingleSensor } from "../creature/sensors/CreatureSensors";
 import World from "../world/World";
 import WebUI from "./WebUI";
 
@@ -75,13 +74,14 @@ export default class InitialSettings {
       !!mutationMode
     ) {
       this.world.size = worldSize;
-      this.world.sensors = this.parseSensors();
-      this.world.actions = this.parseActions();
       this.world.initialPopulation = initialPopulation;
       this.world.initialGenomeSize = initialGenomeSize;
       this.world.maxGenomeSize = maxGenomeSize;
       this.world.maxNumberNeurons = maxNumberNeurons;
       this.world.mutationMode = mutationMode;
+      this.applySensors();
+      this.applyActions();
+
       const isPaused = this.world.isPaused;
       this.world.initializeWorld(true);
       if (!isPaused) {
@@ -94,34 +94,23 @@ export default class InitialSettings {
     return false;
   }
 
-  parseSensors(): CreatureSensor[] {
-    const sensors: CreatureSensor[] = [];
-
+  applySensors() {
     const checkboxes = Array.from(
       this.sensorsParent.querySelectorAll<HTMLInputElement>("input")
     );
     for (const checkbox of checkboxes) {
-      if (checkbox.checked) {
-        sensors.push(this.webUI.sensors[checkbox.id]);
-      }
+      this.world.sensors.data[checkbox.id].enabled = checkbox.checked;
     }
-
-    return sensors;
   }
 
-  parseActions(): CreatureAction[] {
-    const actions: CreatureAction[] = [];
-
+  applyActions() {
     const checkboxes = Array.from(
       this.actionsParent.querySelectorAll<HTMLInputElement>("input")
     );
-    for (const checkbox of checkboxes) {
-      if (checkbox.checked) {
-        actions.push(this.webUI.actions[checkbox.id]);
-      }
-    }
 
-    return actions;
+    for (const checkbox of checkboxes) {
+      this.world.actions.data[checkbox.id].enabled = checkbox.checked;
+    }
   }
 
   createSensorAndActionCheckboxes() {
@@ -130,19 +119,22 @@ export default class InitialSettings {
     this.actionsParent.textContent = "";
 
     const elements = [
-      ...Object.values(this.webUI.sensors).map((item) => ({
-        instance: item,
+      ...Object.values(this.world.sensors.data).map((obj) => ({
+        obj,
         type: "sensor",
       })),
-      ...Object.values(this.webUI.actions).map((item) => ({
-        instance: item,
+      ...Object.values(this.world.actions.data).map((obj) => ({
+        obj,
         type: "action",
       })),
     ];
 
     // Create checkboxes
-    for (const { instance, type } of Object.values(elements)) {
-      const name = instance.name;
+    for (const {
+      obj,
+      obj: { enabled, name },
+      type,
+    } of elements) {
       const prettyName = name.replace(/([A-Z])/g, " $1").trim();
 
       // Create container
@@ -162,21 +154,18 @@ export default class InitialSettings {
 
       // Set label text, check input and add to DOM
       if (type === "sensor") {
-        const sensor = <CreatureSensor>instance;
+        const { neuronCount } = <SingleSensor>obj;
 
         label.textContent = `${prettyName} (${
-          sensor.outputCount > 1
-            ? `${sensor.outputCount} neurons`
-            : `${sensor.outputCount} neuron`
+          neuronCount > 1 ? `${neuronCount} neurons` : `${neuronCount} neuron`
         })`;
-
-        input.checked = !!this.world.sensors.find((item) => item.name === name);
+        input.checked = enabled;
 
         this.sensorsParent.appendChild(container);
       } else {
         // Actions
         label.textContent = `${prettyName} (1 neuron)`;
-        input.checked = !!this.world.actions.find((item) => item.name === name);
+        input.checked = enabled;
 
         this.actionsParent.appendChild(container);
       }

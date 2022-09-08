@@ -1,22 +1,3 @@
-import CreatureAction from "../creature/actions/CreatureAction";
-import MoveEastAction from "../creature/actions/MoveEastAction";
-import MoveForwardAction from "../creature/actions/MoveForwardAction";
-import MoveNorthAction from "../creature/actions/MoveNorthAction";
-import MoveSouthAction from "../creature/actions/MoveSouthAction";
-import MoveWestAction from "../creature/actions/MoveWestAction";
-import RandomMoveAction from "../creature/actions/RandomMoveAction";
-import AgeSensor from "../creature/sensors/AgeSensor";
-import BorderDistanceSensor from "../creature/sensors/BorderDistanceSensor";
-import CreatureSensor from "../creature/sensors/CreatureSensor";
-import HorizontalBorderDistanceSensor from "../creature/sensors/HorizontalBorderDistanceSensor";
-import HorizontalPositionSensor from "../creature/sensors/HorizontalPositionSensor";
-import HorizontalSpeedSensor from "../creature/sensors/HorizontalSpeedSensor";
-import OscillatorSensor from "../creature/sensors/OscillatorSensor";
-import RandomSensor from "../creature/sensors/RandomSensor";
-import TouchSensor from "../creature/sensors/TouchSensor";
-import VerticalBorderDistanceSensor from "../creature/sensors/VerticalBorderDistanceSensor";
-import VerticalPositionSensor from "../creature/sensors/VerticalPositionSensor";
-import VerticalSpeedSensor from "../creature/sensors/VerticalSpeedSensor";
 import { WorldEvents } from "../events/WorldEvents";
 import World from "../world/World";
 import InitialSettings from "./InitialSettings";
@@ -38,10 +19,6 @@ export default class WebUI {
   lastGenerationDuration: HTMLElement;
   currentStep: HTMLElement;
 
-  // Sensors and actions
-  sensors: { [key: string]: CreatureSensor };
-  actions: { [key: string]: CreatureAction };
-
   // Tab classes
   initialSettings: InitialSettings;
   populationTab: PopulationTab;
@@ -49,32 +26,10 @@ export default class WebUI {
   loadTab: LoadTab;
   statsTab: StatsTab;
 
+  lastGenerationDurationAccumulator: number[] = [];
+
   constructor(world: World) {
     this.world = world;
-
-    this.sensors = {
-      HorizontalPosition: new HorizontalPositionSensor(world),
-      VerticalPosition: new VerticalPositionSensor(world),
-      Age: new AgeSensor(world),
-      Oscillator: new OscillatorSensor(world),
-      Random: new RandomSensor(world),
-      HorizontalSpeed: new HorizontalSpeedSensor(world),
-      VerticalSpeed: new VerticalSpeedSensor(world),
-      HorizontalBorderDistance: new HorizontalBorderDistanceSensor(world),
-      VerticalBorderDistance: new VerticalBorderDistanceSensor(world),
-      BorderDistance: new BorderDistanceSensor(world),
-      Touch: new TouchSensor(world),
-    };
-
-    // Actions
-    this.actions = {
-      MoveNorth: new MoveNorthAction(world),
-      MoveSouth: new MoveSouthAction(world),
-      MoveEast: new MoveEastAction(world),
-      MoveWest: new MoveWestAction(world),
-      RandomMove: new RandomMoveAction(world),
-      MoveForward: new MoveForwardAction(world),
-    };
 
     // Statistics texts
     this.generationText = document.querySelector("#generation") as HTMLElement;
@@ -235,6 +190,21 @@ export default class WebUI {
         Math.round(this.world.lastSurvivalRate * 100 * 100) / 100
       }%`
     );
+
+    if (this.world.lastGenerationDuration) {
+      this.lastGenerationDurationAccumulator.push(
+        this.world.lastGenerationDuration
+      );
+
+      if (this.lastGenerationDurationAccumulator.length > 20) {
+        const sum = this.lastGenerationDurationAccumulator.reduce(
+          (previous, current) => previous + current,
+          0
+        );
+        console.log(sum / this.lastGenerationDurationAccumulator.length);
+        this.lastGenerationDurationAccumulator = [];
+      }
+    }
 
     this.renderStatTexts();
   }
