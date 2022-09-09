@@ -5,7 +5,7 @@ import { MutationMode } from "./creature/genome/MutationMode";
 import WebUI from "./web/WebUI";
 import RectangleReproductionArea from "./world/areas/reproduction/RectangleReproductionArea";
 import InsideReproductionAreaSelection from "./creature/selection/InsideReproductionAreaSelection";
-import EllipseHealthArea from "./world/areas/EllipseHealthArea";
+import RectangleObject from "./world/objects/RectangleObject";
 
 // Create world
 const world = new World(
@@ -29,52 +29,45 @@ const selectionMethod = new InsideReproductionAreaSelection();
 // ];
 
 // A map divided in two sections by 5 squares and a reproduction zone in the center
-// world.obstacles = [
-//   new RectangleObject(world, 0, 0, 0.2, 0.2),
-//   new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
-//   new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
-//   new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
-//   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
-// ];
-// world.areas = [
-//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
-// ];
-
-// world.obstacles = [
-//   new RectangleObject(world, 0, 0, 0.2, 0.2),
-//   new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
-//   new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
-//   new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
-//   new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
-//   new EllipseObject(world, 0.5, 0, 0.2, 0.2, true, true),
-//   new EllipseObject(world, 0.7, 0, 0.15, 0.2),
-//   new EllipseObject(world, 0.9, 0, 0.05, 0.05, true),
-// ];
+world.obstacles = [
+  new RectangleObject(world, 0, 0, 0.2, 0.2),
+  new RectangleObject(world, 0.2, 0.2, 0.2, 0.2),
+  new RectangleObject(world, 0.4, 0.4, 0.2, 0.2),
+  new RectangleObject(world, 0.6, 0.6, 0.2, 0.2),
+  new RectangleObject(world, 0.8, 0.8, 0.2, 0.2),
+];
+world.areas = [
+  new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+];
 
 // world.areas = [
 //   new RectangleHealthArea(world, 0.4, 0.0, 0.2, 1, true, -1),
 //   new EllipseHealthArea(world, 0, 0.0, 0.3, 0.2, true, -1),
 // ];
 
-world.areas = [
-  new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
-  new EllipseHealthArea(world, 0.375, 0.35, 0.25, 0.3, true, -1),
-];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+//   new EllipseHealthArea(world, 0.375, 0.35, 0.25, 0.3, true, -1),
+// ];
 
 // world.obstacles = [new RectangleObject(world, 0, 0, 0.6, 0.6)];
 // world.obstacles = [new RectangleObject(world, 0.15, 0.15, 0.5, 0.5)];
 
+// This map has two vertical walls and a reproduction area
+// at the center. It resembles the following shape:
 // |    |
 // |    |
 // world.obstacles = [
 //   new RectangleObject(world, 0.2, 0.2, 0.05, 0.6),
 //   new RectangleObject(world, 0.75, 0.2, 0.05, 0.6),
 // ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+// ];
 
 //  _  _
 // |    |
 // |_  _|
-//
 // world.obstacles = [
 //   new RectangleObject(world, 0.2, 0.2, 0.05, 0.6),
 //   new RectangleObject(world, 0.25, 0.2, 0.15, 0.05),
@@ -82,6 +75,9 @@ world.areas = [
 //   new RectangleObject(world, 0.75, 0.2, 0.05, 0.6),
 //   new RectangleObject(world, 0.6, 0.2, 0.15, 0.05),
 //   new RectangleObject(world, 0.6, 0.75, 0.15, 0.05),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
 // ];
 
 // |   |
@@ -91,6 +87,19 @@ world.areas = [
 //   // new RectangleObject(world, 0.75, 0, 0.05, 0.8),
 //   new RectangleObject(world, 0.75, 0.2, 0.05, 0.8),
 // ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+// ];
+
+// world.obstacles = [
+//   new RectangleObject(world, 0.2, 0.5, 0.05, 0.5),
+//   new RectangleObject(world, 0.75, 0.5, 0.05, 0.5),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+//   new RectangleHealthArea(world, 0, 0, 0.1, 1, true, -1),
+//   new RectangleHealthArea(world, 0.9, 0, 0.1, 1, true, -1),
+// ];
 
 // |  |  |
 // |  |  |
@@ -98,6 +107,18 @@ world.areas = [
 //   new RectangleObject(world, 0.2, 0.2, 0.1, 0.8),
 //   new RectangleObject(world, 0.45, 0.2, 0.1, 0.8),
 //   new RectangleObject(world, 0.7, 0.2, 0.1, 0.8),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+// ];
+
+// world.obstacles = [
+//   new EllipseObject(world, 0.2, 0.2, 0.1, 1.6),
+//   new EllipseObject(world, 0.45, 0.2, 0.1, 1.6),
+//   new EllipseObject(world, 0.7, 0.2, 0.1, 1.6),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
 // ];
 
 // world.obstacles = [
@@ -106,10 +127,24 @@ world.areas = [
 //   new RectangleObject(world, 0.7, 0.2, 0.1, 0.8),
 //   new RectangleObject(world, 0, 0.6, 1, 0.4),
 // ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+// ];
 
 // world.obstacles = [
 //   new RectangleObject(world, 0.1, 0.1, 0.3, 0.8),
 //   new RectangleObject(world, 0.6, 0.1, 0.3, 0.8),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
+// ];
+
+// world.obstacles = [
+//   new EllipseObject(world, 0.1, 0.1, 0.3, 0.8, true, true),
+//   new EllipseObject(world, 0.6, 0.1, 0.3, 0.8, true, true),
+// ];
+// world.areas = [
+//   new RectangleReproductionArea(world, 0.25, 0.25, 0.5, 0.5, true),
 // ];
 
 // Rounding tests
