@@ -65,6 +65,11 @@ export default class CreatureSensors {
       enabled: false,
       neuronCount: 4,
     },
+    Pain: {
+      name: "Pain",
+      enabled: true,
+      neuronCount: 1,
+    },
   };
 
   neuronsCount: number = 0;
@@ -187,6 +192,11 @@ export default class CreatureSensors {
         tile = creature.world.grid[x][y];
         values.push(tile.creature || tile.obstacle ? 1.0 : 0);
       }
+    }
+
+    // Pain/Health
+    if (this.data.Pain.enabled) {
+      values.push((100 - creature.health) / 100);
     }
 
     return values;
