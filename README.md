@@ -2,6 +2,10 @@
 
 > This app is available through [this link.](https://evolution-simulation.netlify.app/)
 
+## New Version
+
+I continued this project in this new repo: https://github.com/carlo697/react-biosim
+
 ## Running
 
 In order to run this project locally, clone the repo and:
